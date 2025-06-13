@@ -1,0 +1,15 @@
+{
+  "singleQuote": true,
+  "semi": true,
+  "tabWidth": 2,
+  "useTabs": false,
+  "trailingComma": "es5",
+  "printWidth": 100,
+  "bracketSpacing": true,
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "bracketSameLine": false,
+  "quoteProps": "as-needed",
+  "plugins": ["@ianvs/prettier-plugin-sort-imports"],
+  "importOrder": ["^(react|react-dom)$", "^@?\\w", "^@/(.*)$", "^[./]"]
+}

@@ -1,0 +1,57 @@
+{
+  "name": "@mcp-b/transports",
+  "version": "0.0.1",
+  "description": "Transports for the in browser transport protocols",
+  "license": "MIT",
+  "author": "mcp-b Team",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alxnahas/mcp-b.git",
+    "directory": "packages/mcp-b"
+  },
+  "homepage": "https://github.com/alxnahas/mcp-b#readme",
+  "bugs": {
+    "url": "https://github.com/alxnahas/mcp-b/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "browser",
+    "transport",
+    "browser-extension",
+    "tab-transport",
+    "chrome-extension"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo"
+  },
+  "peerDependencies": {},
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/node": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "@types/chrome": "^0.0.326"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["NODE_ENV", "ENV", "LOG_LEVEL", "DEBUG", "npm_package_version"],
+  "tasks": {
+    "start": {
+      "dependsOn": ["^build"],
+      "persistent": true,
+      "cache": false,
+      "outputs": ["dist/**", "bin/**", ".next/**", "!.next/cache/**"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": true,
+      "outputs": ["dist/**", "bin/**", ".next/**", "!.next/cache/**"]
+    },
+    "build:packages": {
+      "dependsOn": ["^build"],
+      "cache": true,
+      "outputs": ["dist/**", "*.tsbuildinfo"],
+      "inputs": ["src/**", "tsconfig.json", "package.json", "tsup.config.ts"]
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": true,
+      "persistent": true,
+      "outputs": ["dist/**", ".next/**"]
+    },
+    "test": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "clean": {
+      "cache": false
+    },
+    "lint": {
+      "outputs": []
+    },
+    "format": {
+      "outputs": []
+    },
+    "typecheck": {
+      "outputs": []
+    }
+  }
+}
