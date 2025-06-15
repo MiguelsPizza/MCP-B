@@ -26,12 +26,6 @@ export const indexSearchSchema = z.object({
     .optional()
     .default('threads')
     .describe('Active sidebar view'),
-  // Current tab - 'assistant' or 'tutorial'
-  tab: z
-    .enum(['assistant', 'tutorial'])
-    .optional()
-    .default('assistant')
-    .describe('Active tab in the main view'),
   // Todo sorting parameters
   ...todoSortSchema.shape,
 });

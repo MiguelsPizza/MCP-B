@@ -136,3 +136,11 @@
   animation: fadeInUp 0.5s ease-out forwards;
   opacity: 0;
 }
+
+/* Grid pattern for hero backgrounds */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, hsl(var(--muted-foreground) / 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--muted-foreground) / 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}

@@ -27,8 +27,11 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
           <SidebarMenuItem>
             <SidebarMenuButton size="lg">
               <a
-                href="https://github.com/alxnahas/mcp-b"
-                target="_blank"
+                href={
+                  import.meta.env.DEV
+                    ? 'http://localhost:5173/'
+                    : `${import.meta.env.VITE_APP_URL || window.location.origin}/`
+                }
                 className="flex items-center gap-2"
               >
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/80 to-primary text-primary-foreground">
@@ -42,7 +45,7 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
                   </svg>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">mcp-b</span>
+                  <span className="font-semibold">MCP-B</span>
                   <span className="text-xs text-muted-foreground">Browser MCP</span>
                 </div>
               </a>
@@ -83,7 +86,7 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
           <SidebarMenuItem>
             <SidebarMenuButton size="lg">
               <a
-                href="https://github.com/alxnahas/mcp-b"
+                href="https://github.com/miguelspizza/mcp-b"
                 target="_blank"
                 className="flex items-center gap-2"
               >

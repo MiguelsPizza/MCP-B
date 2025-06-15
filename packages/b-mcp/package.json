@@ -6,12 +6,12 @@
   "author": "mcp-b Team",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alxnahas/mcp-b.git",
+    "url": "git+https://github.com/miguelspizza/mcp-b.git",
     "directory": "packages/mcp-b"
   },
-  "homepage": "https://github.com/alxnahas/mcp-b#readme",
+  "homepage": "https://github.com/miguelspizza/mcp-b#readme",
   "bugs": {
-    "url": "https://github.com/alxnahas/mcp-b/issues"
+    "url": "https://github.com/miguelspizza/mcp-b/issues"
   },
   "keywords": [
     "mcp",

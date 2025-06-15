@@ -1,15 +1,14 @@
 import { useLiveQuery } from '@tanstack/react-db';
 import { AlertCircle, CheckCircle2, Circle, ListTodo } from 'lucide-react';
-import { Alert, AlertDescription } from './components/ui/alert';
-import { Checkbox } from './components/ui/checkbox';
-import { Skeleton } from './components/ui/skeleton';
+import { useTodoSortParamsRouter } from '../hooks/useTodoSortParamsRouter';
+import { userId } from '../lib/utils';
+import { userTodoCollection } from '../services/collections';
+import { Alert, AlertDescription } from './ui/alert';
+import { Checkbox } from './ui/checkbox';
+import { Skeleton } from './ui/skeleton';
 
-import { useTodoSortParamsRouter } from './hooks/useTodoSortParamsRouter';
-import { userId } from './lib/utils';
-import { userTodoCollection } from './services/collections';
-
-export default function Todos() {
-  const { sortParams, getSortDescription } = useTodoSortParamsRouter();
+export default function Todos({ route }: { route: '/assistant' | '/blogs' }) {
+  const { sortParams, getSortDescription } = useTodoSortParamsRouter(route);
   const { data: todos = [] } = useLiveQuery(
     (query) => {
       let baseQuery = query.from({ userTodoCollection });
@@ -49,7 +48,10 @@ export default function Todos() {
     return (
       <div className="h-full p-4 space-y-3">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-card/50 border border-border/50">
+          <div
+            key={i}
+            className="flex items-start gap-3 p-3 rounded-lg bg-card/50 border border-border/50"
+          >
             <Skeleton className="h-5 w-5 rounded-full mt-0.5" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-3/4" />
@@ -66,15 +68,13 @@ export default function Todos() {
       <div className="h-full p-4 flex items-center justify-center">
         <Alert variant="destructive" className="border-destructive/50">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            {(error as Error)?.message || 'Failed to load todos'}
-          </AlertDescription>
+          <AlertDescription>{(error as Error)?.message || 'Failed to load todos'}</AlertDescription>
         </Alert>
       </div>
     );
   }
 
-  const completedCount = todos.filter(t => t.completed).length;
+  const completedCount = todos.filter((t) => t.completed).length;
   const totalCount = todos.length;
 
   return (
@@ -99,7 +99,7 @@ export default function Todos() {
         </div>
         {totalCount > 0 && (
           <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-            <div 
+            <div
               className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-500"
               style={{ width: `${(completedCount / totalCount) * 100}%` }}
             />
@@ -138,11 +138,11 @@ export default function Todos() {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm leading-relaxed break-words ${
-                    todo.completed 
-                      ? 'text-muted-foreground line-through' 
-                      : 'text-foreground'
-                  }`}>
+                  <p
+                    className={`text-sm leading-relaxed break-words ${
+                      todo.completed ? 'text-muted-foreground line-through' : 'text-foreground'
+                    }`}
+                  >
                     {todo.text}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -150,7 +150,7 @@ export default function Todos() {
                       month: 'short',
                       day: 'numeric',
                       hour: 'numeric',
-                      minute: '2-digit'
+                      minute: '2-digit',
                     })}
                   </p>
                 </div>
