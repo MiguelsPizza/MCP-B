@@ -139,8 +139,81 @@
 
 /* Grid pattern for hero backgrounds */
 .bg-grid-pattern {
-  background-image: 
+  background-image:
     linear-gradient(to right, hsl(var(--muted-foreground) / 0.1) 1px, transparent 1px),
     linear-gradient(to bottom, hsl(var(--muted-foreground) / 0.1) 1px, transparent 1px);
   background-size: 40px 40px;
+}
+
+/* Gradient animations */
+@keyframes gradient-shift {
+  0%,
+  100% {
+    transform: translateX(0%) translateY(0%);
+  }
+  25% {
+    transform: translateX(100%) translateY(100%);
+  }
+  50% {
+    transform: translateX(100%) translateY(0%);
+  }
+  75% {
+    transform: translateX(0%) translateY(100%);
+  }
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 20s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes gradient-x {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 3s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+
+/* Floating animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  33% {
+    transform: translateY(-30px) translateX(20px);
+  }
+  66% {
+    transform: translateY(20px) translateX(-20px);
+  }
+}
+
+@keyframes float-delayed {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  33% {
+    transform: translateY(30px) translateX(-30px);
+  }
+  66% {
+    transform: translateY(-20px) translateX(20px);
+  }
+}
+
+.animate-float-slow {
+  animation: float 20s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 25s ease-in-out infinite;
+  animation-delay: 5s;
 }

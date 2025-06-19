@@ -58,7 +58,8 @@
     "@types/react": "catalog:",
     "@types/node": "catalog:",
     "tsup": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@types/chrome": "^0.0.326"
   },
   "publishConfig": {
     "access": "public",

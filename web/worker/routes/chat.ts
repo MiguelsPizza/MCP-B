@@ -30,6 +30,7 @@ const chat = new Hono<{ Bindings: Env }>()
    */
   .post('/api/chat', zValidator('json', PostRequestBodySchema), async (c) => {
     const { messages, system, tools } = c.req.valid('json');
+    // console.log({ tools, system, messages: JSON.stringify(messages, null, 2) });
 
     // Initialize OpenAI client with API key from environment
     const openai = createOpenAI({

@@ -34,3 +34,4 @@ web/.tanstack
 
 # Exclude extension from initial release
 extension/
+extension/.tanstack

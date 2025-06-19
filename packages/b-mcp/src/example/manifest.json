@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "MCP Chrome Extension",
+  "version": "1.0.0",
+  "permissions": ["activeTab", "tabs", "scripting", "bookmarks", "storage"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  }
+}

@@ -5,9 +5,16 @@ import { Button } from './ui/button';
 interface PageHeaderProps {
   title: string;
   description?: string;
+  titleClassName?: string;
+  descriptionClassName?: string;
 }
 
-export const PageHeader = ({ title, description }: PageHeaderProps) => {
+export const PageHeader = ({
+  title,
+  description,
+  titleClassName,
+  descriptionClassName,
+}: PageHeaderProps) => {
   return (
     <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-4">
@@ -21,8 +28,12 @@ export const PageHeader = ({ title, description }: PageHeaderProps) => {
             </Link>
             <div className="h-6 w-px bg-border" />
             <div>
-              <h1 className="text-lg font-semibold">{title}</h1>
-              {description && <p className="text-sm text-muted-foreground">{description}</p>}
+              <h1 className={`text-lg font-semibold ${titleClassName || ''}`}>{title}</h1>
+              {description && (
+                <p className={`text-sm text-muted-foreground ${descriptionClassName || ''}`}>
+                  {description}
+                </p>
+              )}
             </div>
           </div>
           <Link to="/">
