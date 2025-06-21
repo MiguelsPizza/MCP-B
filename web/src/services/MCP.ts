@@ -257,11 +257,7 @@ export const initializeMcpServer = async () => {
   try {
     const server = generateServer();
     const transport = new TabServerTransport({
-      serverInfo: {
-        name: 'TODO-APP',
-        version: '1.0.0',
-      },
-      capabilities: { tools: {} },
+      allowedOrigins: ['*'],
     });
     await server.connect(transport);
     console.log(server);

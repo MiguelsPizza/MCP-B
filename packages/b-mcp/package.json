@@ -39,14 +39,21 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo"
   },
-  "peerDependencies": {},
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
     "zod": "^3.24.1"
   },
+  "peerDependencies": {
+    "ws": "^8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ws": {
+      "optional": true
+    }
+  },
   "devDependencies": {
-    "@types/react": "catalog:",
     "@types/node": "catalog:",
+    "@types/ws": "^8.5.0",
     "tsup": "catalog:",
     "typescript": "catalog:",
     "@types/chrome": "^0.0.326"

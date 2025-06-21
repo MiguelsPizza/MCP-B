@@ -33,5 +33,5 @@ web/.tanstack
 .claude
 
 # Exclude extension from initial release
-extension/
+# extension/
 extension/.tanstack
