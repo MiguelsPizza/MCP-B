@@ -168,7 +168,7 @@ export const Documentation = () => {
           <h3 className="text-sm font-semibold mb-3">Resources</h3>
           <div className="space-y-2">
             <a
-              href="https://github.com/alxnahas/B-MCP"
+              href="https://github.com/miguelspizza/MCP-B"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
@@ -198,7 +198,7 @@ export const Documentation = () => {
               <Globe className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold">B-MCP Documentation</h1>
+              <h1 className="text-4xl font-bold">MCP-B Documentation</h1>
               <p className="text-xl text-muted-foreground mt-1">
                 Browser-based Model Context Protocol
               </p>
@@ -217,11 +217,11 @@ export const Documentation = () => {
 
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle>What is B-MCP?</CardTitle>
+              <CardTitle>What is MCP-B?</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                B-MCP brings the power of the Model Context Protocol (MCP) to the browser, enabling
+                MCP-B brings the power of the Model Context Protocol (MCP) to the browser, enabling
                 AI agents to interact with web applications using existing authentication and
                 structured data access instead of screen scraping.
               </p>
@@ -372,8 +372,8 @@ await server.connect(transport);`}
                 <CardContent>
                   <CodeBlock
                     language="bash"
-                    code={`git clone https://github.com/alxnahas/B-MCP.git
-cd B-MCP
+                    code={`git clone https://github.com/miguelspizza/MCP-B.git
+cd MCP-B
 pnpm install
 pnpm build`}
                   />
@@ -402,7 +402,7 @@ pnpm build`}
 
               <Card>
                 <CardHeader>
-                  <CardTitle>3. Visit B-MCP enabled sites</CardTitle>
+                  <CardTitle>3. Visit MCP-B enabled sites</CardTitle>
                   <CardDescription>
                     The extension will automatically detect and connect to MCP servers on any page
                   </CardDescription>
@@ -475,7 +475,7 @@ pnpm build`}
           <div className="prose prose-lg dark:prose-invert max-w-none">
             <h3 className="text-xl font-semibold mb-4">How It Works</h3>
             <p className="text-muted-foreground">
-              B-MCP introduces two new transport layers that enable MCP communication in browser
+              MCP-B introduces two new transport layers that enable MCP communication in browser
               environments:
             </p>
           </div>
@@ -988,11 +988,11 @@ server.tool(
         <footer className="mt-16 pt-8 border-t">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              B-MCP is not affiliated with Anthropic or the official Model Context Protocol project.
+              MCP-B is not affiliated with Anthropic or the official Model Context Protocol project.
             </p>
             <div className="flex gap-4">
               <a
-                href="https://github.com/alxnahas/B-MCP"
+                href="https://github.com/miguelspizza/MCP-B"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 GitHub

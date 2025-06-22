@@ -1,0 +1,65 @@
+{
+  "name": "@mcp-b/extension-tools",
+  "version": "0.0.1",
+  "description": "Chrome Extension API tools for Model Context Protocol (MCP) - provides MCP-compatible wrappers for browser extension APIs",
+  "license": "MIT",
+  "author": "Alex Nahas",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miguelspizza/MCP-B.git",
+    "directory": "packages/extension-tools"
+  },
+  "homepage": "https://github.com/miguelspizza/MCP-B/tree/main/packages/extension-tools#readme",
+  "bugs": {
+    "url": "https://github.com/miguelspizza/MCP-B/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "chrome-extension",
+    "browser-extension",
+    "chrome-api",
+    "extension-api",
+    "tabs-api",
+    "bookmarks-api",
+    "storage-api",
+    "browser-automation"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo",
+    "prepublishOnly": "pnpm run build",
+    "generate-chrome-api-tools": "pnpx tsx src/aiScripts/generate-chrome-api-tools.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "playwright": "^1.53.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.54.0",
+    "@types/chrome": "^0.0.326",
+    "@types/node": "catalog:",
+    "cheerio": "^1.1.0",
+    "dotenv": "^16.5.0",
+    "tsup": "catalog:",
+    "typescript": "^5.8.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

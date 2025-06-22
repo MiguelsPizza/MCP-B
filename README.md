@@ -1,4 +1,4 @@
-# B-MCP: Browser-based Model Context Protocol
+# MCP-B: Browser-based Model Context Protocol
 
 Bringing the power of the Model Context Protocol (MCP) to the browser, where work actually happens.
 
@@ -7,12 +7,14 @@ Bringing the power of the Model Context Protocol (MCP) to the browser, where wor
 The Model Context Protocol has become the de facto standard for allowing LLMs to interact with the external world. But there's a critical gap: **most white-collar work happens in the browser**, yet MCP's solution has been to bypass browsers entirely and connect directly to APIs.
 
 This creates two major issues:
+
 1. **Authentication complexity** - MCP is essentially reinventing auth systems that browsers have already solved
 2. **Poor agent experience** - Browser automation tools force LLMs to parse visual content and irrelevant HTML, degrading performance
 
-## The Solution: B-MCP
+## The Solution: MCP-B
 
-B-MCP solves this by running MCP servers **directly inside web pages**, allowing AI agents to:
+MCP-B solves this by running MCP servers **directly inside web pages**, allowing AI agents to:
+
 - Use existing browser authentication (cookies, sessions, OAuth)
 - Access structured data through MCP tools instead of screen scraping
 - Orchestrate workflows across multiple web applications
@@ -20,9 +22,10 @@ B-MCP solves this by running MCP servers **directly inside web pages**, allowing
 
 ## How It Works
 
-B-MCP introduces two new transport layers that enable MCP communication in browser environments:
+MCP-B introduces two new transport layers that enable MCP communication in browser environments:
 
 ### 🌐 Tab Transports
+
 Run an MCP server directly on any webpage, exposing its functionality through standardized tools:
 
 ```typescript
@@ -47,6 +50,7 @@ await server.connect(transport);
 ```
 
 ### 🔌 Extension Transports
+
 A browser extension that automatically discovers and connects to MCP servers on any page:
 
 ```typescript
@@ -73,12 +77,13 @@ Imagine John, who works at a machine shop and receives an order for custom valve
 
 1. **Email** - Send PO to accounting
 2. **Internal IMS** - Check inventory for parts
-3. **McMaster-Carr** - Order missing components  
+3. **McMaster-Carr** - Order missing components
 4. **Job Scheduler** - Register the work order
 5. **Shipping Calculator** - Estimate delivery
 6. **CRM** - Update customer with timeline
 
-With B-MCP, each of these web apps exposes MCP tools. An AI assistant in the browser sidebar can:
+With MCP-B, each of these web apps exposes MCP tools. An AI assistant in the browser sidebar can:
+
 - Navigate between all six applications
 - Use existing authentication (no API keys needed)
 - Execute the entire workflow through structured commands
@@ -99,23 +104,24 @@ With B-MCP, each of these web apps exposes MCP tools. An AI assistant in the bro
 
 This monorepo includes:
 
-| Package | Description |
-|---------|-------------|
-| [`@mcp-b/transports`](./packages/b-mcp) | Core browser transport implementations |
-| [`@mcp-b/mcp-react-hooks`](./packages/mcp-react-hooks) | React hooks for MCP integration |
-| [`extension`](./extension) | Chrome extension with AI chat interface |
-| [`web`](./web) | Demo todo app with MCP server |
+| Package                                                | Description                             |
+| ------------------------------------------------------ | --------------------------------------- |
+| [`@mcp-b/transports`](./packages/MCP-B)                | Core browser transport implementations  |
+| [`@mcp-b/mcp-react-hooks`](./packages/mcp-react-hooks) | React hooks for MCP integration         |
+| [`extension`](./extension)                             | Chrome extension with AI chat interface |
+| [`web`](./web)                                         | Demo todo app with MCP server           |
 
 ## Quick Start
 
 ### For Web Developers
+
 Add MCP to your web app in minutes:
 
 ```bash
 npm install @mcp-b/transports @modelcontextprotocol/sdk
 ```
 
-Then expose your app's functionality through MCP tools. See the [transports documentation](./packages/b-mcp/README.md) for detailed examples.
+Then expose your app's functionality through MCP tools. See the [transports documentation](./packages/MCP-B/README.md) for detailed examples.
 
 ### For Extension Users
 
@@ -123,7 +129,7 @@ Then expose your app's functionality through MCP tools. See the [transports docu
 2. Install dependencies: `pnpm install`
 3. Build everything: `pnpm build`
 4. Load the extension from `extension/dist`
-5. Visit any B-MCP enabled site and watch the AI assistant connect automatically!
+5. Visit any MCP-B enabled site and watch the AI assistant connect automatically!
 
 ### Development
 
@@ -142,7 +148,7 @@ pnpm lint
 
 ## Why This Matters
 
-B-MCP represents a fundamental shift in how AI agents interact with web applications:
+MCP-B represents a fundamental shift in how AI agents interact with web applications:
 
 - **Security**: Leverage existing browser auth instead of managing API keys
 - **Performance**: Structured data access instead of visual parsing
@@ -151,7 +157,8 @@ B-MCP represents a fundamental shift in how AI agents interact with web applicat
 
 ## Project Status
 
-B-MCP is actively being developed. Current focus areas:
+MCP-B is actively being developed. Current focus areas:
+
 - ✅ Core transport implementations
 - ✅ Chrome extension with chat interface
 - ✅ Demo todo application
@@ -177,4 +184,4 @@ MIT - See [LICENSE](./LICENSE) for details
 
 ---
 
-*B-MCP is not affiliated with Anthropic or the official Model Context Protocol project.*
+_MCP-B is not affiliated with Anthropic or the official Model Context Protocol project._

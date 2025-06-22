@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Transports for the in browser transport protocols",
   "license": "MIT",
-  "author": "mcp-b Team",
+  "author": "Alex Nahas",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/miguelspizza/mcp-b.git",
@@ -35,28 +35,33 @@
   ],
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
+    "@types/cheerio": "^1.0.0",
+    "cheerio": "^1.1.0",
     "zod": "^3.24.1"
   },
   "peerDependencies": {
+    "@anthropic-ai/sdk": "^0.54.0",
     "ws": "^8.0.0"
   },
   "peerDependenciesMeta": {
     "ws": {
       "optional": true
+    },
+    "@anthropic-ai/sdk": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@types/chrome": "^0.0.326",
     "@types/node": "catalog:",
     "@types/ws": "^8.5.0",
     "tsup": "catalog:",
-    "typescript": "catalog:",
-    "@types/chrome": "^0.0.326"
+    "typescript": "^5.8.3"
   },
   "publishConfig": {
     "access": "public",

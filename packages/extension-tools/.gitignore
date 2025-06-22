@@ -1,0 +1,20 @@
+# Generated documentation cache
+src/aiScripts/docs-cache/
+
+# TypeScript build output
+dist/
+*.tsbuildinfo
+
+# Dependency directories
+node_modules/
+
+# IDE files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.local 
