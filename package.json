@@ -17,7 +17,14 @@
     "test": "turbo run test",
     "clean": "git clean -xdf .cache .turbo node_modules",
     "typecheck": "turbo run typecheck",
-    "check-all": "pnpm run typecheck && pnpm run lint:check && pnpm run format:check"
+    "check-all": "pnpm run typecheck && pnpm run lint:check && pnpm run format:check",
+    "publish:packages": "turbo run publish:npm --filter='./packages/*'",
+    "publish:dry": "turbo run publish:dry --filter='./packages/*'",
+    "version:patch": "turbo run version:patch --filter='./packages/*'",
+    "version:minor": "turbo run version:minor --filter='./packages/*'",
+    "version:major": "turbo run version:major --filter='./packages/*'",
+    "build:packages": "turbo run build --filter='./packages/*'",
+    "publish:wizard": "./scripts/publish-packages.sh"
   },
   "engines": {
     "node": ">=22.12",

@@ -41,6 +41,28 @@
     },
     "typecheck": {
       "outputs": []
+    },
+    "prepublishOnly": {
+      "dependsOn": ["build"],
+      "cache": false
+    },
+    "publish:npm": {
+      "dependsOn": ["prepublishOnly"],
+      "cache": false,
+      "env": ["NPM_TOKEN", "NODE_AUTH_TOKEN"]
+    },
+    "publish:dry": {
+      "dependsOn": ["prepublishOnly"],
+      "cache": false
+    },
+    "version:patch": {
+      "cache": false
+    },
+    "version:minor": {
+      "cache": false
+    },
+    "version:major": {
+      "cache": false
     }
   }
 }

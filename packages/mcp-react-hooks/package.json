@@ -37,7 +37,13 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist .turbo"
+    "clean": "rm -rf dist .turbo",
+    "prepublishOnly": "pnpm run build",
+    "publish:npm": "pnpm publish --access public --no-git-checks",
+    "publish:dry": "pnpm publish --access public --no-git-checks --dry-run",
+    "version:patch": "pnpm version patch --no-git-tag-version",
+    "version:minor": "pnpm version minor --no-git-tag-version",
+    "version:major": "pnpm version major --no-git-tag-version"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
