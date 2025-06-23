@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as BlogsRouteImport } from './routes/blogs'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DocsRoute = DocsRouteImport.update({
   id: '/docs',
   path: '/docs',
@@ -40,12 +46,14 @@ export interface FileRoutesByFullPath {
   '/assistant': typeof AssistantRoute
   '/blogs': typeof BlogsRoute
   '/docs': typeof DocsRoute
+  '/privacy': typeof PrivacyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/blogs': typeof BlogsRoute
   '/docs': typeof DocsRoute
+  '/privacy': typeof PrivacyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/assistant': typeof AssistantRoute
   '/blogs': typeof BlogsRoute
   '/docs': typeof DocsRoute
+  '/privacy': typeof PrivacyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assistant' | '/blogs' | '/docs'
+  fullPaths: '/' | '/assistant' | '/blogs' | '/docs' | '/privacy'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assistant' | '/blogs' | '/docs'
-  id: '__root__' | '/' | '/assistant' | '/blogs' | '/docs'
+  to: '/' | '/assistant' | '/blogs' | '/docs' | '/privacy'
+  id: '__root__' | '/' | '/assistant' | '/blogs' | '/docs' | '/privacy'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,10 +76,18 @@ export interface RootRouteChildren {
   AssistantRoute: typeof AssistantRoute
   BlogsRoute: typeof BlogsRoute
   DocsRoute: typeof DocsRoute
+  PrivacyRoute: typeof PrivacyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/docs': {
       id: '/docs'
       path: '/docs'
@@ -107,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssistantRoute: AssistantRoute,
   BlogsRoute: BlogsRoute,
   DocsRoute: DocsRoute,
+  PrivacyRoute: PrivacyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

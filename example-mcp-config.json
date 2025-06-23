@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "browser-extension-hub": {
+      "type": "websocket",
+      "url": "ws://localhost:8888",
+      "name": "Browser Extension MCP Hub",
+      "description": "Connect to browser extension MCP server via WebSocket bridge"
+    }
+  }
+}

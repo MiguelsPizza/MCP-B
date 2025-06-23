@@ -4,4 +4,5 @@ export * from './ExtensionClientTransport.js';
 export * from './ExtensionServerTransport.js';
 export * from './WebsocketClientTransport.js';
 export * from './WebsocketServerTransport.js';
+export * from './BrowserWebSocketClientTransport.js';
 export * from './browser-types.js';

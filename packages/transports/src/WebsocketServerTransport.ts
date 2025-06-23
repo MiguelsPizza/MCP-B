@@ -9,6 +9,7 @@ export class WebSocketServerTransport implements Transport {
   private _socket?: WebSocket;
   private _server?: any; // For environments that support WebSocketServer
   private _started = false;
+  private _connectionId?: string;
 
   onclose?: () => void;
   onerror?: (error: Error) => void;
@@ -51,7 +52,16 @@ export class WebSocketServerTransport implements Transport {
       let message: JSONRPCMessage;
       try {
         const data = typeof event.data === 'string' ? event.data : event.data.toString();
-        message = JSONRPCMessageSchema.parse(JSON.parse(data));
+        const parsedData = JSON.parse(data);
+
+        // Handle bridge protocol - extract connectionId if present
+        if (parsedData.connectionId) {
+          this._connectionId = parsedData.connectionId;
+          const { connectionId, ...actualMessage } = parsedData;
+          message = JSONRPCMessageSchema.parse(actualMessage);
+        } else {
+          message = JSONRPCMessageSchema.parse(parsedData);
+        }
       } catch (error) {
         this.onerror?.(error as Error);
         return;
@@ -94,7 +104,12 @@ export class WebSocketServerTransport implements Transport {
       }
 
       try {
-        this._socket.send(JSON.stringify(message));
+        // If we have a connectionId from the bridge, include it in the response
+        const messageToSend = this._connectionId
+          ? { ...message, connectionId: this._connectionId }
+          : message;
+
+        this._socket.send(JSON.stringify(messageToSend));
         resolve();
       } catch (error) {
         reject(error);

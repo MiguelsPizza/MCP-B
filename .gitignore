@@ -35,3 +35,5 @@ web/.tanstack
 # Exclude extension from initial release
 # extension/
 extension/.tanstack
+local-server/node_modules
+local-server/dist
