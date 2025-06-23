@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/websocket-bridge",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "WebSocket bridge for connecting MCP clients to browser extensions",
   "keywords": [
     "mcp",
