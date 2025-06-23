@@ -30,7 +30,7 @@ The WebSocket bridge system solves a key limitation: browser extensions cannot h
 ├─────────────────────┤     ├─────────────────────┤     ├─────────────────────┤
 │                     │     │                     │     │                     │
 │  MCP Inspector      │────▶│  STDIO ↔ WebSocket  │────▶│  WebSocket Bridge   │
-│  (STDIO only)       │     │      Proxy          │     │   localhost:8888    │
+│  (STDIO only)       │     │      Proxy          │     │   localhost:8021    │
 │                     │     │                     │     │                     │
 ├─────────────────────┤     │                     │     │  • Multiple clients │
 │                     │     │                     │     │  • Connection IDs   │
@@ -74,7 +74,7 @@ The WebSocket bridge system solves a key limitation: browser extensions cannot h
 ### Components and Their Connections
 
 ```
-MCP Inspector ──STDIO──▶ Proxy (index.ts) ──WebSocket──▶ Bridge (:8888)
+MCP Inspector ──STDIO──▶ Proxy (index.ts) ──WebSocket──▶ Bridge (:8021)
                                                               │
                                                               │ WebSocket +
                                                               │ connectionId
@@ -95,8 +95,8 @@ MCP Inspector ──STDIO──▶ Proxy (index.ts) ──WebSocket──▶ Bri
 
 ```
 Inspector → Proxy: STDIO connection
-Proxy → Bridge: WebSocket connect to ws://localhost:8888
-Extension → Bridge: WebSocket connect to ws://localhost:8888?type=extension
+Proxy → Bridge: WebSocket connect to ws://localhost:8021
+Extension → Bridge: WebSocket connect to ws://localhost:8021?type=extension
 Bridge: Assigns connectionId to Inspector session
 ```
 
@@ -139,7 +139,7 @@ Extension → ... → Inspector: Tool execution result
 ```bash
 cd local-server
 pnpm bridge
-# Bridge starts on port 8888
+# Bridge starts on port 8021
 ```
 
 ### Step 2: Configure the Extension
@@ -167,14 +167,14 @@ cd local-server
 pnpm inspect:bridge
 
 # Option B: Manual connection
-npx @modelcontextprotocol/inspector tsx src/index.ts ws://localhost:8888
+npx @modelcontextprotocol/inspector tsx src/index.ts ws://localhost:8021
 ```
 
 ## Key Components
 
 ### 1. WebSocket Bridge (`bridge-server.ts`)
 
-- Hosts WebSocket server on port 8888
+- Hosts WebSocket server on port 8021
 - Accepts connections from both clients and extensions
 - Routes messages using connection IDs
 - Handles multiple simultaneous clients
@@ -213,7 +213,7 @@ npx @modelcontextprotocol/inspector tsx src/index.ts ws://localhost:8888
 ### For WebSocket-native clients (Claude, Cursor):
 
 - Skip the proxy step
-- Connect directly to ws://localhost:8888
+- Connect directly to ws://localhost:8021
 - Same message routing through the bridge
 
 ## Benefits

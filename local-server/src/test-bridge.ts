@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import WebSocket from 'ws';
 
-const bridgeUrl = 'ws://localhost:8888';
+const bridgeUrl = 'ws://localhost:8021';
 
 console.log(`Connecting to bridge at ${bridgeUrl}...`);
 

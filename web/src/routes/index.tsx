@@ -4,8 +4,10 @@ import {
   ArrowRight,
   Award,
   BookOpen,
+  Boxes,
   Building2,
   CheckCircle,
+  ChevronRight,
   Chrome,
   Code2,
   ExternalLink,
@@ -19,20 +21,18 @@ import {
   Monitor,
   Network,
   PlayCircle,
+  Rocket,
+  Server,
   Shield,
   Sparkles,
   Terminal,
   Users,
   Workflow,
   Zap,
-  ChevronRight,
-  Rocket,
-  Server,
-  Boxes,
 } from 'lucide-react';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Separator } from '../components/ui/separator';
 import { indexSearchSchema } from '../paramSchemas';
 
@@ -179,7 +179,8 @@ function IndexRoute() {
               className="animate-fadeInUp text-lg text-muted-foreground max-w-3xl mx-auto"
               style={{ animationDelay: '100ms' }}
             >
-              Browser extensions can't host servers. MCP requires servers. We solved this impossible equation.
+              Browser extensions can't host servers. MCP requires servers. We solved this impossible
+              equation.
             </p>
           </div>
 
@@ -195,10 +196,10 @@ function IndexRoute() {
                   WebSocket Bridge Architecture
                 </h3>
                 <p className="mb-6 text-muted-foreground">
-                  We created the first architecture that enables browser extensions to act as MCP servers,
-                  opening up an entirely new class of AI capabilities.
+                  We created the first architecture that enables browser extensions to act as MCP
+                  servers, opening up an entirely new class of AI capabilities.
                 </p>
-                
+
                 <div className="grid gap-6 md:grid-cols-3">
                   <div className="space-y-3">
                     <h4 className="font-semibold text-primary">The Challenge</h4>
@@ -217,7 +218,7 @@ function IndexRoute() {
                       </li>
                     </ul>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <h4 className="font-semibold text-primary">Our Solution</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
@@ -235,7 +236,7 @@ function IndexRoute() {
                       </li>
                     </ul>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <h4 className="font-semibold text-primary">The Result</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
@@ -259,7 +260,10 @@ function IndexRoute() {
 
             {/* Problems Solved */}
             <div className="grid gap-8 lg:grid-cols-2">
-              <Card className="animate-fadeInUp border-destructive/20 bg-gradient-to-br from-destructive/5 via-background/95 to-background/80 backdrop-blur-sm hover:border-destructive/30 transition-all duration-300" style={{ animationDelay: '200ms' }}>
+              <Card
+                className="animate-fadeInUp border-destructive/20 bg-gradient-to-br from-destructive/5 via-background/95 to-background/80 backdrop-blur-sm hover:border-destructive/30 transition-all duration-300"
+                style={{ animationDelay: '200ms' }}
+              >
                 <div className="p-6">
                   <h3 className="mb-4 text-xl font-semibold flex items-center gap-2">
                     <Lock className="h-5 w-5 text-destructive" />
@@ -282,7 +286,10 @@ function IndexRoute() {
                 </div>
               </Card>
 
-              <Card className="animate-fadeInUp border-orange-600/20 bg-gradient-to-br from-orange-600/5 via-background/95 to-background/80 backdrop-blur-sm hover:border-orange-600/30 transition-all duration-300" style={{ animationDelay: '300ms' }}>
+              <Card
+                className="animate-fadeInUp border-orange-600/20 bg-gradient-to-br from-orange-600/5 via-background/95 to-background/80 backdrop-blur-sm hover:border-orange-600/30 transition-all duration-300"
+                style={{ animationDelay: '300ms' }}
+              >
                 <div className="p-6">
                   <h3 className="mb-4 text-xl font-semibold flex items-center gap-2">
                     <Eye className="h-5 w-5 text-orange-600" />
@@ -310,16 +317,23 @@ function IndexRoute() {
           {/* Technical Architecture Visualization */}
           <div className="space-y-8">
             {/* High-Level Architecture Diagram */}
-            <Card className="animate-fadeInUp overflow-hidden border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm" style={{ animationDelay: '400ms' }}>
+            <Card
+              className="animate-fadeInUp overflow-hidden border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm"
+              style={{ animationDelay: '400ms' }}
+            >
               <div className="p-8">
-                <h3 className="mb-6 text-xl font-semibold text-center">Revolutionary Bridge Architecture</h3>
-                
+                <h3 className="mb-6 text-xl font-semibold text-center">
+                  Revolutionary Bridge Architecture
+                </h3>
+
                 {/* Architecture Diagram */}
                 <div className="space-y-8">
                   {/* MCP Clients Section */}
                   <div className="grid gap-4 md:grid-cols-3">
                     <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-muted-foreground text-center">Development Tools</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground text-center">
+                        Development Tools
+                      </h4>
                       <div className="space-y-2">
                         <Card className="p-3 border-muted bg-muted/30">
                           <div className="flex items-center gap-2">
@@ -344,9 +358,11 @@ function IndexRoute() {
                         </Card>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-muted-foreground text-center">Bridge Layer</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground text-center">
+                        Bridge Layer
+                      </h4>
                       <Card className="p-6 border-primary bg-gradient-to-br from-primary/10 to-blue-600/10 h-full flex flex-col justify-center">
                         <div className="text-center space-y-4">
                           <div className="inline-flex p-3 rounded-lg bg-gradient-to-br from-primary/20 to-blue-600/20">
@@ -354,7 +370,7 @@ function IndexRoute() {
                           </div>
                           <div>
                             <h5 className="font-semibold text-primary">WebSocket Bridge</h5>
-                            <p className="text-xs text-muted-foreground mt-1">localhost:8888</p>
+                            <p className="text-xs text-muted-foreground mt-1">localhost:8021</p>
                           </div>
                           <div className="space-y-1 text-xs text-muted-foreground">
                             <p>• Multiple clients</p>
@@ -364,9 +380,11 @@ function IndexRoute() {
                         </div>
                       </Card>
                     </div>
-                    
+
                     <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-muted-foreground text-center">Browser Layer</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground text-center">
+                        Browser Layer
+                      </h4>
                       <Card className="p-4 border-primary/20 bg-gradient-to-br from-background/95 to-background/80">
                         <div className="space-y-3">
                           <div className="flex items-center gap-2">
@@ -395,7 +413,7 @@ function IndexRoute() {
                       </Card>
                     </div>
                   </div>
-                  
+
                   {/* Connection Flow Arrows */}
                   <div className="relative h-16 hidden md:block">
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -404,19 +422,23 @@ function IndexRoute() {
                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2">
                             <ArrowRight className="h-4 w-4 text-primary" />
                           </div>
-                          <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">STDIO / WebSocket</span>
+                          <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
+                            STDIO / WebSocket
+                          </span>
                         </div>
                         <div className="flex-1 border-t-2 border-dashed border-primary/30 relative ml-8">
                           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2">
                             <ArrowRight className="h-4 w-4 text-primary" />
                           </div>
-                          <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">WebSocket + ID</span>
+                          <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
+                            WebSocket + ID
+                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="mt-6 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-blue-600/10 backdrop-blur-sm border border-primary/20">
                   <p className="text-sm text-center font-medium bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
                     First architecture to enable browser extensions as full MCP servers
@@ -425,7 +447,6 @@ function IndexRoute() {
               </div>
             </Card>
           </div>
-
         </div>
       </section>
 
@@ -610,20 +631,28 @@ function IndexRoute() {
 
           {/* Comparison Diagram */}
           <div className="mb-12">
-            <Card className="animate-in-fadeInUp overflow-hidden border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm" style={{ animationDelay: '200ms' }}>
+            <Card
+              className="animate-in-fadeInUp overflow-hidden border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm"
+              style={{ animationDelay: '200ms' }}
+            >
               <div className="p-8">
-                <h3 className="mb-6 text-xl font-semibold text-center">The Evolution of Browser AI Integration</h3>
-                
+                <h3 className="mb-6 text-xl font-semibold text-center">
+                  The Evolution of Browser AI Integration
+                </h3>
+
                 <div className="grid gap-6 md:grid-cols-3">
                   {/* Traditional Browser Automation */}
                   <div className="space-y-4">
                     <div className="text-center">
-                      <Badge variant="outline" className="mb-3 border-destructive/20 text-destructive bg-destructive/5">
+                      <Badge
+                        variant="outline"
+                        className="mb-3 border-destructive/20 text-destructive bg-destructive/5"
+                      >
                         Traditional Approach
                       </Badge>
                       <h4 className="font-semibold mb-2">Browser Automation</h4>
                     </div>
-                    
+
                     <div className="space-y-3">
                       <Card className="p-3 border-destructive/20 bg-gradient-to-br from-destructive/10 to-destructive/5">
                         <div className="flex items-center gap-2 mb-2">
@@ -636,26 +665,31 @@ function IndexRoute() {
                           <p>• Breaks with UI changes</p>
                         </div>
                       </Card>
-                      
+
                       <div className="text-center py-2">
                         <ArrowRight className="h-5 w-5 text-muted-foreground mx-auto rotate-90" />
                       </div>
-                      
+
                       <Card className="p-3 border-destructive/20 bg-destructive/5">
-                        <p className="text-xs text-center font-medium text-destructive">Result: Brittle & Slow</p>
+                        <p className="text-xs text-center font-medium text-destructive">
+                          Result: Brittle & Slow
+                        </p>
                       </Card>
                     </div>
                   </div>
-                  
+
                   {/* Traditional MCP */}
                   <div className="space-y-4">
                     <div className="text-center">
-                      <Badge variant="outline" className="mb-3 border-orange-600/20 text-orange-600 bg-orange-600/5">
+                      <Badge
+                        variant="outline"
+                        className="mb-3 border-orange-600/20 text-orange-600 bg-orange-600/5"
+                      >
                         Current State
                       </Badge>
                       <h4 className="font-semibold mb-2">Traditional MCP</h4>
                     </div>
-                    
+
                     <div className="space-y-3">
                       <Card className="p-3 border-orange-600/20 bg-gradient-to-br from-orange-600/10 to-orange-600/5">
                         <div className="flex items-center gap-2 mb-2">
@@ -668,17 +702,19 @@ function IndexRoute() {
                           <p>• Technical setup needed</p>
                         </div>
                       </Card>
-                      
+
                       <div className="text-center py-2">
                         <ArrowRight className="h-5 w-5 text-muted-foreground mx-auto rotate-90" />
                       </div>
-                      
+
                       <Card className="p-3 border-orange-600/20 bg-orange-600/5">
-                        <p className="text-xs text-center font-medium text-orange-600">Result: High Barrier</p>
+                        <p className="text-xs text-center font-medium text-orange-600">
+                          Result: High Barrier
+                        </p>
                       </Card>
                     </div>
                   </div>
-                  
+
                   {/* MCP-B Solution */}
                   <div className="space-y-4">
                     <div className="text-center">
@@ -687,7 +723,7 @@ function IndexRoute() {
                       </Badge>
                       <h4 className="font-semibold mb-2">MCP-B Bridge</h4>
                     </div>
-                    
+
                     <div className="space-y-3">
                       <Card className="p-3 border-primary/20 bg-gradient-to-br from-primary/10 to-blue-600/10">
                         <div className="flex items-center gap-2 mb-2">
@@ -700,11 +736,11 @@ function IndexRoute() {
                           <p>• Zero configuration</p>
                         </div>
                       </Card>
-                      
+
                       <div className="text-center py-2">
                         <ArrowRight className="h-5 w-5 text-primary mx-auto rotate-90" />
                       </div>
-                      
+
                       <Card className="p-3 border-primary/20 bg-gradient-to-br from-primary/10 to-blue-600/10">
                         <p className="text-xs text-center font-medium bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
                           Result: Works Instantly
@@ -841,7 +877,10 @@ function IndexRoute() {
       </section>
 
       {/* Extension Section */}
-      <section id="extension" className="border-t bg-gradient-to-b from-muted/30 to-background px-4 py-20 relative overflow-hidden">
+      <section
+        id="extension"
+        className="border-t bg-gradient-to-b from-muted/30 to-background px-4 py-20 relative overflow-hidden"
+      >
         <div className="container mx-auto max-w-6xl relative">
           <div className="mb-12 text-center">
             <h2 className="animate-fadeInUp mb-4 text-3xl font-bold sm:text-4xl bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent">
@@ -867,16 +906,23 @@ function IndexRoute() {
                     One Extension, Unlimited Possibilities
                   </h3>
                   <p className="mb-6 text-muted-foreground">
-                    Transform your browser into an AI-powered workspace. The MCP-B extension brings the full power of Model Context Protocol directly to your browser.
+                    Transform your browser into an AI-powered workspace. The MCP-B extension brings
+                    the full power of Model Context Protocol directly to your browser.
                   </p>
                   <div className="space-y-4">
                     <Button size="lg" className="w-full group gap-2" disabled>
                       <Chrome className="h-5 w-5" />
                       Coming to Chrome Web Store
-                      <Badge variant="secondary" className="ml-2">Soon</Badge>
+                      <Badge variant="secondary" className="ml-2">
+                        Soon
+                      </Badge>
                     </Button>
                     <Button size="lg" variant="outline" className="w-full group gap-2" asChild>
-                      <a href="https://github.com/yourusername/mcp-b" target="_blank" rel="noopener noreferrer">
+                      <a
+                        href="https://github.com/yourusername/mcp-b"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         View Source on GitHub
                         <ExternalLink className="h-4 w-4 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </a>
@@ -897,7 +943,8 @@ function IndexRoute() {
                   </CardHeader>
                   <CardContent className="p-0">
                     <p className="text-sm text-muted-foreground">
-                      Interact with AI assistants directly in your browser's side panel. Support for multiple AI providers.
+                      Interact with AI assistants directly in your browser's side panel. Support for
+                      multiple AI providers.
                     </p>
                   </CardContent>
                 </Card>
@@ -925,7 +972,8 @@ function IndexRoute() {
                   </CardHeader>
                   <CardContent className="p-0">
                     <p className="text-sm text-muted-foreground">
-                      All processing happens locally. Your data never leaves your device without permission.
+                      All processing happens locally. Your data never leaves your device without
+                      permission.
                     </p>
                   </CardContent>
                 </Card>
@@ -1097,7 +1145,8 @@ const features = [
   {
     icon: Shield,
     title: 'Enterprise Security',
-    description: 'Leverages browser security model. No API keys floating around, no new attack vectors.',
+    description:
+      'Leverages browser security model. No API keys floating around, no new attack vectors.',
   },
   {
     icon: Network,

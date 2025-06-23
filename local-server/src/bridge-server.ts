@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { McpWebSocketBridge } from './mcpProxy';
 
-const port = process.env.PORT ? parseInt(process.env.PORT) : 8888;
+const port = process.env.PORT ? parseInt(process.env.PORT) : 8021;
 
 // Start the WebSocket bridge
 const bridge = new McpWebSocketBridge(port);

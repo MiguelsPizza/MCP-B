@@ -5,6 +5,7 @@ interface BridgeConnection {
   id: string;
   clientWs: any; // WebSocket from MCP client
   extensionWs?: any; // WebSocket from browser extension
+  messageQueue: any[]; // Queue messages when no extension available
 }
 
 export class McpWebSocketBridge {
@@ -13,6 +14,7 @@ export class McpWebSocketBridge {
   private connections = new Map<string, BridgeConnection>();
   private extensionConnections = new Set<any>();
   private isShuttingDown = false;
+  private pendingConnections = new Set<BridgeConnection>(); // Connections waiting for extension
 
   constructor(port: number = 3000) {
     this.server = createServer();
@@ -87,6 +89,25 @@ export class McpWebSocketBridge {
     console.log('Extension connected to bridge');
     this.extensionConnections.add(ws);
 
+    // Process any pending connections that were waiting for an extension
+    for (const connection of this.pendingConnections) {
+      connection.extensionWs = ws;
+      this.pendingConnections.delete(connection);
+      
+      console.log(`Assigned extension to pending connection ${connection.id}`);
+      
+      // Send any queued messages
+      while (connection.messageQueue.length > 0) {
+        const message = connection.messageQueue.shift();
+        const forwardMessage = {
+          ...message,
+          connectionId: connection.id,
+        };
+        console.log(`📤 Sending queued message to extension for ${connection.id}`);
+        ws.send(JSON.stringify(forwardMessage));
+      }
+    }
+
     ws.on('message', (data: Buffer) => {
       try {
         const message = JSON.parse(data.toString());
@@ -110,6 +131,23 @@ export class McpWebSocketBridge {
     ws.on('close', () => {
       console.log('Extension disconnected from bridge');
       this.extensionConnections.delete(ws);
+      
+      // Mark all connections using this extension as needing a new one
+      for (const connection of this.connections.values()) {
+        if (connection.extensionWs === ws) {
+          connection.extensionWs = undefined;
+          // Try to find another available extension
+          const newExtension = this.getAvailableExtension();
+          if (newExtension) {
+            connection.extensionWs = newExtension;
+            console.log(`Reassigned connection ${connection.id} to another extension`);
+          } else {
+            // No extension available, add to pending
+            this.pendingConnections.add(connection);
+            console.log(`Connection ${connection.id} is now pending an extension`);
+          }
+        }
+      }
     });
 
     ws.on('error', (error: Error) => {
@@ -124,6 +162,7 @@ export class McpWebSocketBridge {
     const connection: BridgeConnection = {
       id: connectionId,
       clientWs: ws,
+      messageQueue: [],
     };
 
     this.connections.set(connectionId, connection);
@@ -132,6 +171,11 @@ export class McpWebSocketBridge {
     const extensionWs = this.getAvailableExtension();
     if (extensionWs) {
       connection.extensionWs = extensionWs;
+      console.log(`Assigned extension to connection ${connectionId}`);
+    } else {
+      // No extension available yet, add to pending
+      this.pendingConnections.add(connection);
+      console.log(`No extension available for ${connectionId}, connection is pending`);
     }
 
     ws.on('message', (data: Buffer) => {
@@ -160,8 +204,26 @@ export class McpWebSocketBridge {
           console.log('📤 Forwarding to extension with connectionId:', connectionId);
           connection.extensionWs.send(JSON.stringify(forwardMessage));
         } else {
-          console.warn(`No extension available for connection ${connectionId}`);
-          // Optionally queue messages or send error response
+          console.warn(`No extension available for connection ${connectionId}, queueing message`);
+          // Queue the message for when an extension becomes available
+          connection.messageQueue.push(message);
+          
+          // Try to find an extension again
+          const newExtension = this.getAvailableExtension();
+          if (newExtension) {
+            connection.extensionWs = newExtension;
+            this.pendingConnections.delete(connection);
+            
+            // Send queued messages
+            while (connection.messageQueue.length > 0) {
+              const queuedMessage = connection.messageQueue.shift();
+              const forwardMessage = {
+                ...queuedMessage,
+                connectionId,
+              };
+              newExtension.send(JSON.stringify(forwardMessage));
+            }
+          }
         }
       } catch (error) {
         console.error('Error handling client message:', error);
@@ -171,6 +233,7 @@ export class McpWebSocketBridge {
     ws.on('close', () => {
       console.log(`MCP client disconnected: ${connectionId}`);
       this.connections.delete(connectionId);
+      this.pendingConnections.delete(connection);
     });
 
     ws.on('error', (error: Error) => {

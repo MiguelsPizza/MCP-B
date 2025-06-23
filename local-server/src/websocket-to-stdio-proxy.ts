@@ -4,7 +4,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 
 // Get WebSocket URL from command line or environment
-const wsUrl = (process.argv[2] || process.env.WEBSOCKET_MCP_URL) ?? 'ws://localhost:8888';
+const wsUrl = (process.argv[2] || process.env.WEBSOCKET_MCP_URL) ?? 'ws://localhost:8021';
 
 if (!wsUrl) {
   console.error('Usage: node websocket-to-stdio-proxy.js <websocket-url>');

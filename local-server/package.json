@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/websocket-bridge",
-  "version": "0.1.4",
+  "version": "0.1.10",
   "description": "WebSocket bridge for connecting MCP clients to browser extensions",
   "keywords": [
     "mcp",
@@ -27,7 +27,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "tsup src/cli.ts src/index.ts src/bridge-server.ts --format esm && shx chmod +x dist/*.js",
+    "build": "tsup src/cli.ts src/index.ts src/bridge-server.ts src/mcpProxy.ts --format esm && shx chmod +x dist/*.js",
     "prepare": "npm run build",
     "watch": "tsup src/cli.ts src/index.ts src/bridge-server.ts --format esm --watch",
     "dev:bridge": "tsx src/bridge-server.ts",

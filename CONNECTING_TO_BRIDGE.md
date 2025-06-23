@@ -11,7 +11,7 @@ This guide explains how to connect MCP clients to your browser extension via the
    pnpm bridge
    ```
 
-   This starts the bridge on port 8888.
+   This starts the bridge on port 8021.
 
 2. **Configure and Load the Extension**:
    - Set `new McpHub('ws')` in `extension/entrypoints/background/index.ts`
@@ -28,10 +28,10 @@ Since MCP Inspector only supports STDIO transport, you need to use the WebSocket
 cd local-server
 
 # Use the inspector with the proxy
-npx @modelcontextprotocol/inspector node dist/index.js ws://localhost:8888
+npx @modelcontextprotocol/inspector node dist/index.js ws://localhost:8021
 
 # Or if you haven't built yet:
-npx @modelcontextprotocol/inspector tsx src/index.ts ws://localhost:8888
+npx @modelcontextprotocol/inspector tsx src/index.ts ws://localhost:8021
 ```
 
 This creates the following connection chain:
@@ -52,7 +52,7 @@ Add to your Claude Desktop configuration file (location varies by OS):
   "mcpServers": {
     "browser-extension": {
       "type": "websocket",
-      "url": "ws://localhost:8888"
+      "url": "ws://localhost:8021"
     }
   }
 }
@@ -67,7 +67,7 @@ Add to `.cursor/mcp.json` in your project:
   "mcpServers": {
     "browser-extension": {
       "type": "websocket",
-      "url": "ws://localhost:8888"
+      "url": "ws://localhost:8021"
     }
   }
 }
@@ -79,10 +79,10 @@ You can also test the connection using the MCP Inspector CLI:
 
 ```bash
 # List available tools
-npx @modelcontextprotocol/inspector --cli ws://localhost:8888 --method tools/list
+npx @modelcontextprotocol/inspector --cli ws://localhost:8021 --method tools/list
 
 # Call a tool
-npx @modelcontextprotocol/inspector --cli ws://localhost:8888 --method tools/call --tool-name tab1_createTodo --tool-arg title="Test Todo"
+npx @modelcontextprotocol/inspector --cli ws://localhost:8021 --method tools/call --tool-name tab1_createTodo --tool-arg title="Test Todo"
 ```
 
 ## Troubleshooting
@@ -98,7 +98,7 @@ npx @modelcontextprotocol/inspector --cli ws://localhost:8888 --method tools/cal
    - Check the extension's background page console for errors
 
 3. **Port Conflicts**:
-   - If port 8888 is in use, change it via environment variable:
+   - If port 8021 is in use, change it via environment variable:
      ```bash
      PORT=9999 pnpm bridge
      ```
@@ -109,7 +109,7 @@ npx @modelcontextprotocol/inspector --cli ws://localhost:8888 --method tools/cal
 ```
 MCP Client (Inspector/Claude/etc.)
     ↓ (WebSocket)
-Bridge Server (localhost:8888)
+Bridge Server (localhost:8021)
     ↓ (WebSocket with connectionId)
 Browser Extension (acting as MCP Server)
     ↓ (Chrome Extension APIs)

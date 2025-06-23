@@ -4,7 +4,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 
 // Get WebSocket URL from command line or environment
-const wsUrl = (process.argv[2] || process.env.WEBSOCKET_MCP_URL) ?? 'ws://localhost:8888';
+const wsUrl = (process.argv[2] || process.env.WEBSOCKET_MCP_URL) ?? 'ws://localhost:8021';
 
 if (!wsUrl) {
   console.error('Usage: node websocket-to-stdio-proxy.js <websocket-url>');
@@ -12,23 +12,108 @@ if (!wsUrl) {
   process.exit(1);
 }
 
-console.error(`Connecting to WebSocket MCP server at: ${wsUrl}`);
+console.error(`WebSocket-to-STDIO proxy starting...`);
+console.error(`Will connect to WebSocket MCP server at: ${wsUrl}`);
 
 let wsClient: WebSocketClientTransport | null = null;
 let stdioServer: StdioServerTransport | null = null;
+let isConnected = false;
+let reconnectTimeout: NodeJS.Timeout | null = null;
+let isShuttingDown = false;
+
+// Queue for messages received while WebSocket is disconnected
+const messageQueue: JSONRPCMessage[] = [];
+
+async function connectWebSocket(): Promise<void> {
+  if (isConnected || isShuttingDown) return;
+
+  try {
+    console.error(`Attempting to connect to WebSocket server at: ${wsUrl}`);
+
+    // Create WebSocket client transport to connect to remote server
+    wsClient = new WebSocketClientTransport(new URL(wsUrl));
+
+    // Set up message handlers before connecting
+    wsClient.onmessage = async (message: JSONRPCMessage) => {
+      console.error(`← Server to Client: ${JSON.stringify(message, null, 2) || 'response'}`);
+
+      // Enhanced logging for responses
+      if ('result' in message || 'error' in message) {
+        console.error('📨 Response detected:');
+        if ('result' in message) {
+          console.error(`  Result: ${JSON.stringify(message.result, null, 2)}`);
+        }
+        if ('error' in message) {
+          console.error(`  Error: ${JSON.stringify(message.error, null, 2)}`);
+        }
+      }
+
+      try {
+        if (stdioServer) {
+          await stdioServer.send(message);
+        }
+      } catch (error) {
+        console.error('Error sending to STDIO client:', error);
+      }
+    };
+
+    // Handle connection errors
+    wsClient.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      isConnected = false;
+      scheduleReconnect();
+    };
+
+    // Handle WebSocket server disconnect
+    wsClient.onclose = () => {
+      console.error('WebSocket server disconnected');
+      isConnected = false;
+      scheduleReconnect();
+    };
+
+    // Start the WebSocket connection
+    await wsClient.start();
+    isConnected = true;
+    console.error('✓ Connected to WebSocket server');
+
+    // Send any queued messages
+    while (messageQueue.length > 0) {
+      const message = messageQueue.shift()!;
+      try {
+        await wsClient.send(message);
+      } catch (error) {
+        console.error('Error sending queued message:', error);
+        // Put it back in the queue
+        messageQueue.unshift(message);
+        break;
+      }
+    }
+  } catch (error) {
+    console.error('Failed to connect to WebSocket server:', error);
+    isConnected = false;
+    scheduleReconnect();
+  }
+}
+
+function scheduleReconnect() {
+  if (isShuttingDown) return;
+
+  if (reconnectTimeout) {
+    clearTimeout(reconnectTimeout);
+  }
+
+  console.error('Will retry WebSocket connection in 5 seconds...');
+  reconnectTimeout = setTimeout(() => {
+    connectWebSocket();
+  }, 5000);
+}
 
 async function main() {
   try {
-    // Create WebSocket client transport to connect to remote server
-    wsClient = new WebSocketClientTransport(new URL(wsUrl!));
-
     // Create STDIO server transport to expose to local clients
     stdioServer = new StdioServerTransport();
 
-    // Start both transports
-    await wsClient.start();
-    console.error('✓ Connected to WebSocket server');
-
+    // Start STDIO server first (it can accept connections immediately)
     await stdioServer.start();
     console.error('✓ STDIO server started');
     console.error('Ready for STDIO client connections');
@@ -47,56 +132,37 @@ async function main() {
         }
       }
 
-      try {
-        await wsClient.send(message);
-      } catch (error) {
-        console.error('Error sending to WebSocket server:', error);
-      }
-    };
-
-    // Relay messages from WebSocket server to STDIO client
-    wsClient.onmessage = async (message: JSONRPCMessage) => {
-      console.error(`← Server to Client: ${JSON.stringify(message, null, 2) || 'response'}`);
-
-      // Enhanced logging for responses
-      if ('result' in message || 'error' in message) {
-        console.error('📨 Response detected:');
-        if ('result' in message) {
-          console.error(`  Result: ${JSON.stringify(message.result, null, 2)}`);
+      if (isConnected && wsClient) {
+        try {
+          await wsClient.send(message);
+        } catch (error) {
+          console.error('Error sending to WebSocket server:', error);
+          isConnected = false;
+          messageQueue.push(message);
+          scheduleReconnect();
         }
-        if ('error' in message) {
-          console.error(`  Error: ${JSON.stringify(message.error, null, 2)}`);
+      } else {
+        console.error('WebSocket not connected, queueing message...');
+        messageQueue.push(message);
+
+        // If we're not already trying to connect, start now
+        if (!reconnectTimeout) {
+          connectWebSocket();
         }
       }
-
-      try {
-        await stdioServer.send(message);
-      } catch (error) {
-        console.error('Error sending to STDIO client:', error);
-      }
-    };
-
-    // Handle connection errors
-    wsClient.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      process.exit(1);
     };
 
     stdioServer.onerror = (error) => {
       console.error('STDIO error:', error);
     };
 
-    // Handle WebSocket server disconnect
-    wsClient.onclose = () => {
-      console.error('WebSocket server disconnected');
-      process.exit(0);
-    };
-
     stdioServer.onclose = () => {
       console.error('STDIO client disconnected');
-      wsClient.close();
-      process.exit(0);
+      shutdown();
     };
+
+    // Start WebSocket connection
+    await connectWebSocket();
   } catch (error) {
     console.error('Failed to start proxy:', error);
     process.exit(1);
@@ -105,7 +171,15 @@ async function main() {
 
 // Handle process termination
 const shutdown = async () => {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+
   console.error('\nShutting down proxy...');
+
+  if (reconnectTimeout) {
+    clearTimeout(reconnectTimeout);
+  }
+
   try {
     if (wsClient) {
       await wsClient.close();

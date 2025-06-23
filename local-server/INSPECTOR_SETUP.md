@@ -23,7 +23,7 @@ cd local-server
 pnpm bridge
 ```
 
-This starts the bridge server on port 8888 that your extension will connect to.
+This starts the bridge server on port 8021 that your extension will connect to.
 
 ### 2. Configure and Load the Extension
 
@@ -47,7 +47,7 @@ The MCP Inspector only supports STDIO transport, so we use the included proxy:
 
 ```bash
 cd local-server
-npx @modelcontextprotocol/inspector tsx src/index.ts ws://localhost:8888
+npx @modelcontextprotocol/inspector tsx src/index.ts ws://localhost:8021
 ```
 
 ## Connection Flow
@@ -55,7 +55,7 @@ npx @modelcontextprotocol/inspector tsx src/index.ts ws://localhost:8888
 ```
 ┌─────────────────┐     STDIO      ┌─────────────┐    WebSocket    ┌────────────┐
 │  MCP Inspector  │ ◄────────────► │    Proxy    │ ◄─────────────► │   Bridge   │
-│  (STDIO only)   │                │  (index.ts) │                  │ (port 8888)│
+│  (STDIO only)   │                │  (index.ts) │                  │ (port 8021)│
 └─────────────────┘                └─────────────┘                  └────────────┘
                                                                             │
                                                                        WebSocket
@@ -72,7 +72,7 @@ npx @modelcontextprotocol/inspector tsx src/index.ts ws://localhost:8888
 From the `local-server` directory:
 
 - `pnpm bridge` - Start the WebSocket bridge server
-- `pnpm proxy ws://localhost:8888` - Start the STDIO proxy (for manual testing)
+- `pnpm proxy ws://localhost:8021` - Start the STDIO proxy (for manual testing)
 - `pnpm inspect:bridge` - Start MCP Inspector connected to the bridge (all-in-one)
 - `pnpm test:bridge` - Test the bridge connection directly
 

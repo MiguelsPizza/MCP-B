@@ -5,7 +5,7 @@ A WebSocket bridge that enables MCP (Model Context Protocol) clients to connect 
 ## Quick Start
 
 ```bash
-# Start the bridge server (default port 8888)
+# Start the bridge server (default port 8021)
 npx @mcp-b/websocket-bridge
 
 # Start with MCP Inspector
@@ -27,7 +27,7 @@ The WebSocket bridge acts as an intermediary between MCP clients and browser ext
 
 ```
 MCP Client <-> WebSocket Bridge <-> Browser Extension
-                (localhost:8888)         (MCP Hub)
+                (localhost:8021)         (MCP Hub)
 ```
 
 1. Browser extensions connect as special clients with `?type=extension`
@@ -42,7 +42,8 @@ MCP Client <-> WebSocket Bridge <-> Browser Extension
 Start the WebSocket bridge server.
 
 Options:
-- `-p, --port <port>` - Port to run on (default: 8888)
+
+- `-p, --port <port>` - Port to run on (default: 8021)
 - `--with-inspector` - Also start MCP Inspector
 
 ### `npx @mcp-b/websocket-bridge proxy <websocket-url>`
@@ -56,12 +57,14 @@ Start MCP Inspector connected to a WebSocket server.
 ## Connection URLs
 
 When the bridge is running:
-- **Extensions**: `ws://localhost:8888?type=extension`
-- **MCP Clients**: `ws://localhost:8888`
+
+- **Extensions**: `ws://localhost:8021?type=extension`
+- **MCP Clients**: `ws://localhost:8021`
 
 ## Usage with Browser Extension
 
 1. Start the bridge:
+
    ```bash
    npx @mcp-b/websocket-bridge
    ```
@@ -69,9 +72,9 @@ When the bridge is running:
 2. Configure your browser extension to connect to the bridge in WebSocket mode
 
 3. Connect MCP clients:
-   - **Claude Desktop**: Use `ws://localhost:8888` in the config
+   - **Claude Desktop**: Use `ws://localhost:8021` in the config
    - **MCP Inspector**: Use `npx @mcp-b/websocket-bridge --with-inspector`
-   - **Other clients**: Connect to `ws://localhost:8888`
+   - **Other clients**: Connect to `ws://localhost:8021`
 
 ## Example: Claude Desktop Configuration
 
@@ -82,7 +85,7 @@ Add to your Claude Desktop config file:
   "mcpServers": {
     "browser-extension": {
       "command": "npx",
-      "args": ["@mcp-b/websocket-bridge", "proxy", "ws://localhost:8888"]
+      "args": ["@mcp-b/websocket-bridge", "proxy", "ws://localhost:8021"]
     }
   }
 }
@@ -95,7 +98,7 @@ Or for direct WebSocket connection (if supported):
   "mcpServers": {
     "browser-extension": {
       "transport": "websocket",
-      "url": "ws://localhost:8888"
+      "url": "ws://localhost:8021"
     }
   }
 }
