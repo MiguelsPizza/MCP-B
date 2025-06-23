@@ -11,10 +11,7 @@ export interface GcmApiToolsOptions {
 export class GcmApiTools extends BaseApiTools {
   protected apiName = 'Gcm';
 
-  constructor(
-    server: McpServer,
-    options: GcmApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: GcmApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -69,13 +66,16 @@ export class GcmApiTools extends BaseApiTools {
     this.server.registerTool(
       'gcm_register',
       {
-        description: 'Register the application with Firebase Cloud Messaging (FCM) to receive messages',
+        description:
+          'Register the application with Firebase Cloud Messaging (FCM) to receive messages',
         inputSchema: {
           senderIds: z
             .array(z.string())
             .min(1)
             .max(100)
-            .describe('A list of server IDs that are allowed to send messages to the application. Must contain at least one and no more than 100 sender IDs'),
+            .describe(
+              'A list of server IDs that are allowed to send messages to the application. Must contain at least one and no more than 100 sender IDs'
+            ),
         },
       },
       async ({ senderIds }) => {
@@ -109,19 +109,27 @@ export class GcmApiTools extends BaseApiTools {
         inputSchema: {
           destinationId: z
             .string()
-            .describe('The ID of the server to send the message to as assigned by Google API Console'),
+            .describe(
+              'The ID of the server to send the message to as assigned by Google API Console'
+            ),
           messageId: z
             .string()
-            .describe('The ID of the message. Must be unique for each message in scope of the application'),
+            .describe(
+              'The ID of the message. Must be unique for each message in scope of the application'
+            ),
           data: z
             .record(z.string())
-            .describe('Message data to send to the server. Case-insensitive goog. and google, as well as case-sensitive collapse_key are disallowed as key prefixes'),
+            .describe(
+              'Message data to send to the server. Case-insensitive goog. and google, as well as case-sensitive collapse_key are disallowed as key prefixes'
+            ),
           timeToLive: z
             .number()
             .min(0)
             .max(2419200)
             .optional()
-            .describe('Time-to-live of the message in seconds. 0 means send immediately or fail. Default is 86,400 seconds (1 day), maximum is 2,419,200 seconds (28 days)'),
+            .describe(
+              'Time-to-live of the message in seconds. 0 means send immediately or fail. Default is 86,400 seconds (1 day), maximum is 2,419,200 seconds (28 days)'
+            ),
         },
       },
       async ({ destinationId, messageId, data, timeToLive }) => {
@@ -135,8 +143,14 @@ export class GcmApiTools extends BaseApiTools {
           // Validate key prefixes
           for (const key of Object.keys(data)) {
             const lowerKey = key.toLowerCase();
-            if (lowerKey.startsWith('goog.') || lowerKey.startsWith('google') || key === 'collapse_key') {
-              return this.formatError(`Invalid key prefix: ${key}. Keys cannot start with 'goog.', 'google', or be 'collapse_key'`);
+            if (
+              lowerKey.startsWith('goog.') ||
+              lowerKey.startsWith('google') ||
+              key === 'collapse_key'
+            ) {
+              return this.formatError(
+                `Invalid key prefix: ${key}. Keys cannot start with 'goog.', 'google', or be 'collapse_key'`
+              );
             }
           }
 

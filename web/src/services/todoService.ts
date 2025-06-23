@@ -76,9 +76,15 @@ const handleApiError = async (res: Response, defaultMessage: string): Promise<ne
     const errorData = await res.json();
 
     // Check if this is a Zod validation error response
-    if (errorData && typeof errorData === 'object' && 'success' in errorData && errorData.success === false && 'error' in errorData) {
+    if (
+      errorData &&
+      typeof errorData === 'object' &&
+      'success' in errorData &&
+      errorData.success === false &&
+      'error' in errorData
+    ) {
       const zodError = errorData as { success: false; error: { name: string; message: string } };
-      
+
       // Parse Zod error message to extract field-specific errors
       let errorMessage = 'Validation error';
       try {
@@ -88,13 +94,15 @@ const handleApiError = async (res: Response, defaultMessage: string): Promise<ne
           code?: string;
           minimum?: number;
         }>;
-        
+
         // Format error messages for each field
-        const fieldErrors = errors.map(err => {
-          const field = err.path.join('.');
-          return `${field}: ${err.message}`;
-        }).join(', ');
-        
+        const fieldErrors = errors
+          .map((err) => {
+            const field = err.path.join('.');
+            return `${field}: ${err.message}`;
+          })
+          .join(', ');
+
         errorMessage = fieldErrors || 'Validation failed';
       } catch {
         errorMessage = zodError.error.message || 'Validation failed';
@@ -104,15 +112,15 @@ const handleApiError = async (res: Response, defaultMessage: string): Promise<ne
         error: 'VALIDATION_ERROR',
         message: errorMessage,
         code: 'VALIDATION_ERROR',
-        details: errorData
+        details: errorData,
       };
-      
+
       throw new TodoApiError(normalizedError, res.status, defaultMessage);
     }
 
     // Handle standard error response format
     const typedErrorData = errorData as ErrorResponse;
-    
+
     // The backend now returns consistent error responses with error, message, and code
     // Ensure we have all required fields
     const normalizedError: ErrorResponse = {

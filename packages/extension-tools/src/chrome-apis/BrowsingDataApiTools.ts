@@ -23,10 +23,7 @@ export interface BrowsingDataApiToolsOptions {
 export class BrowsingDataApiTools extends BaseApiTools {
   protected apiName = 'BrowsingData';
 
-  constructor(
-    server: McpServer,
-    options: BrowsingDataApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: BrowsingDataApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -46,7 +43,8 @@ export class BrowsingDataApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.browsingData.settings is not available',
-          details: 'The browsingData API appears to be partially available. Check manifest permissions.',
+          details:
+            'The browsingData API appears to be partially available. Check manifest permissions.',
         };
       }
 
@@ -136,7 +134,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
     this.server.registerTool(
       'remove_browsing_data',
       {
-        description: 'Remove various types of browsing data from the user\'s profile',
+        description: "Remove various types of browsing data from the user's profile",
         inputSchema: {
           since: z
             .number()
@@ -158,12 +156,12 @@ export class BrowsingDataApiTools extends BaseApiTools {
             })
             .optional()
             .describe('Types of origins to clear'),
-          appcache: z.boolean().optional().describe('Remove websites\' appcaches'),
+          appcache: z.boolean().optional().describe("Remove websites' appcaches"),
           cache: z.boolean().optional().describe('Remove browser cache'),
           cacheStorage: z.boolean().optional().describe('Remove cache storage'),
           cookies: z.boolean().optional().describe('Remove cookies'),
           downloads: z.boolean().optional().describe('Remove download list'),
-          fileSystems: z.boolean().optional().describe('Remove websites\' file systems'),
+          fileSystems: z.boolean().optional().describe("Remove websites' file systems"),
           formData: z.boolean().optional().describe('Remove stored form data'),
           history: z.boolean().optional().describe('Remove browser history'),
           indexedDB: z.boolean().optional().describe('Remove IndexedDB data'),
@@ -226,7 +224,9 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
           return this.formatSuccess('Browsing data removed successfully', {
             options,
-            dataTypes: Object.keys(dataToRemove).filter(key => dataToRemove[key as keyof chrome.browsingData.DataTypeSet]),
+            dataTypes: Object.keys(dataToRemove).filter(
+              (key) => dataToRemove[key as keyof chrome.browsingData.DataTypeSet]
+            ),
           });
         } catch (error) {
           return this.formatError(error);
@@ -239,16 +239,13 @@ export class BrowsingDataApiTools extends BaseApiTools {
     this.server.registerTool(
       'remove_appcache',
       {
-        description: 'Remove websites\' appcache data',
+        description: "Remove websites' appcache data",
         inputSchema: {
           since: z
             .number()
             .optional()
             .describe('Remove data accumulated on or after this date (milliseconds since epoch)'),
-          origins: z
-            .array(z.string())
-            .optional()
-            .describe('Only remove data for these origins'),
+          origins: z.array(z.string()).optional().describe('Only remove data for these origins'),
           excludeOrigins: z
             .array(z.string())
             .optional()
@@ -299,10 +296,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
             .number()
             .optional()
             .describe('Remove data accumulated on or after this date (milliseconds since epoch)'),
-          origins: z
-            .array(z.string())
-            .optional()
-            .describe('Only remove data for these origins'),
+          origins: z.array(z.string()).optional().describe('Only remove data for these origins'),
           excludeOrigins: z
             .array(z.string())
             .optional()
@@ -347,16 +341,13 @@ export class BrowsingDataApiTools extends BaseApiTools {
     this.server.registerTool(
       'remove_cache_storage',
       {
-        description: 'Remove websites\' cache storage data',
+        description: "Remove websites' cache storage data",
         inputSchema: {
           since: z
             .number()
             .optional()
             .describe('Remove data accumulated on or after this date (milliseconds since epoch)'),
-          origins: z
-            .array(z.string())
-            .optional()
-            .describe('Only remove data for these origins'),
+          origins: z.array(z.string()).optional().describe('Only remove data for these origins'),
           excludeOrigins: z
             .array(z.string())
             .optional()
@@ -407,10 +398,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
             .number()
             .optional()
             .describe('Remove data accumulated on or after this date (milliseconds since epoch)'),
-          origins: z
-            .array(z.string())
-            .optional()
-            .describe('Only remove data for these origins'),
+          origins: z.array(z.string()).optional().describe('Only remove data for these origins'),
           excludeOrigins: z
             .array(z.string())
             .optional()
@@ -499,16 +487,13 @@ export class BrowsingDataApiTools extends BaseApiTools {
     this.server.registerTool(
       'remove_file_systems',
       {
-        description: 'Remove websites\' file system data',
+        description: "Remove websites' file system data",
         inputSchema: {
           since: z
             .number()
             .optional()
             .describe('Remove data accumulated on or after this date (milliseconds since epoch)'),
-          origins: z
-            .array(z.string())
-            .optional()
-            .describe('Only remove data for these origins'),
+          origins: z.array(z.string()).optional().describe('Only remove data for these origins'),
           excludeOrigins: z
             .array(z.string())
             .optional()
@@ -641,16 +626,13 @@ export class BrowsingDataApiTools extends BaseApiTools {
     this.server.registerTool(
       'remove_indexed_db',
       {
-        description: 'Remove websites\' IndexedDB data',
+        description: "Remove websites' IndexedDB data",
         inputSchema: {
           since: z
             .number()
             .optional()
             .describe('Remove data accumulated on or after this date (milliseconds since epoch)'),
-          origins: z
-            .array(z.string())
-            .optional()
-            .describe('Only remove data for these origins'),
+          origins: z.array(z.string()).optional().describe('Only remove data for these origins'),
           excludeOrigins: z
             .array(z.string())
             .optional()
@@ -695,16 +677,13 @@ export class BrowsingDataApiTools extends BaseApiTools {
     this.server.registerTool(
       'remove_local_storage',
       {
-        description: 'Remove websites\' local storage data',
+        description: "Remove websites' local storage data",
         inputSchema: {
           since: z
             .number()
             .optional()
             .describe('Remove data accumulated on or after this date (milliseconds since epoch)'),
-          origins: z
-            .array(z.string())
-            .optional()
-            .describe('Only remove data for these origins'),
+          origins: z.array(z.string()).optional().describe('Only remove data for these origins'),
           excludeOrigins: z
             .array(z.string())
             .optional()
@@ -793,16 +772,13 @@ export class BrowsingDataApiTools extends BaseApiTools {
     this.server.registerTool(
       'remove_service_workers',
       {
-        description: 'Remove websites\' service workers',
+        description: "Remove websites' service workers",
         inputSchema: {
           since: z
             .number()
             .optional()
             .describe('Remove data accumulated on or after this date (milliseconds since epoch)'),
-          origins: z
-            .array(z.string())
-            .optional()
-            .describe('Only remove data for these origins'),
+          origins: z.array(z.string()).optional().describe('Only remove data for these origins'),
           excludeOrigins: z
             .array(z.string())
             .optional()
@@ -847,16 +823,13 @@ export class BrowsingDataApiTools extends BaseApiTools {
     this.server.registerTool(
       'remove_web_sql',
       {
-        description: 'Remove websites\' WebSQL data',
+        description: "Remove websites' WebSQL data",
         inputSchema: {
           since: z
             .number()
             .optional()
             .describe('Remove data accumulated on or after this date (milliseconds since epoch)'),
-          origins: z
-            .array(z.string())
-            .optional()
-            .describe('Only remove data for these origins'),
+          origins: z.array(z.string()).optional().describe('Only remove data for these origins'),
           excludeOrigins: z
             .array(z.string())
             .optional()

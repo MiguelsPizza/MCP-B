@@ -11,10 +11,7 @@ export interface DevtoolsNetworkApiToolsOptions {
 export class DevtoolsNetworkApiTools extends BaseApiTools {
   protected apiName = 'Devtools.network';
 
-  constructor(
-    server: McpServer,
-    options: DevtoolsNetworkApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: DevtoolsNetworkApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -25,7 +22,8 @@ export class DevtoolsNetworkApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.devtools.network API is not defined',
-          details: 'This extension needs to be running in a devtools context and have the "devtools" permission in its manifest.json',
+          details:
+            'This extension needs to be running in a devtools context and have the "devtools" permission in its manifest.json',
         };
       }
 
@@ -34,7 +32,8 @@ export class DevtoolsNetworkApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.devtools.network.getHAR is not available',
-          details: 'The devtools.network API appears to be partially available. Check manifest permissions and ensure running in devtools context.',
+          details:
+            'The devtools.network API appears to be partially available. Check manifest permissions and ensure running in devtools context.',
         };
       }
 
@@ -76,7 +75,8 @@ export class DevtoolsNetworkApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_har',
       {
-        description: 'Get the HTTP Archive (HAR) log for the current page, containing all network requests',
+        description:
+          'Get the HTTP Archive (HAR) log for the current page, containing all network requests',
         inputSchema: {},
       },
       async () => {
@@ -148,7 +148,10 @@ export class DevtoolsNetworkApiTools extends BaseApiTools {
       {
         description: 'Set up a listener for navigation events in the inspected window',
         inputSchema: {
-          enable: z.boolean().optional().describe('Whether to enable or disable the navigation listener'),
+          enable: z
+            .boolean()
+            .optional()
+            .describe('Whether to enable or disable the navigation listener'),
         },
       },
       async ({ enable = true }) => {
@@ -185,7 +188,10 @@ export class DevtoolsNetworkApiTools extends BaseApiTools {
       {
         description: 'Set up a listener for network request completion events',
         inputSchema: {
-          enable: z.boolean().optional().describe('Whether to enable or disable the request finished listener'),
+          enable: z
+            .boolean()
+            .optional()
+            .describe('Whether to enable or disable the request finished listener'),
         },
       },
       async ({ enable = true }) => {

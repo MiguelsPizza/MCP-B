@@ -11,10 +11,7 @@ export interface ProxyApiToolsOptions {
 export class ProxyApiTools extends BaseApiTools {
   protected apiName = 'Proxy';
 
-  constructor(
-    server: McpServer,
-    options: ProxyApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: ProxyApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -123,18 +120,9 @@ export class ProxyApiTools extends BaseApiTools {
             .optional()
             .default('regular')
             .describe('Scope of the setting'),
-          pacScriptUrl: z
-            .string()
-            .optional()
-            .describe('URL of the PAC file (for pac_script mode)'),
-          pacScriptData: z
-            .string()
-            .optional()
-            .describe('PAC script content (for pac_script mode)'),
-          pacScriptMandatory: z
-            .boolean()
-            .optional()
-            .describe('Whether PAC script is mandatory'),
+          pacScriptUrl: z.string().optional().describe('URL of the PAC file (for pac_script mode)'),
+          pacScriptData: z.string().optional().describe('PAC script content (for pac_script mode)'),
+          pacScriptMandatory: z.boolean().optional().describe('Whether PAC script is mandatory'),
           singleProxyHost: z
             .string()
             .optional()
@@ -232,11 +220,13 @@ export class ProxyApiTools extends BaseApiTools {
             if (pacScriptUrl !== undefined) pacScript.url = pacScriptUrl;
             if (pacScriptData !== undefined) pacScript.data = pacScriptData;
             if (pacScriptMandatory !== undefined) pacScript.mandatory = pacScriptMandatory;
-            
+
             if (Object.keys(pacScript).length === 0) {
-              return this.formatError('PAC script URL or data must be provided for pac_script mode');
+              return this.formatError(
+                'PAC script URL or data must be provided for pac_script mode'
+              );
             }
-            
+
             config.pacScript = pacScript;
           } else if (mode === 'fixed_servers') {
             const rules: any = {};
@@ -281,7 +271,9 @@ export class ProxyApiTools extends BaseApiTools {
             }
 
             if (Object.keys(rules).length === 0) {
-              return this.formatError('At least one proxy server must be specified for fixed_servers mode');
+              return this.formatError(
+                'At least one proxy server must be specified for fixed_servers mode'
+              );
             }
 
             config.rules = rules;

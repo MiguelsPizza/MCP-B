@@ -12,10 +12,7 @@ export interface DebuggerApiToolsOptions {
 export class DebuggerApiTools extends BaseApiTools {
   protected apiName = 'Debugger';
 
-  constructor(
-    server: McpServer,
-    options: DebuggerApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: DebuggerApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -35,7 +32,8 @@ export class DebuggerApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.debugger.getTargets is not available',
-          details: 'The debugger API appears to be partially available. Check manifest permissions.',
+          details:
+            'The debugger API appears to be partially available. Check manifest permissions.',
         };
       }
 
@@ -86,7 +84,10 @@ export class DebuggerApiTools extends BaseApiTools {
           tabId: z.number().optional().describe('The ID of the tab to debug'),
           extensionId: z.string().optional().describe('The ID of the extension to debug'),
           targetId: z.string().optional().describe('The opaque ID of the debug target'),
-          requiredVersion: z.string().default('1.3').describe('Required debugging protocol version (default: 1.3)'),
+          requiredVersion: z
+            .string()
+            .default('1.3')
+            .describe('Required debugging protocol version (default: 1.3)'),
         },
       },
       async ({ tabId, extensionId, targetId, requiredVersion }) => {
@@ -134,7 +135,10 @@ export class DebuggerApiTools extends BaseApiTools {
         inputSchema: {
           tabId: z.number().optional().describe('The ID of the tab to detach from'),
           extensionId: z.string().optional().describe('The ID of the extension to detach from'),
-          targetId: z.string().optional().describe('The opaque ID of the debug target to detach from'),
+          targetId: z
+            .string()
+            .optional()
+            .describe('The opaque ID of the debug target to detach from'),
         },
       },
       async ({ tabId, extensionId, targetId }) => {

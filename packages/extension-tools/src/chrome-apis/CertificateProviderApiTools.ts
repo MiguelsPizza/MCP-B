@@ -14,10 +14,7 @@ export interface CertificateProviderApiToolsOptions {
 export class CertificateProviderApiTools extends BaseApiTools {
   protected apiName = 'CertificateProvider';
 
-  constructor(
-    server: McpServer,
-    options: CertificateProviderApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: CertificateProviderApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -28,7 +25,8 @@ export class CertificateProviderApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.certificateProvider API is not defined',
-          details: 'This extension needs the "certificateProvider" permission in its manifest.json and only works on ChromeOS',
+          details:
+            'This extension needs the "certificateProvider" permission in its manifest.json and only works on ChromeOS',
         };
       }
 
@@ -37,7 +35,8 @@ export class CertificateProviderApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.certificateProvider.setCertificates is not available',
-          details: 'The certificateProvider API appears to be partially available. Check manifest permissions and ensure running on ChromeOS.',
+          details:
+            'The certificateProvider API appears to be partially available. Check manifest permissions and ensure running on ChromeOS.',
         };
       }
 
@@ -84,7 +83,8 @@ export class CertificateProviderApiTools extends BaseApiTools {
     this.server.registerTool(
       'set_certificates',
       {
-        description: 'Sets a list of certificates to use in the browser for TLS client authentication',
+        description:
+          'Sets a list of certificates to use in the browser for TLS client authentication',
         inputSchema: {
           certificatesRequestId: z
             .number()
@@ -120,7 +120,8 @@ export class CertificateProviderApiTools extends BaseApiTools {
                 }
                 return bytes.buffer;
               }),
-              supportedAlgorithms: cert.supportedAlgorithms as chrome.certificateProvider.Algorithm[],
+              supportedAlgorithms:
+                cert.supportedAlgorithms as chrome.certificateProvider.Algorithm[],
             })),
           };
 
@@ -250,17 +251,17 @@ export class CertificateProviderApiTools extends BaseApiTools {
             details.attemptsLeft = attemptsLeft;
           }
 
-          const response = await new Promise<chrome.certificateProvider.PinResponseDetails | undefined>(
-            (resolve, reject) => {
-              chrome.certificateProvider.requestPin(details, (response) => {
-                if (chrome.runtime.lastError) {
-                  reject(new Error(chrome.runtime.lastError.message));
-                } else {
-                  resolve(response);
-                }
-              });
-            }
-          );
+          const response = await new Promise<
+            chrome.certificateProvider.PinResponseDetails | undefined
+          >((resolve, reject) => {
+            chrome.certificateProvider.requestPin(details, (response) => {
+              if (chrome.runtime.lastError) {
+                reject(new Error(chrome.runtime.lastError.message));
+              } else {
+                resolve(response);
+              }
+            });
+          });
 
           return this.formatJson({
             signRequestId,
@@ -394,7 +395,7 @@ export class CertificateProviderApiTools extends BaseApiTools {
   private handleSignatureRequested = (request: chrome.certificateProvider.SignatureRequest) => {
     const certificate = new Uint8Array(request.certificate);
     const input = new Uint8Array(request.input);
-    
+
     console.log('Signature requested:', {
       signRequestId: request.signRequestId,
       algorithm: request.algorithm,

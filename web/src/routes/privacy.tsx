@@ -15,12 +15,12 @@ function PrivacyRoute() {
 
           <h2>Overview</h2>
           <p>
-            MCP-B ("we", "our", or "the Service") is committed to protecting your privacy. 
-            This privacy policy explains how our browser extension and web application handle your data.
+            MCP-B ("we", "our", or "the Service") is committed to protecting your privacy. This
+            privacy policy explains how our browser extension and web application handle your data.
           </p>
 
           <h2>Data Collection and Usage</h2>
-          
+
           <h3>What We Don't Collect</h3>
           <ul>
             <li>We do NOT collect any personal information without your explicit consent</li>
@@ -47,16 +47,36 @@ function PrivacyRoute() {
 
           <h2>Browser Extension Permissions</h2>
           <p>Our browser extension requires certain permissions to function:</p>
-          
+
           <ul>
-            <li><strong>Host Permissions (&lt;all_urls&gt;)</strong>: Used only when you explicitly request the AI to interact with a webpage</li>
-            <li><strong>Storage</strong>: Saves your settings and chat history locally in your browser</li>
-            <li><strong>Tabs & Tab Groups</strong>: Allows the AI assistant to manage browser tabs when requested</li>
-            <li><strong>Side Panel</strong>: Provides the chat interface for interacting with the AI</li>
-            <li><strong>Web Navigation</strong>: Helps the AI understand page navigation context</li>
-            <li><strong>Bookmarks</strong>: Accessed only when you ask the AI to search or manage bookmarks</li>
-            <li><strong>Windows</strong>: Used for window management features when requested</li>
-            <li><strong>History</strong>: Searched only when you explicitly ask the AI to look through browsing history</li>
+            <li>
+              <strong>Host Permissions (&lt;all_urls&gt;)</strong>: Used only when you explicitly
+              request the AI to interact with a webpage
+            </li>
+            <li>
+              <strong>Storage</strong>: Saves your settings and chat history locally in your browser
+            </li>
+            <li>
+              <strong>Tabs & Tab Groups</strong>: Allows the AI assistant to manage browser tabs
+              when requested
+            </li>
+            <li>
+              <strong>Side Panel</strong>: Provides the chat interface for interacting with the AI
+            </li>
+            <li>
+              <strong>Web Navigation</strong>: Helps the AI understand page navigation context
+            </li>
+            <li>
+              <strong>Bookmarks</strong>: Accessed only when you ask the AI to search or manage
+              bookmarks
+            </li>
+            <li>
+              <strong>Windows</strong>: Used for window management features when requested
+            </li>
+            <li>
+              <strong>History</strong>: Searched only when you explicitly ask the AI to look through
+              browsing history
+            </li>
           </ul>
 
           <h2>Third-Party Services</h2>
@@ -71,7 +91,9 @@ function PrivacyRoute() {
           <ul>
             <li>All sensitive data (like API keys) is encrypted before storage</li>
             <li>We use secure HTTPS connections for all data transmission</li>
-            <li>The browser extension runs entirely in your browser with minimal server communication</li>
+            <li>
+              The browser extension runs entirely in your browser with minimal server communication
+            </li>
             <li>Web application data is stored securely in our database with encryption at rest</li>
           </ul>
 
@@ -94,29 +116,37 @@ function PrivacyRoute() {
 
           <h2>Children's Privacy</h2>
           <p>
-            Our Service is not intended for use by children under 13 years of age. 
-            We do not knowingly collect personal information from children under 13.
+            Our Service is not intended for use by children under 13 years of age. We do not
+            knowingly collect personal information from children under 13.
           </p>
 
           <h2>Changes to This Policy</h2>
           <p>
-            We may update this privacy policy from time to time. We will notify you of any 
-            changes by posting the new privacy policy on this page and updating the "Last updated" date.
+            We may update this privacy policy from time to time. We will notify you of any changes
+            by posting the new privacy policy on this page and updating the "Last updated" date.
           </p>
 
           <h2>Contact Us</h2>
           <p>
-            If you have any questions about this privacy policy or our data practices, please contact us at:
+            If you have any questions about this privacy policy or our data practices, please
+            contact us at:
           </p>
           <ul>
             <li>Email: privacy@mcp-b.example.com</li>
-            <li>GitHub: <a href="https://github.com/yourusername/mcp-b/issues" target="_blank" rel="noopener noreferrer">Submit an issue</a></li>
+            <li>
+              GitHub:{' '}
+              <a
+                href="https://github.com/yourusername/mcp-b/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Submit an issue
+              </a>
+            </li>
           </ul>
 
           <h2>Consent</h2>
-          <p>
-            By using MCP-B, you consent to this privacy policy and agree to its terms.
-          </p>
+          <p>By using MCP-B, you consent to this privacy policy and agree to its terms.</p>
         </CardContent>
       </Card>
     </div>

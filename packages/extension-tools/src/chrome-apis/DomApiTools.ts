@@ -9,10 +9,7 @@ export interface DomApiToolsOptions {
 export class DomApiTools extends BaseApiTools {
   protected apiName = 'Dom';
 
-  constructor(
-    server: McpServer,
-    options: DomApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: DomApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -32,7 +29,8 @@ export class DomApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.dom.openOrClosedShadowRoot is not available',
-          details: 'The dom API appears to be partially available. Check Chrome version (88+) and context.',
+          details:
+            'The dom API appears to be partially available. Check Chrome version (88+) and context.',
         };
       }
 
@@ -59,7 +57,8 @@ export class DomApiTools extends BaseApiTools {
     this.server.registerTool(
       'open_or_closed_shadow_root',
       {
-        description: 'Gets the open shadow root or the closed shadow root hosted by the specified element',
+        description:
+          'Gets the open shadow root or the closed shadow root hosted by the specified element',
         inputSchema: {
           elementSelector: z
             .string()
@@ -75,7 +74,7 @@ export class DomApiTools extends BaseApiTools {
         try {
           // Find the element using the selector
           const elements = document.querySelectorAll(elementSelector);
-          
+
           if (elements.length === 0) {
             return this.formatError(`No elements found matching selector: ${elementSelector}`);
           }
@@ -87,7 +86,7 @@ export class DomApiTools extends BaseApiTools {
           }
 
           const element = elements[elementIndex] as HTMLElement;
-          
+
           if (!element) {
             return this.formatError('Selected element is not an HTMLElement');
           }

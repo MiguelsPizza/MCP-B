@@ -13,10 +13,7 @@ export interface FileSystemProviderApiToolsOptions {
 export class FileSystemProviderApiTools extends BaseApiTools {
   protected apiName = 'FileSystemProvider';
 
-  constructor(
-    server: McpServer,
-    options: FileSystemProviderApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: FileSystemProviderApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -27,7 +24,8 @@ export class FileSystemProviderApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.fileSystemProvider API is not defined',
-          details: 'This extension needs the "fileSystemProvider" permission in its manifest.json and is only available on ChromeOS',
+          details:
+            'This extension needs the "fileSystemProvider" permission in its manifest.json and is only available on ChromeOS',
         };
       }
 
@@ -36,7 +34,8 @@ export class FileSystemProviderApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.fileSystemProvider.getAll is not available',
-          details: 'The fileSystemProvider API appears to be partially available. Check manifest permissions and ensure running on ChromeOS.',
+          details:
+            'The fileSystemProvider API appears to be partially available. Check manifest permissions and ensure running on ChromeOS.',
         };
       }
 
@@ -88,15 +87,42 @@ export class FileSystemProviderApiTools extends BaseApiTools {
       {
         description: 'Mount a file system with the given fileSystemId and displayName',
         inputSchema: {
-          fileSystemId: z.string().describe('The string identifier of the file system. Must be unique per each extension'),
+          fileSystemId: z
+            .string()
+            .describe(
+              'The string identifier of the file system. Must be unique per each extension'
+            ),
           displayName: z.string().describe('A human-readable name for the file system'),
-          writable: z.boolean().optional().describe('Whether the file system supports operations which may change contents'),
-          openedFilesLimit: z.number().optional().describe('The maximum number of files that can be opened at once. If not specified, or 0, then not limited'),
-          supportsNotifyTag: z.boolean().optional().describe('Whether the file system supports the tag field for observed directories'),
-          persistent: z.boolean().optional().describe('Whether the framework should resume the file system at the next sign-in session. True by default'),
+          writable: z
+            .boolean()
+            .optional()
+            .describe('Whether the file system supports operations which may change contents'),
+          openedFilesLimit: z
+            .number()
+            .optional()
+            .describe(
+              'The maximum number of files that can be opened at once. If not specified, or 0, then not limited'
+            ),
+          supportsNotifyTag: z
+            .boolean()
+            .optional()
+            .describe('Whether the file system supports the tag field for observed directories'),
+          persistent: z
+            .boolean()
+            .optional()
+            .describe(
+              'Whether the framework should resume the file system at the next sign-in session. True by default'
+            ),
         },
       },
-      async ({ fileSystemId, displayName, writable, openedFilesLimit, supportsNotifyTag, persistent }) => {
+      async ({
+        fileSystemId,
+        displayName,
+        writable,
+        openedFilesLimit,
+        supportsNotifyTag,
+        persistent,
+      }) => {
         try {
           const options: chrome.fileSystemProvider.MountOptions = {
             fileSystemId,
@@ -179,20 +205,24 @@ export class FileSystemProviderApiTools extends BaseApiTools {
       {
         description: 'Get information about a file system with the specified fileSystemId',
         inputSchema: {
-          fileSystemId: z.string().describe('The identifier of the file system to retrieve information about'),
+          fileSystemId: z
+            .string()
+            .describe('The identifier of the file system to retrieve information about'),
         },
       },
       async ({ fileSystemId }) => {
         try {
-          const fileSystem = await new Promise<chrome.fileSystemProvider.FileSystemInfo>((resolve, reject) => {
-            chrome.fileSystemProvider.get(fileSystemId, (fileSystem) => {
-              if (chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
-              } else {
-                resolve(fileSystem);
-              }
-            });
-          });
+          const fileSystem = await new Promise<chrome.fileSystemProvider.FileSystemInfo>(
+            (resolve, reject) => {
+              chrome.fileSystemProvider.get(fileSystemId, (fileSystem) => {
+                if (chrome.runtime.lastError) {
+                  reject(new Error(chrome.runtime.lastError.message));
+                } else {
+                  resolve(fileSystem);
+                }
+              });
+            }
+          );
 
           return this.formatJson({
             fileSystemId: fileSystem.fileSystemId,
@@ -227,15 +257,17 @@ export class FileSystemProviderApiTools extends BaseApiTools {
       },
       async () => {
         try {
-          const fileSystems = await new Promise<chrome.fileSystemProvider.FileSystemInfo[]>((resolve, reject) => {
-            chrome.fileSystemProvider.getAll((fileSystems) => {
-              if (chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
-              } else {
-                resolve(fileSystems);
-              }
-            });
-          });
+          const fileSystems = await new Promise<chrome.fileSystemProvider.FileSystemInfo[]>(
+            (resolve, reject) => {
+              chrome.fileSystemProvider.getAll((fileSystems) => {
+                if (chrome.runtime.lastError) {
+                  reject(new Error(chrome.runtime.lastError.message));
+                } else {
+                  resolve(fileSystems);
+                }
+              });
+            }
+          );
 
           return this.formatJson({
             count: fileSystems.length,
@@ -260,17 +292,34 @@ export class FileSystemProviderApiTools extends BaseApiTools {
     this.server.registerTool(
       'notify_file_system_changes',
       {
-        description: 'Notify about changes in the watched directory at observedPath in recursive mode',
+        description:
+          'Notify about changes in the watched directory at observedPath in recursive mode',
         inputSchema: {
-          fileSystemId: z.string().describe('The identifier of the file system related to this change'),
+          fileSystemId: z
+            .string()
+            .describe('The identifier of the file system related to this change'),
           observedPath: z.string().describe('The path of the observed entry'),
           recursive: z.boolean().describe('Mode of the observed entry'),
-          changeType: z.enum(['CHANGED', 'DELETED']).describe('The type of the change which happened to the observed entry'),
-          tag: z.string().optional().describe('Tag for the notification. Required if the file system was mounted with the supportsNotifyTag option'),
-          changes: z.array(z.object({
-            entryPath: z.string().describe('The path of the changed entry'),
-            changeType: z.enum(['CHANGED', 'DELETED']).describe('The type of the change which happened to the entry'),
-          })).optional().describe('List of changes to entries within the observed directory'),
+          changeType: z
+            .enum(['CHANGED', 'DELETED'])
+            .describe('The type of the change which happened to the observed entry'),
+          tag: z
+            .string()
+            .optional()
+            .describe(
+              'Tag for the notification. Required if the file system was mounted with the supportsNotifyTag option'
+            ),
+          changes: z
+            .array(
+              z.object({
+                entryPath: z.string().describe('The path of the changed entry'),
+                changeType: z
+                  .enum(['CHANGED', 'DELETED'])
+                  .describe('The type of the change which happened to the entry'),
+              })
+            )
+            .optional()
+            .describe('List of changes to entries within the observed directory'),
         },
       },
       async ({ fileSystemId, observedPath, recursive, changeType, tag, changes }) => {

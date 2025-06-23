@@ -14,10 +14,7 @@ export interface EnterprisePlatformKeysApiToolsOptions {
 export class EnterprisePlatformKeysApiTools extends BaseApiTools {
   protected apiName = 'Enterprise.platformKeys';
 
-  constructor(
-    server: McpServer,
-    options: EnterprisePlatformKeysApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: EnterprisePlatformKeysApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -28,7 +25,8 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.enterprise.platformKeys API is not defined',
-          details: 'This extension needs the "enterprise.platformKeys" permission in its manifest.json and must be running on ChromeOS',
+          details:
+            'This extension needs the "enterprise.platformKeys" permission in its manifest.json and must be running on ChromeOS',
         };
       }
 
@@ -37,7 +35,8 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.enterprise.platformKeys.getTokens is not available',
-          details: 'The enterprise.platformKeys API appears to be partially available. Check manifest permissions and ChromeOS platform.',
+          details:
+            'The enterprise.platformKeys API appears to be partially available. Check manifest permissions and ChromeOS platform.',
         };
       }
 
@@ -96,15 +95,17 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
       },
       async () => {
         try {
-          const tokens = await new Promise<chrome.enterprise.platformKeys.Token[]>((resolve, reject) => {
-            chrome.enterprise.platformKeys.getTokens((tokens) => {
-              if (chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
-              } else {
-                resolve(tokens);
-              }
-            });
-          });
+          const tokens = await new Promise<chrome.enterprise.platformKeys.Token[]>(
+            (resolve, reject) => {
+              chrome.enterprise.platformKeys.getTokens((tokens) => {
+                if (chrome.runtime.lastError) {
+                  reject(new Error(chrome.runtime.lastError.message));
+                } else {
+                  resolve(tokens);
+                }
+              });
+            }
+          );
 
           return this.formatJson({
             count: tokens.length,
@@ -131,17 +132,19 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
       },
       async ({ tokenId }) => {
         try {
-          const tokens = await new Promise<chrome.enterprise.platformKeys.Token[]>((resolve, reject) => {
-            chrome.enterprise.platformKeys.getTokens((tokens) => {
-              if (chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
-              } else {
-                resolve(tokens);
-              }
-            });
-          });
+          const tokens = await new Promise<chrome.enterprise.platformKeys.Token[]>(
+            (resolve, reject) => {
+              chrome.enterprise.platformKeys.getTokens((tokens) => {
+                if (chrome.runtime.lastError) {
+                  reject(new Error(chrome.runtime.lastError.message));
+                } else {
+                  resolve(tokens);
+                }
+              });
+            }
+          );
 
-          const token = tokens.find(t => t.id === tokenId);
+          const token = tokens.find((t) => t.id === tokenId);
           if (!token) {
             return this.formatError(`Token with ID '${tokenId}' not found`);
           }
@@ -261,7 +264,10 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
         description: 'Challenge the machine key for enterprise attestation',
         inputSchema: {
           challenge: z.string().describe('The challenge data as a base64 encoded string'),
-          registerKey: z.boolean().optional().describe('Whether to register the key if it does not exist'),
+          registerKey: z
+            .boolean()
+            .optional()
+            .describe('Whether to register the key if it does not exist'),
         },
       },
       async ({ challenge, registerKey }) => {
@@ -276,13 +282,17 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
 
           const response = await new Promise<ArrayBuffer>((resolve, reject) => {
             if (registerKey !== undefined) {
-              chrome.enterprise.platformKeys.challengeMachineKey(challengeBuffer, registerKey, (response) => {
-                if (chrome.runtime.lastError) {
-                  reject(new Error(chrome.runtime.lastError.message));
-                } else {
-                  resolve(response);
+              chrome.enterprise.platformKeys.challengeMachineKey(
+                challengeBuffer,
+                registerKey,
+                (response) => {
+                  if (chrome.runtime.lastError) {
+                    reject(new Error(chrome.runtime.lastError.message));
+                  } else {
+                    resolve(response);
+                  }
                 }
-              });
+              );
             } else {
               chrome.enterprise.platformKeys.challengeMachineKey(challengeBuffer, (response) => {
                 if (chrome.runtime.lastError) {
@@ -332,13 +342,17 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
           const challengeBuffer = bytes.buffer;
 
           const response = await new Promise<ArrayBuffer>((resolve, reject) => {
-            chrome.enterprise.platformKeys.challengeUserKey(challengeBuffer, registerKey, (response) => {
-              if (chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
-              } else {
-                resolve(response);
+            chrome.enterprise.platformKeys.challengeUserKey(
+              challengeBuffer,
+              registerKey,
+              (response) => {
+                if (chrome.runtime.lastError) {
+                  reject(new Error(chrome.runtime.lastError.message));
+                } else {
+                  resolve(response);
+                }
               }
-            });
+            );
           });
 
           // Convert response to base64

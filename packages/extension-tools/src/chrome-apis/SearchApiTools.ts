@@ -9,10 +9,7 @@ export interface SearchApiToolsOptions {
 export class SearchApiTools extends BaseApiTools {
   protected apiName = 'Search';
 
-  constructor(
-    server: McpServer,
-    options: SearchApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: SearchApiToolsOptions = {}) {
     super(server, options);
   }
 

@@ -13,10 +13,7 @@ export interface InstanceIDApiToolsOptions {
 export class InstanceIDApiTools extends BaseApiTools {
   protected apiName = 'InstanceID';
 
-  constructor(
-    server: McpServer,
-    options: InstanceIDApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: InstanceIDApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -36,7 +33,8 @@ export class InstanceIDApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.instanceID.getID is not available',
-          details: 'The instanceID API appears to be partially available. Check manifest permissions.',
+          details:
+            'The instanceID API appears to be partially available. Check manifest permissions.',
         };
       }
 
@@ -86,7 +84,8 @@ export class InstanceIDApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_instance_id',
       {
-        description: 'Retrieve an identifier for the app instance. The same ID will be returned as long as the application identity has not been revoked or expired',
+        description:
+          'Retrieve an identifier for the app instance. The same ID will be returned as long as the application identity has not been revoked or expired',
         inputSchema: {},
       },
       async () => {
@@ -115,7 +114,8 @@ export class InstanceIDApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_creation_time',
       {
-        description: 'Retrieve the time when the InstanceID has been generated, represented in milliseconds since the epoch',
+        description:
+          'Retrieve the time when the InstanceID has been generated, represented in milliseconds since the epoch',
         inputSchema: {},
       },
       async () => {
@@ -145,7 +145,8 @@ export class InstanceIDApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_token',
       {
-        description: 'Return a token that allows the authorized entity to access the service defined by scope',
+        description:
+          'Return a token that allows the authorized entity to access the service defined by scope',
         inputSchema: {
           authorizedEntity: z
             .string()
@@ -257,7 +258,9 @@ export class InstanceIDApiTools extends BaseApiTools {
             });
           });
 
-          return this.formatSuccess('Instance ID deleted successfully and all associated tokens revoked');
+          return this.formatSuccess(
+            'Instance ID deleted successfully and all associated tokens revoked'
+          );
         } catch (error) {
           return this.formatError(error);
         }

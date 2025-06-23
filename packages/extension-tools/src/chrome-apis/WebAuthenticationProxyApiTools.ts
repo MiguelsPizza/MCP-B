@@ -18,10 +18,7 @@ export interface WebAuthenticationProxyApiToolsOptions {
 export class WebAuthenticationProxyApiTools extends BaseApiTools {
   protected apiName = 'WebAuthenticationProxy';
 
-  constructor(
-    server: McpServer,
-    options: WebAuthenticationProxyApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: WebAuthenticationProxyApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -32,7 +29,8 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.webAuthenticationProxy API is not defined',
-          details: 'This extension needs the "webAuthenticationProxy" permission in its manifest.json',
+          details:
+            'This extension needs the "webAuthenticationProxy" permission in its manifest.json',
         };
       }
 
@@ -41,7 +39,8 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.webAuthenticationProxy.attach is not available',
-          details: 'The webAuthenticationProxy API appears to be partially available. Check manifest permissions.',
+          details:
+            'The webAuthenticationProxy API appears to be partially available. Check manifest permissions.',
         };
       }
 
@@ -123,7 +122,9 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
             return this.formatError(error);
           }
 
-          return this.formatSuccess('Successfully attached as Web Authentication API request proxy');
+          return this.formatSuccess(
+            'Successfully attached as Web Authentication API request proxy'
+          );
         } catch (error) {
           return this.formatError(error);
         }
@@ -135,7 +136,8 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
     this.server.registerTool(
       'detach_web_authentication_proxy',
       {
-        description: 'Removes this extension from being the active Web Authentication API request proxy',
+        description:
+          'Removes this extension from being the active Web Authentication API request proxy',
         inputSchema: {},
       },
       async () => {
@@ -154,7 +156,9 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
             return this.formatError(error);
           }
 
-          return this.formatSuccess('Successfully detached from Web Authentication API request proxy');
+          return this.formatSuccess(
+            'Successfully detached from Web Authentication API request proxy'
+          );
         } catch (error) {
           return this.formatError(error);
         }
@@ -169,11 +173,17 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
         description: 'Reports the result of a navigator.credentials.create() call',
         inputSchema: {
           requestId: z.number().describe('The requestId of the CreateRequest'),
-          responseJson: z.string().optional().describe('The PublicKeyCredential serialized as JSON'),
-          error: z.object({
-            name: z.string().describe('The DOMException name'),
-            message: z.string().describe('The DOMException message'),
-          }).optional().describe('The DOMException yielded by the remote request, if any'),
+          responseJson: z
+            .string()
+            .optional()
+            .describe('The PublicKeyCredential serialized as JSON'),
+          error: z
+            .object({
+              name: z.string().describe('The DOMException name'),
+              message: z.string().describe('The DOMException message'),
+            })
+            .optional()
+            .describe('The DOMException yielded by the remote request, if any'),
         },
       },
       async ({ requestId, responseJson, error }) => {
@@ -215,11 +225,17 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
         description: 'Reports the result of a navigator.credentials.get() call',
         inputSchema: {
           requestId: z.number().describe('The requestId of the GetRequest'),
-          responseJson: z.string().optional().describe('The PublicKeyCredential serialized as JSON'),
-          error: z.object({
-            name: z.string().describe('The DOMException name'),
-            message: z.string().describe('The DOMException message'),
-          }).optional().describe('The DOMException yielded by the remote request, if any'),
+          responseJson: z
+            .string()
+            .optional()
+            .describe('The PublicKeyCredential serialized as JSON'),
+          error: z
+            .object({
+              name: z.string().describe('The DOMException name'),
+              message: z.string().describe('The DOMException message'),
+            })
+            .optional()
+            .describe('The DOMException yielded by the remote request, if any'),
         },
       },
       async ({ requestId, responseJson, error }) => {
@@ -258,10 +274,13 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
     this.server.registerTool(
       'complete_is_uvpaa_request',
       {
-        description: 'Reports the result of a PublicKeyCredential.isUserVerifyingPlatformAuthenticator() call',
+        description:
+          'Reports the result of a PublicKeyCredential.isUserVerifyingPlatformAuthenticator() call',
         inputSchema: {
           requestId: z.number().describe('The requestId of the IsUvpaaRequest'),
-          isUvpaa: z.boolean().describe('Whether user verifying platform authenticator is available'),
+          isUvpaa: z
+            .boolean()
+            .describe('Whether user verifying platform authenticator is available'),
         },
       },
       async ({ requestId, isUvpaa }) => {
@@ -281,7 +300,10 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
             });
           });
 
-          return this.formatSuccess('IsUvpaa request completed successfully', { requestId, isUvpaa });
+          return this.formatSuccess('IsUvpaa request completed successfully', {
+            requestId,
+            isUvpaa,
+          });
         } catch (error) {
           return this.formatError(error);
         }
@@ -345,7 +367,8 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
     this.server.registerTool(
       'listen_is_uvpaa_requests',
       {
-        description: 'Start listening for PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() calls',
+        description:
+          'Start listening for PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() calls',
         inputSchema: {},
       },
       async () => {

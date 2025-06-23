@@ -11,10 +11,7 @@ export interface SessionsApiToolsOptions {
 export class SessionsApiTools extends BaseApiTools {
   protected apiName = 'Sessions';
 
-  constructor(
-    server: McpServer,
-    options: SessionsApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: SessionsApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -34,7 +31,8 @@ export class SessionsApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.sessions.getRecentlyClosed is not available',
-          details: 'The sessions API appears to be partially available. Check manifest permissions.',
+          details:
+            'The sessions API appears to be partially available. Check manifest permissions.',
         };
       }
 
@@ -113,17 +111,21 @@ export class SessionsApiTools extends BaseApiTools {
               sessions: device.sessions.map((session) => ({
                 lastModified: session.lastModified,
                 lastModifiedFormatted: new Date(session.lastModified * 1000).toISOString(),
-                tab: session.tab ? {
-                  id: session.tab.id,
-                  url: session.tab.url,
-                  title: session.tab.title,
-                  sessionId: session.tab.sessionId,
-                } : undefined,
-                window: session.window ? {
-                  id: session.window.id,
-                  sessionId: session.window.sessionId,
-                  tabCount: session.window.tabs?.length || 0,
-                } : undefined,
+                tab: session.tab
+                  ? {
+                      id: session.tab.id,
+                      url: session.tab.url,
+                      title: session.tab.title,
+                      sessionId: session.tab.sessionId,
+                    }
+                  : undefined,
+                window: session.window
+                  ? {
+                      id: session.window.id,
+                      sessionId: session.window.sessionId,
+                      tabCount: session.window.tabs?.length || 0,
+                    }
+                  : undefined,
               })),
             })),
           });
@@ -172,20 +174,24 @@ export class SessionsApiTools extends BaseApiTools {
             sessions: sessions.map((session) => ({
               lastModified: session.lastModified,
               lastModifiedFormatted: new Date(session.lastModified * 1000).toISOString(),
-              tab: session.tab ? {
-                id: session.tab.id,
-                url: session.tab.url,
-                title: session.tab.title,
-                sessionId: session.tab.sessionId,
-                favIconUrl: session.tab.favIconUrl,
-              } : undefined,
-              window: session.window ? {
-                id: session.window.id,
-                sessionId: session.window.sessionId,
-                tabCount: session.window.tabs?.length || 0,
-                incognito: session.window.incognito,
-                type: session.window.type,
-              } : undefined,
+              tab: session.tab
+                ? {
+                    id: session.tab.id,
+                    url: session.tab.url,
+                    title: session.tab.title,
+                    sessionId: session.tab.sessionId,
+                    favIconUrl: session.tab.favIconUrl,
+                  }
+                : undefined,
+              window: session.window
+                ? {
+                    id: session.window.id,
+                    sessionId: session.window.sessionId,
+                    tabCount: session.window.tabs?.length || 0,
+                    incognito: session.window.incognito,
+                    type: session.window.type,
+                  }
+                : undefined,
             })),
           });
         } catch (error) {
@@ -234,19 +240,23 @@ export class SessionsApiTools extends BaseApiTools {
           return this.formatSuccess('Session restored successfully', {
             lastModified: restoredSession.lastModified,
             lastModifiedFormatted: new Date(restoredSession.lastModified * 1000).toISOString(),
-            tab: restoredSession.tab ? {
-              id: restoredSession.tab.id,
-              url: restoredSession.tab.url,
-              title: restoredSession.tab.title,
-              sessionId: restoredSession.tab.sessionId,
-            } : undefined,
-            window: restoredSession.window ? {
-              id: restoredSession.window.id,
-              sessionId: restoredSession.window.sessionId,
-              tabCount: restoredSession.window.tabs?.length || 0,
-              incognito: restoredSession.window.incognito,
-              type: restoredSession.window.type,
-            } : undefined,
+            tab: restoredSession.tab
+              ? {
+                  id: restoredSession.tab.id,
+                  url: restoredSession.tab.url,
+                  title: restoredSession.tab.title,
+                  sessionId: restoredSession.tab.sessionId,
+                }
+              : undefined,
+            window: restoredSession.window
+              ? {
+                  id: restoredSession.window.id,
+                  sessionId: restoredSession.window.sessionId,
+                  tabCount: restoredSession.window.tabs?.length || 0,
+                  incognito: restoredSession.window.incognito,
+                  type: restoredSession.window.type,
+                }
+              : undefined,
           });
         } catch (error) {
           return this.formatError(error);

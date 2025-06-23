@@ -15,10 +15,7 @@ export interface IdentityApiToolsOptions {
 export class IdentityApiTools extends BaseApiTools {
   protected apiName = 'Identity';
 
-  constructor(
-    server: McpServer,
-    options: IdentityApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: IdentityApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -38,7 +35,8 @@ export class IdentityApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.identity.getRedirectURL is not available',
-          details: 'The identity API appears to be partially available. Check manifest permissions.',
+          details:
+            'The identity API appears to be partially available. Check manifest permissions.',
         };
       }
 
@@ -95,7 +93,8 @@ export class IdentityApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_auth_token',
       {
-        description: 'Gets an OAuth2 access token using the client ID and scopes specified in manifest.json',
+        description:
+          'Gets an OAuth2 access token using the client ID and scopes specified in manifest.json',
         inputSchema: {
           interactive: z
             .boolean()
@@ -105,10 +104,7 @@ export class IdentityApiTools extends BaseApiTools {
             .array(z.string())
             .optional()
             .describe('List of OAuth2 scopes to request (overrides manifest.json scopes)'),
-          accountId: z
-            .string()
-            .optional()
-            .describe('Account ID whose token should be returned'),
+          accountId: z.string().optional().describe('Account ID whose token should be returned'),
           enableGranularPermissions: z
             .boolean()
             .optional()
@@ -135,15 +131,17 @@ export class IdentityApiTools extends BaseApiTools {
             details.enableGranularPermissions = enableGranularPermissions;
           }
 
-          const result = await new Promise<chrome.identity.GetAuthTokenResult>((resolve, reject) => {
-            chrome.identity.getAuthToken(details, (result) => {
-              if (chrome.runtime.lastError) {
-                reject(new Error(chrome.runtime.lastError.message));
-              } else {
-                resolve(result);
-              }
-            });
-          });
+          const result = await new Promise<chrome.identity.GetAuthTokenResult>(
+            (resolve, reject) => {
+              chrome.identity.getAuthToken(details, (result) => {
+                if (chrome.runtime.lastError) {
+                  reject(new Error(chrome.runtime.lastError.message));
+                } else {
+                  resolve(result);
+                }
+              });
+            }
+          );
 
           return this.formatJson({
             token: result.token,
@@ -160,7 +158,8 @@ export class IdentityApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_profile_user_info',
       {
-        description: 'Retrieves email address and obfuscated gaia id of the user signed into a profile',
+        description:
+          'Retrieves email address and obfuscated gaia id of the user signed into a profile',
         inputSchema: {
           accountStatus: z
             .enum(['SYNC', 'ANY'])
@@ -201,7 +200,8 @@ export class IdentityApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_accounts',
       {
-        description: 'Retrieves a list of AccountInfo objects describing the accounts present on the profile',
+        description:
+          'Retrieves a list of AccountInfo objects describing the accounts present on the profile',
         inputSchema: {},
       },
       async () => {
@@ -235,10 +235,7 @@ export class IdentityApiTools extends BaseApiTools {
       {
         description: 'Generates a redirect URL to be used in launchWebAuthFlow',
         inputSchema: {
-          path: z
-            .string()
-            .optional()
-            .describe('The path appended to the end of the generated URL'),
+          path: z.string().optional().describe('The path appended to the end of the generated URL'),
         },
       },
       async ({ path }) => {
@@ -347,7 +344,8 @@ export class IdentityApiTools extends BaseApiTools {
     this.server.registerTool(
       'clear_all_cached_auth_tokens',
       {
-        description: 'Resets the state of the Identity API by removing all OAuth2 tokens and user preferences',
+        description:
+          'Resets the state of the Identity API by removing all OAuth2 tokens and user preferences',
         inputSchema: {},
       },
       async () => {

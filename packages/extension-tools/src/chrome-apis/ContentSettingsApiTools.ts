@@ -42,10 +42,7 @@ export interface ContentSettingsApiToolsOptions {
 export class ContentSettingsApiTools extends BaseApiTools {
   protected apiName = 'ContentSettings';
 
-  constructor(
-    server: McpServer,
-    options: ContentSettingsApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: ContentSettingsApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -61,22 +58,29 @@ export class ContentSettingsApiTools extends BaseApiTools {
       }
 
       // Test a basic method
-      if (!chrome.contentSettings.cookies || typeof chrome.contentSettings.cookies.get !== 'function') {
+      if (
+        !chrome.contentSettings.cookies ||
+        typeof chrome.contentSettings.cookies.get !== 'function'
+      ) {
         return {
           available: false,
           message: 'chrome.contentSettings.cookies.get is not available',
-          details: 'The contentSettings API appears to be partially available. Check manifest permissions.',
+          details:
+            'The contentSettings API appears to be partially available. Check manifest permissions.',
         };
       }
 
       // Try to actually use the API
-      chrome.contentSettings.cookies.get({
-        primaryUrl: 'https://example.com'
-      }, (_details) => {
-        if (chrome.runtime.lastError) {
-          throw new Error(chrome.runtime.lastError.message);
+      chrome.contentSettings.cookies.get(
+        {
+          primaryUrl: 'https://example.com',
+        },
+        (_details) => {
+          if (chrome.runtime.lastError) {
+            throw new Error(chrome.runtime.lastError.message);
+          }
         }
-      });
+      );
 
       return {
         available: true,
@@ -235,13 +239,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current cookies content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -265,7 +280,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -283,11 +298,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block', 'session_only']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -311,7 +332,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryPattern,
             secondaryPattern,
             setting,
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -326,7 +347,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all cookies content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -345,7 +369,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
           });
 
           return this.formatSuccess('All cookies content setting rules cleared successfully', {
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -360,13 +384,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current JavaScript content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -390,7 +425,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -408,11 +443,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -436,7 +477,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryPattern,
             secondaryPattern,
             setting,
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -451,7 +492,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all JavaScript content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -470,7 +514,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
           });
 
           return this.formatSuccess('All JavaScript content setting rules cleared successfully', {
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -485,13 +529,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current images content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -515,7 +570,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -533,11 +588,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -561,7 +622,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryPattern,
             secondaryPattern,
             setting,
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -576,7 +637,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all images content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -595,7 +659,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
           });
 
           return this.formatSuccess('All images content setting rules cleared successfully', {
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -610,13 +674,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current location content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -640,7 +715,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -658,11 +733,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block', 'ask']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -686,7 +767,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryPattern,
             secondaryPattern,
             setting,
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -701,7 +782,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all location content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -720,7 +804,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
           });
 
           return this.formatSuccess('All location content setting rules cleared successfully', {
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -735,13 +819,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current notifications content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -765,7 +860,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -783,11 +878,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block', 'ask']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -811,7 +912,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryPattern,
             secondaryPattern,
             setting,
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -826,7 +927,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all notifications content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -844,9 +948,12 @@ export class ContentSettingsApiTools extends BaseApiTools {
             });
           });
 
-          return this.formatSuccess('All notifications content setting rules cleared successfully', {
-            scope: scope || 'regular'
-          });
+          return this.formatSuccess(
+            'All notifications content setting rules cleared successfully',
+            {
+              scope: scope || 'regular',
+            }
+          );
         } catch (error) {
           return this.formatError(error);
         }
@@ -860,13 +967,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current popups content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -890,7 +1008,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -908,11 +1026,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -936,7 +1060,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryPattern,
             secondaryPattern,
             setting,
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -951,7 +1075,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all popups content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -970,7 +1097,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
           });
 
           return this.formatSuccess('All popups content setting rules cleared successfully', {
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -985,13 +1112,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current camera content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -1015,7 +1153,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -1033,11 +1171,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block', 'ask']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -1061,7 +1205,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryPattern,
             secondaryPattern,
             setting,
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -1076,7 +1220,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all camera content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -1095,7 +1242,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
           });
 
           return this.formatSuccess('All camera content setting rules cleared successfully', {
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -1110,13 +1257,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current microphone content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -1140,7 +1298,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -1158,11 +1316,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block', 'ask']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -1186,7 +1350,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryPattern,
             secondaryPattern,
             setting,
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -1201,7 +1365,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all microphone content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -1220,7 +1387,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
           });
 
           return this.formatSuccess('All microphone content setting rules cleared successfully', {
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -1235,13 +1402,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current automatic downloads content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -1265,7 +1443,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -1283,11 +1461,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block', 'ask']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -1307,12 +1491,15 @@ export class ContentSettingsApiTools extends BaseApiTools {
             });
           });
 
-          return this.formatSuccess('Automatic downloads content setting rule applied successfully', {
-            primaryPattern,
-            secondaryPattern,
-            setting,
-            scope: scope || 'regular'
-          });
+          return this.formatSuccess(
+            'Automatic downloads content setting rule applied successfully',
+            {
+              primaryPattern,
+              secondaryPattern,
+              setting,
+              scope: scope || 'regular',
+            }
+          );
         } catch (error) {
           return this.formatError(error);
         }
@@ -1326,7 +1513,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all automatic downloads content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -1344,9 +1534,12 @@ export class ContentSettingsApiTools extends BaseApiTools {
             });
           });
 
-          return this.formatSuccess('All automatic downloads content setting rules cleared successfully', {
-            scope: scope || 'regular'
-          });
+          return this.formatSuccess(
+            'All automatic downloads content setting rules cleared successfully',
+            {
+              scope: scope || 'regular',
+            }
+          );
         } catch (error) {
           return this.formatError(error);
         }
@@ -1360,13 +1553,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current clipboard content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -1390,7 +1594,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -1408,11 +1612,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block', 'ask']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -1436,7 +1646,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryPattern,
             secondaryPattern,
             setting,
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -1451,7 +1661,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all clipboard content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -1470,7 +1683,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
           });
 
           return this.formatSuccess('All clipboard content setting rules cleared successfully', {
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -1485,13 +1698,24 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Get the current auto verify content setting for a given pair of URLs',
         inputSchema: {
-          primaryUrl: z.string().describe('The primary URL for which the content setting should be retrieved'),
-          secondaryUrl: z.string().optional().describe('The secondary URL for which the content setting should be retrieved'),
-          incognito: z.boolean().optional().describe('Whether to check the content settings for an incognito session'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('A more specific identifier of the type of content')
+          primaryUrl: z
+            .string()
+            .describe('The primary URL for which the content setting should be retrieved'),
+          secondaryUrl: z
+            .string()
+            .optional()
+            .describe('The secondary URL for which the content setting should be retrieved'),
+          incognito: z
+            .boolean()
+            .optional()
+            .describe('Whether to check the content settings for an incognito session'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('A more specific identifier of the type of content'),
         },
       },
       async ({ primaryUrl, secondaryUrl, incognito, resourceIdentifier }) => {
@@ -1515,7 +1739,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryUrl,
             secondaryUrl,
             incognito: incognito || false,
-            setting: result.setting
+            setting: result.setting,
           });
         } catch (error) {
           return this.formatError(error);
@@ -1533,11 +1757,17 @@ export class ContentSettingsApiTools extends BaseApiTools {
           primaryPattern: z.string().describe('The pattern for the primary URL'),
           secondaryPattern: z.string().optional().describe('The pattern for the secondary URL'),
           setting: z.enum(['allow', 'block']).describe('The setting to apply'),
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to set the setting'),
-          resourceIdentifier: z.object({
-            id: z.string(),
-            description: z.string().optional()
-          }).optional().describe('The resource identifier for the content type')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to set the setting'),
+          resourceIdentifier: z
+            .object({
+              id: z.string(),
+              description: z.string().optional(),
+            })
+            .optional()
+            .describe('The resource identifier for the content type'),
         },
       },
       async ({ primaryPattern, secondaryPattern, setting, scope, resourceIdentifier }) => {
@@ -1561,7 +1791,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
             primaryPattern,
             secondaryPattern,
             setting,
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -1576,7 +1806,10 @@ export class ContentSettingsApiTools extends BaseApiTools {
       {
         description: 'Clear all auto verify content setting rules set by this extension',
         inputSchema: {
-          scope: z.enum(['regular', 'incognito_session_only']).optional().describe('Where to clear the setting')
+          scope: z
+            .enum(['regular', 'incognito_session_only'])
+            .optional()
+            .describe('Where to clear the setting'),
         },
       },
       async ({ scope }) => {
@@ -1595,7 +1828,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
           });
 
           return this.formatSuccess('All auto verify content setting rules cleared successfully', {
-            scope: scope || 'regular'
+            scope: scope || 'regular',
           });
         } catch (error) {
           return this.formatError(error);
@@ -1613,7 +1846,9 @@ export class ContentSettingsApiTools extends BaseApiTools {
       },
       async () => {
         try {
-          const resourceIdentifiers = await new Promise<chrome.contentSettings.ResourceIdentifier[] | undefined>((resolve, reject) => {
+          const resourceIdentifiers = await new Promise<
+            chrome.contentSettings.ResourceIdentifier[] | undefined
+          >((resolve, reject) => {
             chrome.contentSettings.plugins.getResourceIdentifiers((resourceIdentifiers) => {
               if (chrome.runtime.lastError) {
                 reject(new Error(chrome.runtime.lastError.message));
@@ -1625,7 +1860,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
           return this.formatJson({
             count: resourceIdentifiers?.length || 0,
-            resourceIdentifiers: resourceIdentifiers || []
+            resourceIdentifiers: resourceIdentifiers || [],
           });
         } catch (error) {
           return this.formatError(error);

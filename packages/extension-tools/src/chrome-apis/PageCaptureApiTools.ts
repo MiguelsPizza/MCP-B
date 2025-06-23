@@ -9,10 +9,7 @@ export interface PageCaptureApiToolsOptions {
 export class PageCaptureApiTools extends BaseApiTools {
   protected apiName = 'PageCapture';
 
-  constructor(
-    server: McpServer,
-    options: PageCaptureApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: PageCaptureApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -32,7 +29,8 @@ export class PageCaptureApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.pageCapture.saveAsMHTML is not available',
-          details: 'The pageCapture API appears to be partially available. Check manifest permissions.',
+          details:
+            'The pageCapture API appears to be partially available. Check manifest permissions.',
         };
       }
 
@@ -61,9 +59,7 @@ export class PageCaptureApiTools extends BaseApiTools {
       {
         description: 'Save the content of a tab as MHTML format',
         inputSchema: {
-          tabId: z
-            .number()
-            .describe('The ID of the tab to save as MHTML'),
+          tabId: z.number().describe('The ID of the tab to save as MHTML'),
         },
       },
       async ({ tabId }) => {

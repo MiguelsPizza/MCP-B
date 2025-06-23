@@ -11,10 +11,7 @@ export interface IdleApiToolsOptions {
 export class IdleApiTools extends BaseApiTools {
   protected apiName = 'Idle';
 
-  constructor(
-    server: McpServer,
-    options: IdleApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: IdleApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -76,7 +73,8 @@ export class IdleApiTools extends BaseApiTools {
     this.server.registerTool(
       'query_idle_state',
       {
-        description: 'Query the current idle state of the system. Returns "locked" if the system is locked, "idle" if the user has not generated input for the specified time, or "active" otherwise.',
+        description:
+          'Query the current idle state of the system. Returns "locked" if the system is locked, "idle" if the user has not generated input for the specified time, or "active" otherwise.',
         inputSchema: {
           detectionIntervalInSeconds: z
             .number()
@@ -116,7 +114,8 @@ export class IdleApiTools extends BaseApiTools {
     this.server.registerTool(
       'set_idle_detection_interval',
       {
-        description: 'Set the interval used to determine when the system is in an idle state for onStateChanged events. The default interval is 60 seconds.',
+        description:
+          'Set the interval used to determine when the system is in an idle state for onStateChanged events. The default interval is 60 seconds.',
         inputSchema: {
           intervalInSeconds: z
             .number()
@@ -144,7 +143,8 @@ export class IdleApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_auto_lock_delay',
       {
-        description: 'Get the time, in seconds, it takes until the screen is locked automatically while idle. Returns zero if the screen is never locked automatically. Currently supported on Chrome OS only.',
+        description:
+          'Get the time, in seconds, it takes until the screen is locked automatically while idle. Returns zero if the screen is never locked automatically. Currently supported on Chrome OS only.',
         inputSchema: {},
       },
       async () => {

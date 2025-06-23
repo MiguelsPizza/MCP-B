@@ -11,10 +11,7 @@ export interface PowerApiToolsOptions {
 export class PowerApiTools extends BaseApiTools {
   protected apiName = 'Power';
 
-  constructor(
-    server: McpServer,
-    options: PowerApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: PowerApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -73,7 +70,8 @@ export class PowerApiTools extends BaseApiTools {
     this.server.registerTool(
       'request_keep_awake',
       {
-        description: 'Request that power management be temporarily disabled to keep the system or display awake',
+        description:
+          'Request that power management be temporarily disabled to keep the system or display awake',
         inputSchema: {
           level: z
             .enum(['system', 'display'])
@@ -104,7 +102,8 @@ export class PowerApiTools extends BaseApiTools {
     this.server.registerTool(
       'release_keep_awake',
       {
-        description: 'Release a previously made power management request, allowing normal power management to resume',
+        description:
+          'Release a previously made power management request, allowing normal power management to resume',
         inputSchema: {},
       },
       async () => {
@@ -125,7 +124,8 @@ export class PowerApiTools extends BaseApiTools {
     this.server.registerTool(
       'report_activity',
       {
-        description: 'Report user activity to wake the screen from dimmed/off state or exit screensaver (ChromeOS only)',
+        description:
+          'Report user activity to wake the screen from dimmed/off state or exit screensaver (ChromeOS only)',
         inputSchema: {},
       },
       async () => {

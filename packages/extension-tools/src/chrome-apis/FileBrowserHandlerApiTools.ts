@@ -11,10 +11,7 @@ export interface FileBrowserHandlerApiToolsOptions {
 export class FileBrowserHandlerApiTools extends BaseApiTools {
   protected apiName = 'FileBrowserHandler';
 
-  constructor(
-    server: McpServer,
-    options: FileBrowserHandlerApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: FileBrowserHandlerApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -25,17 +22,21 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.fileBrowserHandler API is not defined',
-          details: 'This extension needs the "fileBrowserHandler" permission in its manifest.json and must be running on ChromeOS',
+          details:
+            'This extension needs the "fileBrowserHandler" permission in its manifest.json and must be running on ChromeOS',
         };
       }
 
       // Test a basic method
-      if (typeof chrome.fileBrowserHandler.onExecute !== 'object' || 
-          typeof chrome.fileBrowserHandler.onExecute.addListener !== 'function') {
+      if (
+        typeof chrome.fileBrowserHandler.onExecute !== 'object' ||
+        typeof chrome.fileBrowserHandler.onExecute.addListener !== 'function'
+      ) {
         return {
           available: false,
           message: 'chrome.fileBrowserHandler.onExecute is not available',
-          details: 'The fileBrowserHandler API appears to be partially available. Check manifest permissions and ensure running on ChromeOS.',
+          details:
+            'The fileBrowserHandler API appears to be partially available. Check manifest permissions and ensure running on ChromeOS.',
         };
       }
 
@@ -44,7 +45,8 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'FileBrowserHandler API is only available on ChromeOS',
-          details: 'This API requires ChromeOS and proper file_browser_handlers configuration in manifest.json',
+          details:
+            'This API requires ChromeOS and proper file_browser_handlers configuration in manifest.json',
         };
       }
 
@@ -79,7 +81,8 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_execute_event_details',
       {
-        description: 'Get information about the current file browser handler execute event details structure',
+        description:
+          'Get information about the current file browser handler execute event details structure',
         inputSchema: {},
       },
       async () => {
@@ -89,11 +92,11 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
               id: 'string - The id value from the manifest file',
               details: {
                 entries: 'FileSystemFileEntry[] - Array of selected file entries',
-                tab_id: 'number (optional) - The ID of the tab that raised this event'
-              }
+                tab_id: 'number (optional) - The ID of the tab that raised this event',
+              },
             },
             usage: 'Use addExecuteListener to register a handler for file browser execute events',
-            note: 'This API only works on ChromeOS and requires file_browser_handlers in manifest.json'
+            note: 'This API only works on ChromeOS and requires file_browser_handlers in manifest.json',
           });
         } catch (error) {
           return this.formatError(error);
@@ -106,7 +109,8 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
     this.server.registerTool(
       'add_execute_listener',
       {
-        description: 'Add a listener for file browser handler execute events. This will log events when users execute file browser actions.',
+        description:
+          'Add a listener for file browser handler execute events. This will log events when users execute file browser actions.',
         inputSchema: {
           logEvents: z
             .boolean()
@@ -118,13 +122,16 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
       async ({ logEvents }) => {
         try {
           // Create a listener function
-          const listener = (id: string, details: chrome.fileBrowserHandler.FileHandlerExecuteEventDetails) => {
+          const listener = (
+            id: string,
+            details: chrome.fileBrowserHandler.FileHandlerExecuteEventDetails
+          ) => {
             if (logEvents) {
               console.log('FileBrowserHandler execute event:', {
                 id,
                 entriesCount: details.entries?.length || 0,
                 tabId: details.tab_id,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
               });
             }
           };
@@ -135,7 +142,7 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
           return this.formatSuccess('Execute event listener added successfully', {
             listenerAdded: true,
             loggingEnabled: logEvents,
-            note: 'Events will be triggered when users execute file browser actions'
+            note: 'Events will be triggered when users execute file browser actions',
           });
         } catch (error) {
           return this.formatError(error);
@@ -162,7 +169,7 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
           return this.formatSuccess('Execute event listeners removed', {
             hadListeners: hasListeners,
             listenersRemoved: true,
-            note: 'All execute event listeners have been removed'
+            note: 'All execute event listeners have been removed',
           });
         } catch (error) {
           return this.formatError(error);

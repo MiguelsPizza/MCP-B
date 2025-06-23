@@ -53,17 +53,19 @@ export class McpWebSocketBridge {
     this.isShuttingDown = true;
 
     console.log('Closing all WebSocket connections...');
-    
+
     // Close all client connections
     for (const [id, connection] of this.connections) {
-      if (connection.clientWs.readyState === 1) { // OPEN
+      if (connection.clientWs.readyState === 1) {
+        // OPEN
         connection.clientWs.close(1000, 'Server shutting down');
       }
     }
 
     // Close all extension connections
     for (const ws of this.extensionConnections) {
-      if (ws.readyState === 1) { // OPEN
+      if (ws.readyState === 1) {
+        // OPEN
         ws.close(1000, 'Server shutting down');
       }
     }
@@ -93,9 +95,9 @@ export class McpWebSocketBridge {
     for (const connection of this.pendingConnections) {
       connection.extensionWs = ws;
       this.pendingConnections.delete(connection);
-      
+
       console.log(`Assigned extension to pending connection ${connection.id}`);
-      
+
       // Send any queued messages
       while (connection.messageQueue.length > 0) {
         const message = connection.messageQueue.shift();
@@ -131,7 +133,7 @@ export class McpWebSocketBridge {
     ws.on('close', () => {
       console.log('Extension disconnected from bridge');
       this.extensionConnections.delete(ws);
-      
+
       // Mark all connections using this extension as needing a new one
       for (const connection of this.connections.values()) {
         if (connection.extensionWs === ws) {
@@ -207,13 +209,13 @@ export class McpWebSocketBridge {
           console.warn(`No extension available for connection ${connectionId}, queueing message`);
           // Queue the message for when an extension becomes available
           connection.messageQueue.push(message);
-          
+
           // Try to find an extension again
           const newExtension = this.getAvailableExtension();
           if (newExtension) {
             connection.extensionWs = newExtension;
             this.pendingConnections.delete(connection);
-            
+
             // Send queued messages
             while (connection.messageQueue.length > 0) {
               const queuedMessage = connection.messageQueue.shift();

@@ -9,10 +9,7 @@ export interface WallpaperApiToolsOptions {
 export class WallpaperApiTools extends BaseApiTools {
   protected apiName = 'Wallpaper';
 
-  constructor(
-    server: McpServer,
-    options: WallpaperApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: WallpaperApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -23,7 +20,8 @@ export class WallpaperApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.wallpaper API is not defined',
-          details: 'This extension needs the "wallpaper" permission in its manifest.json and only works on ChromeOS',
+          details:
+            'This extension needs the "wallpaper" permission in its manifest.json and only works on ChromeOS',
         };
       }
 
@@ -32,7 +30,8 @@ export class WallpaperApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.wallpaper.setWallpaper is not available',
-          details: 'The wallpaper API appears to be partially available. Check manifest permissions and ensure you are running on ChromeOS.',
+          details:
+            'The wallpaper API appears to be partially available. Check manifest permissions and ensure you are running on ChromeOS.',
         };
       }
 
@@ -62,17 +61,12 @@ export class WallpaperApiTools extends BaseApiTools {
         description: 'Set the ChromeOS wallpaper to an image from a URL or data',
         inputSchema: {
           filename: z.string().describe('The file name of the saved wallpaper'),
-          layout: z
-            .enum(['STRETCH', 'CENTER', 'CENTER_CROPPED'])
-            .describe('The wallpaper layout'),
+          layout: z.enum(['STRETCH', 'CENTER', 'CENTER_CROPPED']).describe('The wallpaper layout'),
           url: z
             .string()
             .optional()
             .describe('The URL of the wallpaper to be set (can be relative)'),
-          data: z
-            .string()
-            .optional()
-            .describe('Base64 encoded jpeg or png wallpaper image data'),
+          data: z.string().optional().describe('Base64 encoded jpeg or png wallpaper image data'),
           thumbnail: z
             .boolean()
             .optional()
@@ -83,9 +77,7 @@ export class WallpaperApiTools extends BaseApiTools {
         try {
           // Validate that either url or data is provided
           if (!url && !data) {
-            return this.formatError(
-              'Either url or data must be specified to set wallpaper'
-            );
+            return this.formatError('Either url or data must be specified to set wallpaper');
           }
 
           if (url && data) {

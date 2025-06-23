@@ -12,10 +12,7 @@ export interface ReadingListApiToolsOptions {
 export class ReadingListApiTools extends BaseApiTools {
   protected apiName = 'ReadingList';
 
-  constructor(
-    server: McpServer,
-    options: ReadingListApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: ReadingListApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -35,7 +32,8 @@ export class ReadingListApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.readingList.query is not available',
-          details: 'The readingList API appears to be partially available. Check manifest permissions.',
+          details:
+            'The readingList API appears to be partially available. Check manifest permissions.',
         };
       }
 
@@ -123,7 +121,8 @@ export class ReadingListApiTools extends BaseApiTools {
     this.server.registerTool(
       'query_reading_list',
       {
-        description: 'Retrieve all entries that match the query criteria. Properties that are not provided will not be matched',
+        description:
+          'Retrieve all entries that match the query criteria. Properties that are not provided will not be matched',
         inputSchema: {
           hasBeenRead: z
             .boolean()

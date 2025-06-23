@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import type { Collection } from '@tanstack/react-db';
 import { useOptimisticMutation } from '@tanstack/react-db';
+import { toast } from 'sonner';
 import { v7 as uuidv7 } from 'uuid';
 import type { CreateTodoInput, Todo, UpdateTodoInput } from '../../worker/db/schema';
 import { todoMutationFn } from '../mutations/todoMutations';
-import { toast } from 'sonner';
 import { TodoApiError } from '../services/todoService';
 
 /**
@@ -53,21 +53,21 @@ export const useTodoMutations = (todoCollection: Collection<Todo>, userId?: stri
         const result = todoMutation.mutate(() => {
           todoCollection.insert(optimisticTodo);
         });
-        
+
         // Show success toast
         toast.success('Todo created successfully');
-        
+
         return result;
       } catch (error) {
         // Show error toast with specific message
         let errorMessage = 'Failed to create todo';
-        
+
         if (error instanceof TodoApiError) {
           errorMessage = error.message;
         } else if (error instanceof Error) {
           errorMessage = error.message;
         }
-        
+
         toast.error(errorMessage);
         throw error;
       }
@@ -100,23 +100,27 @@ export const useTodoMutations = (todoCollection: Collection<Todo>, userId?: stri
             draft.updated_at = new Date();
           });
         });
-        
+
         // Show success toast
-        const action = input.completed !== undefined ? 
-          (input.completed ? 'completed' : 'uncompleted') : 'updated';
+        const action =
+          input.completed !== undefined
+            ? input.completed
+              ? 'completed'
+              : 'uncompleted'
+            : 'updated';
         toast.success(`Todo ${action} successfully`);
-        
+
         return result;
       } catch (error) {
         // Show error toast with specific message
         let errorMessage = 'Failed to update todo';
-        
+
         if (error instanceof TodoApiError) {
           errorMessage = error.message;
         } else if (error instanceof Error) {
           errorMessage = error.message;
         }
-        
+
         toast.error(errorMessage);
         throw error;
       }
@@ -143,21 +147,21 @@ export const useTodoMutations = (todoCollection: Collection<Todo>, userId?: stri
         const result = todoMutation.mutate(() => {
           todoCollection.delete(existingTodo);
         });
-        
+
         // Show success toast
         toast.success('Todo deleted successfully');
-        
+
         return result;
       } catch (error) {
         // Show error toast with specific message
         let errorMessage = 'Failed to delete todo';
-        
+
         if (error instanceof TodoApiError) {
           errorMessage = error.message;
         } else if (error instanceof Error) {
           errorMessage = error.message;
         }
-        
+
         toast.error(errorMessage);
         throw error;
       }

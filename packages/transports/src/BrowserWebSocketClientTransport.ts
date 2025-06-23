@@ -56,7 +56,7 @@ export class BrowserWebSocketClientTransport implements Transport {
         return; // Success!
       } catch (error) {
         this._retryCount++;
-        
+
         if (this._isClosing) {
           throw new Error('Connection cancelled');
         }
@@ -66,18 +66,21 @@ export class BrowserWebSocketClientTransport implements Transport {
         }
 
         const delay = Math.min(
-          this._options.initialRetryDelay * Math.pow(this._options.retryMultiplier, this._retryCount - 1),
+          this._options.initialRetryDelay *
+            Math.pow(this._options.retryMultiplier, this._retryCount - 1),
           this._options.maxRetryDelay
         );
 
-        console.log(`[WebSocket] Connection failed, retrying in ${delay}ms (attempt ${this._retryCount}/${this._options.maxRetries})`);
+        console.log(
+          `[WebSocket] Connection failed, retrying in ${delay}ms (attempt ${this._retryCount}/${this._options.maxRetries})`
+        );
         await this._sleep(delay);
       }
     }
   }
 
   private _sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private async _attemptConnection(): Promise<void> {
@@ -118,7 +121,7 @@ export class BrowserWebSocketClientTransport implements Transport {
         this._socket.onclose = () => {
           this._socket = undefined;
           this._connectionId = undefined;
-          
+
           // Only call onclose if we're not in the middle of retrying
           if (!this._isClosing && this._retryCount === 0) {
             this.onclose?.();
@@ -156,13 +159,13 @@ export class BrowserWebSocketClientTransport implements Transport {
 
   async close(): Promise<void> {
     this._isClosing = true;
-    
+
     // Clear any pending connection timeout
     if (this._connectionTimeoutId) {
       clearTimeout(this._connectionTimeoutId);
       this._connectionTimeoutId = undefined;
     }
-    
+
     if (this._socket && this._socket.readyState === WebSocket.OPEN) {
       this._socket.close();
     }

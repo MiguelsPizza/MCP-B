@@ -9,10 +9,7 @@ export interface SystemLogApiToolsOptions {
 export class SystemLogApiTools extends BaseApiTools {
   protected apiName = 'SystemLog';
 
-  constructor(
-    server: McpServer,
-    options: SystemLogApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: SystemLogApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -23,7 +20,8 @@ export class SystemLogApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.systemLog API is not defined',
-          details: 'This extension needs the "systemLog" permission in its manifest.json and must run on ChromeOS',
+          details:
+            'This extension needs the "systemLog" permission in its manifest.json and must run on ChromeOS',
         };
       }
 
@@ -32,7 +30,8 @@ export class SystemLogApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.systemLog.add is not available',
-          details: 'The systemLog API appears to be partially available. Check manifest permissions and ensure running on ChromeOS.',
+          details:
+            'The systemLog API appears to be partially available. Check manifest permissions and ensure running on ChromeOS.',
         };
       }
 

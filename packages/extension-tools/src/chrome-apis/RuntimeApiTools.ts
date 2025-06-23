@@ -23,10 +23,7 @@ export interface RuntimeApiToolsOptions {
 export class RuntimeApiTools extends BaseApiTools {
   protected apiName = 'Runtime';
 
-  constructor(
-    server: McpServer,
-    options: RuntimeApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: RuntimeApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -140,11 +137,15 @@ export class RuntimeApiTools extends BaseApiTools {
           extensionId: z
             .string()
             .optional()
-            .describe('The ID of the extension to connect to. If omitted, connects to your own extension'),
+            .describe(
+              'The ID of the extension to connect to. If omitted, connects to your own extension'
+            ),
           name: z
             .string()
             .optional()
-            .describe('Will be passed into onConnect for processes listening for the connection event'),
+            .describe(
+              'Will be passed into onConnect for processes listening for the connection event'
+            ),
           includeTlsChannelId: z
             .boolean()
             .optional()
@@ -155,7 +156,8 @@ export class RuntimeApiTools extends BaseApiTools {
         try {
           const connectInfo: any = {};
           if (name !== undefined) connectInfo.name = name;
-          if (includeTlsChannelId !== undefined) connectInfo.includeTlsChannelId = includeTlsChannelId;
+          if (includeTlsChannelId !== undefined)
+            connectInfo.includeTlsChannelId = includeTlsChannelId;
 
           let port: chrome.runtime.Port;
           if (extensionId) {
@@ -167,14 +169,18 @@ export class RuntimeApiTools extends BaseApiTools {
           return this.formatSuccess('Connection established successfully', {
             portName: port.name,
             extensionId: extensionId || 'own extension',
-            sender: port.sender ? {
-              id: port.sender.id,
-              url: port.sender.url,
-              tab: port.sender.tab ? {
-                id: port.sender.tab.id,
-                url: port.sender.tab.url,
-              } : undefined,
-            } : undefined,
+            sender: port.sender
+              ? {
+                  id: port.sender.id,
+                  url: port.sender.url,
+                  tab: port.sender.tab
+                    ? {
+                        id: port.sender.tab.id,
+                        url: port.sender.tab.url,
+                      }
+                    : undefined,
+                }
+              : undefined,
           });
         } catch (error) {
           return this.formatError(error);
@@ -187,11 +193,10 @@ export class RuntimeApiTools extends BaseApiTools {
     this.server.registerTool(
       'runtime_connect_native',
       {
-        description: 'Connect to a native application in the host machine. Requires "nativeMessaging" permission',
+        description:
+          'Connect to a native application in the host machine. Requires "nativeMessaging" permission',
         inputSchema: {
-          application: z
-            .string()
-            .describe('The name of the registered application to connect to'),
+          application: z.string().describe('The name of the registered application to connect to'),
         },
       },
       async ({ application }) => {
@@ -216,44 +221,39 @@ export class RuntimeApiTools extends BaseApiTools {
         description: 'Fetch information about active contexts associated with this extension',
         inputSchema: {
           contextTypes: z
-            .array(z.enum(['TAB', 'POPUP', 'BACKGROUND', 'OFFSCREEN_DOCUMENT', 'SIDE_PANEL', 'DEVELOPER_TOOLS']))
+            .array(
+              z.enum([
+                'TAB',
+                'POPUP',
+                'BACKGROUND',
+                'OFFSCREEN_DOCUMENT',
+                'SIDE_PANEL',
+                'DEVELOPER_TOOLS',
+              ])
+            )
             .optional()
             .describe('Filter by context types'),
-          contextIds: z
-            .array(z.string())
-            .optional()
-            .describe('Filter by specific context IDs'),
-          tabIds: z
-            .array(z.number())
-            .optional()
-            .describe('Filter by tab IDs'),
-          windowIds: z
-            .array(z.number())
-            .optional()
-            .describe('Filter by window IDs'),
-          frameIds: z
-            .array(z.number())
-            .optional()
-            .describe('Filter by frame IDs'),
-          documentIds: z
-            .array(z.string())
-            .optional()
-            .describe('Filter by document IDs'),
-          documentUrls: z
-            .array(z.string())
-            .optional()
-            .describe('Filter by document URLs'),
-          documentOrigins: z
-            .array(z.string())
-            .optional()
-            .describe('Filter by document origins'),
-          incognito: z
-            .boolean()
-            .optional()
-            .describe('Filter by incognito status'),
+          contextIds: z.array(z.string()).optional().describe('Filter by specific context IDs'),
+          tabIds: z.array(z.number()).optional().describe('Filter by tab IDs'),
+          windowIds: z.array(z.number()).optional().describe('Filter by window IDs'),
+          frameIds: z.array(z.number()).optional().describe('Filter by frame IDs'),
+          documentIds: z.array(z.string()).optional().describe('Filter by document IDs'),
+          documentUrls: z.array(z.string()).optional().describe('Filter by document URLs'),
+          documentOrigins: z.array(z.string()).optional().describe('Filter by document origins'),
+          incognito: z.boolean().optional().describe('Filter by incognito status'),
         },
       },
-      async ({ contextTypes, contextIds, tabIds, windowIds, frameIds, documentIds, documentUrls, documentOrigins, incognito }) => {
+      async ({
+        contextTypes,
+        contextIds,
+        tabIds,
+        windowIds,
+        frameIds,
+        documentIds,
+        documentUrls,
+        documentOrigins,
+        incognito,
+      }) => {
         try {
           const filter: any = {};
           if (contextTypes !== undefined) filter.contextTypes = contextTypes;
@@ -391,11 +391,14 @@ export class RuntimeApiTools extends BaseApiTools {
     this.server.registerTool(
       'runtime_get_url',
       {
-        description: 'Convert a relative path within an app/extension install directory to a fully-qualified URL',
+        description:
+          'Convert a relative path within an app/extension install directory to a fully-qualified URL',
         inputSchema: {
           path: z
             .string()
-            .describe('A path to a resource within an app/extension expressed relative to its install directory'),
+            .describe(
+              'A path to a resource within an app/extension expressed relative to its install directory'
+            ),
         },
       },
       async ({ path }) => {
@@ -417,7 +420,7 @@ export class RuntimeApiTools extends BaseApiTools {
     this.server.registerTool(
       'runtime_open_options_page',
       {
-        description: 'Open the extension\'s options page',
+        description: "Open the extension's options page",
         inputSchema: {},
       },
       async () => {
@@ -514,7 +517,9 @@ export class RuntimeApiTools extends BaseApiTools {
         inputSchema: {
           seconds: z
             .number()
-            .describe('Time to wait in seconds before rebooting the device, or -1 to cancel a scheduled reboot'),
+            .describe(
+              'Time to wait in seconds before rebooting the device, or -1 to cancel a scheduled reboot'
+            ),
         },
       },
       async ({ seconds }) => {
@@ -545,7 +550,8 @@ export class RuntimeApiTools extends BaseApiTools {
     this.server.registerTool(
       'runtime_send_message',
       {
-        description: 'Send a single message to event listeners within your extension or a different extension/app',
+        description:
+          'Send a single message to event listeners within your extension or a different extension/app',
         inputSchema: {
           message: z
             .any()
@@ -553,7 +559,9 @@ export class RuntimeApiTools extends BaseApiTools {
           extensionId: z
             .string()
             .optional()
-            .describe('The ID of the extension to send the message to. If omitted, sends to your own extension'),
+            .describe(
+              'The ID of the extension to send the message to. If omitted, sends to your own extension'
+            ),
           includeTlsChannelId: z
             .boolean()
             .optional()
@@ -601,14 +609,11 @@ export class RuntimeApiTools extends BaseApiTools {
     this.server.registerTool(
       'runtime_send_native_message',
       {
-        description: 'Send a single message to a native application. Requires "nativeMessaging" permission',
+        description:
+          'Send a single message to a native application. Requires "nativeMessaging" permission',
         inputSchema: {
-          application: z
-            .string()
-            .describe('The name of the native messaging host'),
-          message: z
-            .any()
-            .describe('The message that will be passed to the native messaging host'),
+          application: z.string().describe('The name of the native messaging host'),
+          message: z.any().describe('The message that will be passed to the native messaging host'),
         },
       },
       async ({ application, message }) => {
@@ -644,7 +649,9 @@ export class RuntimeApiTools extends BaseApiTools {
           url: z
             .string()
             .max(1023)
-            .describe('URL to be opened after the extension is uninstalled. Must have http: or https: scheme. Set empty string to not open a new tab'),
+            .describe(
+              'URL to be opened after the extension is uninstalled. Must have http: or https: scheme. Set empty string to not open a new tab'
+            ),
         },
       },
       async ({ url }) => {

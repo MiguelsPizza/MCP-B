@@ -13,10 +13,7 @@ export interface ExtensionApiToolsOptions {
 export class ExtensionApiTools extends BaseApiTools {
   protected apiName = 'Extension';
 
-  constructor(
-    server: McpServer,
-    options: ExtensionApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: ExtensionApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -82,7 +79,8 @@ export class ExtensionApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_background_page',
       {
-        description: 'Returns the JavaScript window object for the background page running inside the current extension',
+        description:
+          'Returns the JavaScript window object for the background page running inside the current extension',
         inputSchema: {},
       },
       async () => {
@@ -111,7 +109,8 @@ export class ExtensionApiTools extends BaseApiTools {
     this.server.registerTool(
       'get_views',
       {
-        description: 'Returns an array of the JavaScript window objects for each of the pages running inside the current extension',
+        description:
+          'Returns an array of the JavaScript window objects for each of the pages running inside the current extension',
         inputSchema: {
           tabId: z
             .number()
@@ -120,7 +119,9 @@ export class ExtensionApiTools extends BaseApiTools {
           type: z
             .enum(['tab', 'popup'])
             .optional()
-            .describe('The type of view to get. If omitted, returns all views including background pages and tabs'),
+            .describe(
+              'The type of view to get. If omitted, returns all views including background pages and tabs'
+            ),
           windowId: z
             .number()
             .optional()
@@ -130,20 +131,22 @@ export class ExtensionApiTools extends BaseApiTools {
       async ({ tabId, type, windowId }) => {
         try {
           const fetchProperties: any = {};
-          
+
           if (tabId !== undefined) {
             fetchProperties.tabId = tabId;
           }
-          
+
           if (type !== undefined) {
             fetchProperties.type = type;
           }
-          
+
           if (windowId !== undefined) {
             fetchProperties.windowId = windowId;
           }
 
-          const views = chrome.extension.getViews(Object.keys(fetchProperties).length > 0 ? fetchProperties : undefined);
+          const views = chrome.extension.getViews(
+            Object.keys(fetchProperties).length > 0 ? fetchProperties : undefined
+          );
 
           return this.formatJson({
             count: views.length,
@@ -165,7 +168,8 @@ export class ExtensionApiTools extends BaseApiTools {
     this.server.registerTool(
       'is_allowed_file_scheme_access',
       {
-        description: 'Retrieves the state of the extension\'s access to the file:// scheme. This corresponds to the user-controlled per-extension "Allow access to File URLs" setting',
+        description:
+          'Retrieves the state of the extension\'s access to the file:// scheme. This corresponds to the user-controlled per-extension "Allow access to File URLs" setting',
         inputSchema: {},
       },
       async () => {
@@ -182,7 +186,7 @@ export class ExtensionApiTools extends BaseApiTools {
 
           return this.formatJson({
             isAllowedFileSchemeAccess: isAllowed,
-            message: isAllowed 
+            message: isAllowed
               ? 'Extension has access to file:// URLs'
               : 'Extension does not have access to file:// URLs. This can be enabled in chrome://extensions',
           });
@@ -197,7 +201,8 @@ export class ExtensionApiTools extends BaseApiTools {
     this.server.registerTool(
       'is_allowed_incognito_access',
       {
-        description: 'Retrieves the state of the extension\'s access to Incognito-mode. This corresponds to the user-controlled per-extension "Allowed in Incognito" setting',
+        description:
+          'Retrieves the state of the extension\'s access to Incognito-mode. This corresponds to the user-controlled per-extension "Allowed in Incognito" setting',
         inputSchema: {},
       },
       async () => {
@@ -215,7 +220,7 @@ export class ExtensionApiTools extends BaseApiTools {
           return this.formatJson({
             isAllowedIncognitoAccess: isAllowed,
             inIncognitoContext: chrome.extension.inIncognitoContext,
-            message: isAllowed 
+            message: isAllowed
               ? 'Extension has access to Incognito mode'
               : 'Extension does not have access to Incognito mode. This can be enabled in chrome://extensions',
           });
@@ -230,11 +235,10 @@ export class ExtensionApiTools extends BaseApiTools {
     this.server.registerTool(
       'set_update_url_data',
       {
-        description: 'Sets the value of the ap CGI parameter used in the extension\'s update URL. This value is ignored for extensions hosted in the Chrome Extension Gallery',
+        description:
+          "Sets the value of the ap CGI parameter used in the extension's update URL. This value is ignored for extensions hosted in the Chrome Extension Gallery",
         inputSchema: {
-          data: z
-            .string()
-            .describe('The data to set for the update URL parameter'),
+          data: z.string().describe('The data to set for the update URL parameter'),
         },
       },
       async ({ data }) => {

@@ -21,10 +21,7 @@ export interface FontSettingsApiToolsOptions {
 export class FontSettingsApiTools extends BaseApiTools {
   protected apiName = 'FontSettings';
 
-  constructor(
-    server: McpServer,
-    options: FontSettingsApiToolsOptions = {}
-  ) {
+  constructor(server: McpServer, options: FontSettingsApiToolsOptions = {}) {
     super(server, options);
   }
 
@@ -44,7 +41,8 @@ export class FontSettingsApiTools extends BaseApiTools {
         return {
           available: false,
           message: 'chrome.fontSettings.getFontList is not available',
-          details: 'The fontSettings API appears to be partially available. Check manifest permissions.',
+          details:
+            'The fontSettings API appears to be partially available. Check manifest permissions.',
         };
       }
 
@@ -134,7 +132,9 @@ export class FontSettingsApiTools extends BaseApiTools {
           script: z
             .string()
             .optional()
-            .describe('The script for which the font should be retrieved. If omitted, the font setting for the global script (script code "Zyyy") is retrieved'),
+            .describe(
+              'The script for which the font should be retrieved. If omitted, the font setting for the global script (script code "Zyyy") is retrieved'
+            ),
         },
       },
       async ({ genericFamily, script }) => {
@@ -175,14 +175,18 @@ export class FontSettingsApiTools extends BaseApiTools {
         inputSchema: {
           fontId: z
             .string()
-            .describe('The font ID. The empty string means to fallback to the global script font setting'),
+            .describe(
+              'The font ID. The empty string means to fallback to the global script font setting'
+            ),
           genericFamily: z
             .enum(['standard', 'sansserif', 'serif', 'fixed', 'cursive', 'fantasy', 'math'])
             .describe('The generic font family for which the font should be set'),
           script: z
             .string()
             .optional()
-            .describe('The script code which the font should be set. If omitted, the font setting for the global script (script code "Zyyy") is set'),
+            .describe(
+              'The script code which the font should be set. If omitted, the font setting for the global script (script code "Zyyy") is set'
+            ),
         },
       },
       async ({ fontId, genericFamily, script }) => {
@@ -226,7 +230,9 @@ export class FontSettingsApiTools extends BaseApiTools {
           script: z
             .string()
             .optional()
-            .describe('The script for which the font should be cleared. If omitted, the global script font setting is cleared'),
+            .describe(
+              'The script for which the font should be cleared. If omitted, the global script font setting is cleared'
+            ),
         },
       },
       async ({ genericFamily, script }) => {
@@ -326,11 +332,7 @@ export class FontSettingsApiTools extends BaseApiTools {
       {
         description: 'Set the default font size',
         inputSchema: {
-          pixelSize: z
-            .number()
-            .min(6)
-            .max(72)
-            .describe('The font size in pixels'),
+          pixelSize: z.number().min(6).max(72).describe('The font size in pixels'),
         },
       },
       async ({ pixelSize }) => {
@@ -418,11 +420,7 @@ export class FontSettingsApiTools extends BaseApiTools {
       {
         description: 'Set the default size for fixed width fonts',
         inputSchema: {
-          pixelSize: z
-            .number()
-            .min(6)
-            .max(72)
-            .describe('The font size in pixels'),
+          pixelSize: z.number().min(6).max(72).describe('The font size in pixels'),
         },
       },
       async ({ pixelSize }) => {
@@ -510,11 +508,7 @@ export class FontSettingsApiTools extends BaseApiTools {
       {
         description: 'Set the minimum font size',
         inputSchema: {
-          pixelSize: z
-            .number()
-            .min(6)
-            .max(24)
-            .describe('The font size in pixels'),
+          pixelSize: z.number().min(6).max(24).describe('The font size in pixels'),
         },
       },
       async ({ pixelSize }) => {
