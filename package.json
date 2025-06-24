@@ -15,6 +15,7 @@
     "lint:turbo": "turbo run lint",
     "format:turbo": "turbo run format",
     "test": "turbo run test",
+    "test:e2e": "turbo run test --filter=@mcp-b/e2e-tests",
     "clean": "git clean -xdf .cache .turbo node_modules",
     "typecheck": "turbo run typecheck",
     "check-all": "pnpm run typecheck && pnpm run lint:check && pnpm run format:check",
