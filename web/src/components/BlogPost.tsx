@@ -21,7 +21,6 @@ import { toast } from 'sonner';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 
-// Code block component with copy functionality and syntax highlighting
 const CodeBlock = ({ code, language }: { code: string; language: string }) => {
   const [copied, setCopied] = useState(false);
 

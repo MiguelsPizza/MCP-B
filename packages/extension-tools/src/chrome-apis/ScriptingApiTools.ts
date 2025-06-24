@@ -74,7 +74,7 @@ export class ScriptingApiTools extends BaseApiTools {
   private checkAndRegisterUserScripts(): void {
     // Check if userScripts API is available
     if (!chrome.userScripts) {
-      console.warn('  ✗ UserScripts API not available - Chrome 120+ required');
+      console.warn('UserScripts API not available - Chrome 120+ required');
       return;
     }
 
@@ -85,15 +85,15 @@ export class ScriptingApiTools extends BaseApiTools {
       // Check Chrome version for execute method support
       const chromeVersion = this.getChromeVersion();
       if (chromeVersion >= 135) {
-        console.log('  ✓ UserScripts execute() method available (Chrome 135+)');
+        console.log('UserScripts execute() method available (Chrome 135+)');
         this.registerUserScriptExecute();
       } else {
-        console.log('  ✓ UserScripts API available (legacy mode)');
+        console.log('UserScripts API available (legacy mode)');
         this.registerUserScriptLegacy();
       }
     } catch (error) {
       console.warn(
-        '  ✗ UserScripts API not enabled. Users need to enable developer mode and "User Scripts" toggle in chrome://extensions'
+        'UserScripts API not enabled. Users need to enable developer mode and "User Scripts" toggle in chrome://extensions'
       );
     }
   }

@@ -10,19 +10,17 @@ const __dirname = dirname(__filename);
 
 const program = new Command();
 
-// Track child processes for cleanup
 const childProcesses: ChildProcess[] = [];
 
-// Helper to check if port is available
 function checkPort(port: number): Promise<boolean> {
   return new Promise((resolve) => {
     const client = createConnection({ port }, () => {
       client.end();
-      resolve(false); // Port is in use
+      resolve(false);
     });
 
     client.on('error', () => {
-      resolve(true); // Port is available
+      resolve(true);
     });
   });
 }
@@ -40,7 +38,6 @@ program
   .action(async (options) => {
     const port = parseInt(options.port);
 
-    // Check if port is available
     const isAvailable = await checkPort(port);
     if (!isAvailable) {
       console.error(`Error: Port ${port} is already in use.`);
@@ -55,7 +52,6 @@ program
     console.log(`  MCP Clients: ws://localhost:${port}`);
     console.log('');
 
-    // Start the bridge server
     const bridgeProcess = spawn('node', [join(__dirname, 'bridge-server.js')], {
       stdio: 'inherit',
       env: { ...process.env, PORT: port.toString() },
@@ -63,12 +59,10 @@ program
     childProcesses.push(bridgeProcess);
 
     if (options.withInspector) {
-      // Give the bridge a moment to start
       setTimeout(() => {
         console.log('');
         console.log('Starting MCP Inspector...');
 
-        // Start the proxy connected to the bridge
         const inspectorProcess = spawn(
           'npx',
           [
@@ -94,7 +88,6 @@ program
       process.exit(1);
     });
 
-    // Handle shutdown
     const shutdown = async () => {
       console.log('\nShutting down...');
       for (const child of childProcesses) {
@@ -103,7 +96,6 @@ program
         }
       }
 
-      // Give processes time to clean up
       setTimeout(() => {
         for (const child of childProcesses) {
           if (!child.killed) {
@@ -134,7 +126,6 @@ program
       process.exit(1);
     });
 
-    // Handle shutdown
     const shutdown = async () => {
       console.log('\nShutting down proxy...');
       for (const child of childProcesses) {
@@ -180,7 +171,6 @@ program
       process.exit(1);
     });
 
-    // Handle shutdown
     const shutdown = async () => {
       console.log('\nShutting down...');
       for (const child of childProcesses) {
@@ -210,7 +200,6 @@ program
   .action(async (options) => {
     const port = parseInt(options.port);
 
-    // Check if port is available
     const isAvailable = await checkPort(port);
     if (!isAvailable) {
       console.error(`Error: Port ${port} is already in use.`);
@@ -221,7 +210,6 @@ program
     console.log(`Starting MCP WebSocket Bridge with STDIO proxy on port ${port}...`);
     console.log('');
 
-    // Start the bridge server
     const bridgeProcess = spawn('node', [join(__dirname, 'bridge-server.js')], {
       stdio: 'inherit',
       env: { ...process.env, PORT: port.toString() },
@@ -250,8 +238,7 @@ program
         process.exit(1);
       });
 
-      // Handle shutdown
-      const shutdown = async () => {
+        const shutdown = async () => {
         console.log('\nShutting down...');
         for (const child of childProcesses) {
           if (!child.killed) {

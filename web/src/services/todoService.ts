@@ -1,12 +1,3 @@
-/**
- * Todo Service - Client-side API for todo operations
- *
- * This service provides a type-safe interface to the backend API with:
- * - Standardized error handling using TodoApiError
- * - Consistent error response format matching backend ErrorResponse schema
- * - Helper utilities for common error scenarios
- * - Type-safe API calls using Hono RPC client
- */
 
 import { hc } from 'hono/client';
 import type { AppType } from '../../worker';
@@ -28,10 +19,8 @@ export const DEFAULT_SORT_PARAMS = {
   search: undefined,
 } as const satisfies SortParams;
 
-// LocalStorage key for sort parameters
 const SORT_PARAMS_KEY = 'todo-sort-params';
 
-// Custom error class that preserves the full ErrorResponse structure
 export class TodoApiError extends Error {
   public readonly code?: string;
   public readonly details?: unknown;
@@ -52,7 +41,6 @@ export class TodoApiError extends Error {
     return this.originalError;
   }
 
-  // Helper methods for common error types
   get isNotFound(): boolean {
     return this.code === 'NOT_FOUND';
   }
@@ -70,12 +58,10 @@ export class TodoApiError extends Error {
   }
 }
 
-// Helper function to handle API errors consistently
 const handleApiError = async (res: Response, defaultMessage: string): Promise<never> => {
   try {
     const errorData = await res.json();
 
-    // Check if this is a Zod validation error response
     if (
       errorData &&
       typeof errorData === 'object' &&
@@ -85,7 +71,6 @@ const handleApiError = async (res: Response, defaultMessage: string): Promise<ne
     ) {
       const zodError = errorData as { success: false; error: { name: string; message: string } };
 
-      // Parse Zod error message to extract field-specific errors
       let errorMessage = 'Validation error';
       try {
         const errors = JSON.parse(zodError.error.message) as Array<{
@@ -95,7 +80,6 @@ const handleApiError = async (res: Response, defaultMessage: string): Promise<ne
           minimum?: number;
         }>;
 
-        // Format error messages for each field
         const fieldErrors = errors
           .map((err) => {
             const field = err.path.join('.');
@@ -118,11 +102,8 @@ const handleApiError = async (res: Response, defaultMessage: string): Promise<ne
       throw new TodoApiError(normalizedError, res.status, defaultMessage);
     }
 
-    // Handle standard error response format
     const typedErrorData = errorData as ErrorResponse;
 
-    // The backend now returns consistent error responses with error, message, and code
-    // Ensure we have all required fields
     const normalizedError: ErrorResponse = {
       error: typedErrorData.error || defaultMessage,
       message: typedErrorData.message || typedErrorData.error || defaultMessage,
@@ -132,12 +113,10 @@ const handleApiError = async (res: Response, defaultMessage: string): Promise<ne
 
     throw new TodoApiError(normalizedError, res.status, defaultMessage);
   } catch (parseError) {
-    // If parseError is already a TodoApiError, re-throw it
     if (parseError instanceof TodoApiError) {
       throw parseError;
     }
 
-    // If response is not JSON, create a basic error response
     const errorResponse: ErrorResponse = {
       error: defaultMessage,
       message: res.statusText || defaultMessage,
@@ -147,7 +126,6 @@ const handleApiError = async (res: Response, defaultMessage: string): Promise<ne
   }
 };
 
-// Type exports for external use
 export type TodosGetQueryParams = Parameters<typeof client.api.todos.$get>[0]['query'];
 export type UserTodosGetQueryParams = Parameters<
   (typeof client.api.users)[':userId']['todos']['$get']
@@ -156,12 +134,6 @@ export type TodosPostJsonBody = Parameters<(typeof client.api.todos)['$post']>[0
 export type TodoPutJsonBody = Parameters<(typeof client.api.todos)[':id']['$put']>[0]['json'];
 
 export const todoApi = {
-  /**
-   * Get all todos with optional filtering, sorting, and pagination
-   * @param queryParams - Optional query parameters for filtering and pagination
-   * @returns Promise resolving to array of todos
-   * @throws {TodoApiError} When the request fails
-   */
   async getAll(queryParams?: TodosGetQueryParams) {
     const res = await client.api.todos.$get({
       query: queryParams || {},
@@ -174,12 +146,6 @@ export const todoApi = {
     return await res.json();
   },
 
-  /**
-   * Get a specific todo by ID
-   * @param id - The todo ID
-   * @returns Promise resolving to the todo object
-   * @throws {TodoApiError} When the todo is not found or request fails
-   */
   async getById(id: string) {
     const res = await client.api.todos[':id'].$get({ param: { id } });
 
@@ -190,13 +156,6 @@ export const todoApi = {
     return await res.json();
   },
 
-  /**
-   * Get todos for a specific user with optional filtering, sorting, and pagination
-   * @param userId - The user ID
-   * @param queryParams - Optional query parameters for filtering and pagination
-   * @returns Promise resolving to array of user's todos
-   * @throws {TodoApiError} When the request fails
-   */
   async getForUser(userId: string, queryParams?: UserTodosGetQueryParams) {
     const res = await client.api.users[':userId'].todos.$get({
       param: { userId },
@@ -210,12 +169,6 @@ export const todoApi = {
     return await res.json();
   },
 
-  /**
-   * Create a new todo
-   * @param todo - The todo data to create
-   * @returns Promise resolving to the created todo
-   * @throws {TodoApiError} When creation fails (e.g., validation errors)
-   */
   async create(todo: TodosPostJsonBody) {
     const res = await client.api.todos.$post({
       json: todo,
@@ -228,13 +181,6 @@ export const todoApi = {
     return await res.json();
   },
 
-  /**
-   * Update an existing todo
-   * @param id - The todo ID to update
-   * @param changes - The changes to apply
-   * @returns Promise resolving to the updated todo
-   * @throws {TodoApiError} When the todo is not found or update fails
-   */
   async update(id: string, changes: TodoPutJsonBody) {
     const res = await client.api.todos[':id'].$put({
       param: { id },
@@ -248,12 +194,6 @@ export const todoApi = {
     return await res.json();
   },
 
-  /**
-   * Delete a todo
-   * @param id - The todo ID to delete
-   * @returns Promise resolving to success confirmation
-   * @throws {TodoApiError} When the todo is not found or deletion fails
-   */
   async delete(id: string) {
     const res = await client.api.todos[':id'].$delete({
       param: { id },
@@ -266,12 +206,6 @@ export const todoApi = {
     return { success: true };
   },
 
-  /**
-   * Delete all todos for a specific user
-   * @param userId - The user ID whose todos should be deleted
-   * @returns Promise resolving to deletion result with count
-   * @throws {TodoApiError} When deletion fails
-   */
   async deleteAllForUser(userId: string) {
     const res = await client.api.users[':userId'].todos.$delete({
       param: { userId },
@@ -285,7 +219,6 @@ export const todoApi = {
   },
 };
 
-// Sort parameter utilities
 export const getSortParamsFromStorage = () => {
   try {
     const stored = localStorage.getItem(SORT_PARAMS_KEY);
@@ -312,7 +245,6 @@ export const resetSortParams = () => {
   window.dispatchEvent(new CustomEvent('todoSortParamsChanged'));
 };
 
-// Error handling utilities
 export const isApiError = (error: unknown): error is TodoApiError => error instanceof TodoApiError;
 
 export const getErrorMessage = (error: unknown): string => {
@@ -332,7 +264,6 @@ export const getErrorCode = (error: unknown): string | undefined => {
   return undefined;
 };
 
-// Helper function to handle common error scenarios
 export const handleCommonErrors = (error: TodoApiError): string => {
   switch (error.code) {
     case 'NOT_FOUND':
