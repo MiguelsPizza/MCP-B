@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "@mcp-b/transports": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.12.1"
+    "@modelcontextprotocol/sdk": "^1.13.2"
   },
   "devDependencies": {
     "@types/react": "catalog:",

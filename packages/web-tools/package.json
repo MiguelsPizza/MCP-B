@@ -47,7 +47,7 @@
     "version:major": "pnpm version major --no-git-tag-version"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@modelcontextprotocol/sdk": "^1.13.2",
     "playwright": "^1.53.0",
     "zod": "^3.24.1"
   },

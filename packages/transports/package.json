@@ -45,7 +45,7 @@
     "version:major": "pnpm version major --no-git-tag-version"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1",
+    "@modelcontextprotocol/sdk": "^1.13.2",
     "@types/cheerio": "^1.0.0",
     "cheerio": "^1.1.0",
     "zod": "^3.24.1"

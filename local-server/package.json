@@ -20,14 +20,15 @@
   "license": "MIT",
   "type": "module",
   "bin": {
-    "mcp-websocket-bridge": "dist/cli.js"
+    "mcp-websocket-bridge": "dist/cli.js",
+    "mcp-native-messaging-proxy": "dist/mcp-native-messaging-proxy.js"
   },
   "files": [
     "dist"
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "tsup src/cli.ts src/index.ts src/bridge-server.ts src/mcpProxy.ts --format esm && shx chmod +x dist/*.js",
+    "build": "tsup src/cli.ts src/index.ts src/bridge-server.ts src/mcpProxy.ts src/stdio-to-native-messaging-proxy.ts src/mcp-native-messaging-proxy.ts --format esm && shx chmod +x dist/*.js",
     "prepare": "npm run build",
     "watch": "tsup src/cli.ts src/index.ts src/bridge-server.ts --format esm --watch",
     "dev:bridge": "tsx src/bridge-server.ts",
@@ -45,7 +46,7 @@
     "shell-quote": "^1.8.3",
     "cors": "^2.8.5",
     "spawn-rx": "^5.1.2",
-    "@modelcontextprotocol/sdk": "^1.8.0",
+    "@modelcontextprotocol/sdk": "^1.13.2",
     "commander": "^13.1.0",
     "ws": "^8.18.1",
     "zod": "^3.24.2",

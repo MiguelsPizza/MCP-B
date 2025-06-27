@@ -118,7 +118,7 @@ export class PromptApiTools extends BaseApiTools {
       },
       async (params) => {
         try {
-          const options: any = {};
+          const options: LanguageModelCreateCoreOptions = {};
 
           if (params.topK !== undefined) options.topK = params.topK;
           if (params.temperature !== undefined) options.temperature = params.temperature;
@@ -126,7 +126,7 @@ export class PromptApiTools extends BaseApiTools {
           // Build expected inputs/outputs
           if (params.expectedInputTypes || params.expectedInputLanguages) {
             options.expectedInputs = (params.expectedInputTypes || ['text']).map((type) => ({
-              type,
+              type: type as LanguageModelMessageType,
               languages: params.expectedInputLanguages,
             }));
           }
@@ -134,7 +134,7 @@ export class PromptApiTools extends BaseApiTools {
           if (params.expectedOutputLanguages) {
             options.expectedOutputs = [
               {
-                type: 'text',
+                type: 'text' as LanguageModelMessageType,
                 languages: params.expectedOutputLanguages,
               },
             ];
@@ -213,7 +213,7 @@ export class PromptApiTools extends BaseApiTools {
       },
       async ({ systemPrompt, temperature, topK, initialMessages }) => {
         try {
-          const createOptions: any = {};
+          const createOptions: LanguageModelCreateOptions = {};
 
           // Add parameters if provided
           if (temperature !== undefined) createOptions.temperature = temperature;
@@ -221,15 +221,28 @@ export class PromptApiTools extends BaseApiTools {
 
           // Build initial prompts
           if (systemPrompt || initialMessages) {
-            createOptions.initialPrompts = [];
             if (systemPrompt) {
-              createOptions.initialPrompts.push({
-                role: 'system',
-                content: systemPrompt,
-              });
-            }
-            if (initialMessages) {
-              createOptions.initialPrompts.push(...initialMessages);
+              createOptions.initialPrompts = [
+                {
+                  role: 'system' as LanguageModelSystemMessageRole,
+                  content: systemPrompt,
+                } as LanguageModelSystemMessage,
+                ...(initialMessages || []).map(
+                  (msg) =>
+                    ({
+                      role: msg.role as LanguageModelMessageRole,
+                      content: msg.content,
+                    }) as LanguageModelMessage
+                ),
+              ];
+            } else if (initialMessages) {
+              createOptions.initialPrompts = initialMessages.map(
+                (msg) =>
+                  ({
+                    role: msg.role as LanguageModelMessageRole,
+                    content: msg.content,
+                  }) as LanguageModelMessage
+              );
             }
           }
 
@@ -262,15 +275,10 @@ export class PromptApiTools extends BaseApiTools {
           sessionId: z.string().describe('The ID of the session to prompt'),
           prompt: z.string().describe('The prompt text to send'),
           responseConstraint: z
-            .union([
-              z.object({}).passthrough().describe('JSON schema constraint'),
-              z
-                .string()
-                .regex(/^\/.*\/[gimsuvy]*$/)
-                .describe('RegExp pattern as string'),
-            ])
+            .object({})
+            .passthrough()
             .optional()
-            .describe('Constraint for the response format'),
+            .describe('JSON schema constraint for the response format'),
         },
       },
       async ({ sessionId, prompt, responseConstraint }) => {
@@ -280,22 +288,14 @@ export class PromptApiTools extends BaseApiTools {
             return this.formatError(`Session ${sessionId} not found`);
           }
 
-          const options: any = {};
+          const options: LanguageModelPromptOptions = {};
 
           // Handle response constraint
           if (responseConstraint) {
-            if (typeof responseConstraint === 'string') {
-              // Convert string regex to RegExp
-              const match = responseConstraint.match(/^\/(.*)\/([gimsuvy]*)$/);
-              if (match) {
-                options.responseConstraint = new RegExp(match[1], match[2]);
-              }
-            } else {
-              options.responseConstraint = responseConstraint;
-            }
+            options.responseConstraint = responseConstraint;
           }
 
-          const response = await session.prompt(prompt, options);
+          const response = await session.prompt(prompt as LanguageModelPrompt, options);
 
           return this.formatSuccess('Prompt completed successfully', {
             response,
@@ -332,16 +332,20 @@ export class PromptApiTools extends BaseApiTools {
             return this.formatError(`Session ${sessionId} not found`);
           }
 
-          const stream = session.promptStreaming(prompt);
+          const stream = session.promptStreaming(prompt as LanguageModelPrompt);
           const chunks: string[] = [];
           let chunkCount = 0;
 
-          for await (const chunk of stream as any) {
-            chunks.push(chunk);
-            chunkCount++;
-            if (chunkCount >= maxChunks) {
-              break;
+          const reader = stream.getReader();
+          try {
+            while (chunkCount < maxChunks) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              chunks.push(value);
+              chunkCount++;
             }
+          } finally {
+            reader.releaseLock();
           }
 
           return this.formatSuccess('Streaming prompt started', {
@@ -383,7 +387,7 @@ export class PromptApiTools extends BaseApiTools {
             return this.formatError(`Session ${sessionId} not found`);
           }
 
-          await session.append(messages);
+          await session.append(messages as LanguageModelMessage[]);
 
           return this.formatSuccess('Messages appended successfully', {
             messagesAppended: messages.length,
@@ -414,7 +418,7 @@ export class PromptApiTools extends BaseApiTools {
             return this.formatError(`Session ${sessionId} not found`);
           }
 
-          const usage = await session.measureInputUsage(prompt);
+          const usage = await session.measureInputUsage(prompt as LanguageModelPrompt);
 
           return this.formatJson({
             tokenUsage: usage,
