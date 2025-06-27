@@ -106,7 +106,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerSetComposition(): void {
     this.server.registerTool(
-      'set_composition',
+      'extension_tool_set_composition',
       {
         description: 'Set the current composition text and cursor position',
         inputSchema: {
@@ -176,7 +176,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerClearComposition(): void {
     this.server.registerTool(
-      'clear_composition',
+      'extension_tool_clear_composition',
       {
         description: 'Clear the current composition text',
         inputSchema: {
@@ -208,7 +208,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerCommitText(): void {
     this.server.registerTool(
-      'commit_text',
+      'extension_tool_commit_text',
       {
         description: 'Commit the provided text to the current input',
         inputSchema: {
@@ -242,7 +242,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerSendKeyEvents(): void {
     this.server.registerTool(
-      'send_key_events',
+      'extension_tool_send_key_events',
       {
         description: 'Send key events to the system',
         inputSchema: {
@@ -289,7 +289,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerHideInputView(): void {
     this.server.registerTool(
-      'hide_input_view',
+      'extension_tool_hide_input_view',
       {
         description: 'Hide the input view window',
         inputSchema: {},
@@ -307,7 +307,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerSetCandidateWindowProperties(): void {
     this.server.registerTool(
-      'set_candidate_window_properties',
+      'extension_tool_set_candidate_window_properties',
       {
         description: 'Set the properties of the candidate window',
         inputSchema: {
@@ -357,7 +357,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerSetCandidates(): void {
     this.server.registerTool(
-      'set_candidates',
+      'extension_tool_set_candidates',
       {
         description: 'Set the current candidates',
         inputSchema: {
@@ -408,7 +408,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerSetCursorPosition(): void {
     this.server.registerTool(
-      'set_cursor_position',
+      'extension_tool_set_cursor_position',
       {
         description: 'Set the position of the cursor in the candidate window',
         inputSchema: {
@@ -442,7 +442,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerSetMenuItems(): void {
     this.server.registerTool(
-      'set_menu_items',
+      'extension_tool_set_menu_items',
       {
         description: 'Set the current menu items',
         inputSchema: {
@@ -489,7 +489,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerUpdateMenuItems(): void {
     this.server.registerTool(
-      'update_menu_items',
+      'extension_tool_update_menu_items',
       {
         description: 'Update the current menu items',
         inputSchema: {
@@ -536,7 +536,7 @@ export class InputImeApiTools extends BaseApiTools {
 
   private registerDeleteSurroundingText(): void {
     this.server.registerTool(
-      'delete_surrounding_text',
+      'extension_tool_delete_surrounding_text',
       {
         description: 'Delete the text around the cursor',
         inputSchema: {

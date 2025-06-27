@@ -132,7 +132,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemove(): void {
     this.server.registerTool(
-      'remove_browsing_data',
+      'extension_tool_remove_browsing_data',
       {
         description: "Remove various types of browsing data from the user's profile",
         inputSchema: {
@@ -237,7 +237,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveAppcache(): void {
     this.server.registerTool(
-      'remove_appcache',
+      'extension_tool_remove_appcache',
       {
         description: "Remove websites' appcache data",
         inputSchema: {
@@ -288,7 +288,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveCache(): void {
     this.server.registerTool(
-      'remove_cache',
+      'extension_tool_remove_cache',
       {
         description: 'Remove browser cache',
         inputSchema: {
@@ -339,7 +339,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveCacheStorage(): void {
     this.server.registerTool(
-      'remove_cache_storage',
+      'extension_tool_remove_cache_storage',
       {
         description: "Remove websites' cache storage data",
         inputSchema: {
@@ -390,7 +390,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveCookies(): void {
     this.server.registerTool(
-      'remove_cookies',
+      'extension_tool_remove_cookies',
       {
         description: 'Remove browser cookies and server-bound certificates',
         inputSchema: {
@@ -441,7 +441,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveDownloads(): void {
     this.server.registerTool(
-      'remove_downloads',
+      'extension_tool_remove_downloads',
       {
         description: 'Remove browser download list (not the downloaded files themselves)',
         inputSchema: {
@@ -485,7 +485,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveFileSystems(): void {
     this.server.registerTool(
-      'remove_file_systems',
+      'extension_tool_remove_file_systems',
       {
         description: "Remove websites' file system data",
         inputSchema: {
@@ -536,7 +536,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveFormData(): void {
     this.server.registerTool(
-      'remove_form_data',
+      'extension_tool_remove_form_data',
       {
         description: 'Remove browser stored form data (autofill)',
         inputSchema: {
@@ -580,7 +580,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveHistory(): void {
     this.server.registerTool(
-      'remove_history',
+      'extension_tool_remove_history',
       {
         description: 'Remove browser history',
         inputSchema: {
@@ -624,7 +624,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveIndexedDB(): void {
     this.server.registerTool(
-      'remove_indexed_db',
+      'extension_tool_remove_indexed_db',
       {
         description: "Remove websites' IndexedDB data",
         inputSchema: {
@@ -675,7 +675,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveLocalStorage(): void {
     this.server.registerTool(
-      'remove_local_storage',
+      'extension_tool_remove_local_storage',
       {
         description: "Remove websites' local storage data",
         inputSchema: {
@@ -726,7 +726,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemovePasswords(): void {
     this.server.registerTool(
-      'remove_passwords',
+      'extension_tool_remove_passwords',
       {
         description: 'Remove browser stored passwords',
         inputSchema: {
@@ -770,7 +770,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveServiceWorkers(): void {
     this.server.registerTool(
-      'remove_service_workers',
+      'extension_tool_remove_service_workers',
       {
         description: "Remove websites' service workers",
         inputSchema: {
@@ -821,7 +821,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerRemoveWebSQL(): void {
     this.server.registerTool(
-      'remove_web_sql',
+      'extension_tool_remove_web_sql',
       {
         description: "Remove websites' WebSQL data",
         inputSchema: {
@@ -872,7 +872,7 @@ export class BrowsingDataApiTools extends BaseApiTools {
 
   private registerSettings(): void {
     this.server.registerTool(
-      'get_browsing_data_settings',
+      'extension_tool_get_browsing_data_settings',
       {
         description: 'Get current browsing data settings from the Clear browsing data UI',
         inputSchema: {},

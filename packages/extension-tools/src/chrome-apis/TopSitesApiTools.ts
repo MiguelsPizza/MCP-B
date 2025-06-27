@@ -61,7 +61,7 @@ export class TopSitesApiTools extends BaseApiTools {
 
   private registerGetTopSites(): void {
     this.server.registerTool(
-      'get_top_sites',
+      'extension_tool_get_top_sites',
       {
         description:
           'Get a list of top sites (most visited sites) that are displayed on the new tab page',

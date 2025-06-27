@@ -96,7 +96,7 @@ export class DocumentScanApiTools extends BaseApiTools {
 
   private registerScan(): void {
     this.server.registerTool(
-      'document_scan',
+      'extension_tool_document_scan',
       {
         description: 'Perform a simple document scan using any available scanner',
         inputSchema: {
@@ -149,7 +149,7 @@ export class DocumentScanApiTools extends BaseApiTools {
 
   private registerGetScannerList(): void {
     this.server.registerTool(
-      'get_scanner_list',
+      'extension_tool_get_scanner_list',
       {
         description: 'Get the list of available document scanners',
         inputSchema: {
@@ -211,7 +211,7 @@ export class DocumentScanApiTools extends BaseApiTools {
 
   private registerOpenScanner(): void {
     this.server.registerTool(
-      'open_scanner',
+      'extension_tool_open_scanner',
       {
         description: 'Open a scanner for exclusive access and configuration',
         inputSchema: {
@@ -256,7 +256,7 @@ export class DocumentScanApiTools extends BaseApiTools {
 
   private registerCloseScanner(): void {
     this.server.registerTool(
-      'close_scanner',
+      'extension_tool_close_scanner',
       {
         description: 'Close a previously opened scanner',
         inputSchema: {
@@ -290,7 +290,7 @@ export class DocumentScanApiTools extends BaseApiTools {
 
   private registerGetOptionGroups(): void {
     this.server.registerTool(
-      'get_option_groups',
+      'extension_tool_get_option_groups',
       {
         description: 'Get the group names and member options from an open scanner',
         inputSchema: {
@@ -335,7 +335,7 @@ export class DocumentScanApiTools extends BaseApiTools {
 
   private registerSetOptions(): void {
     this.server.registerTool(
-      'set_scanner_options',
+      'extension_tool_set_scanner_options',
       {
         description: 'Set options on a scanner',
         inputSchema: {
@@ -406,7 +406,7 @@ export class DocumentScanApiTools extends BaseApiTools {
 
   private registerStartScan(): void {
     this.server.registerTool(
-      'start_scan',
+      'extension_tool_start_scan',
       {
         description: 'Start a scan on an open scanner',
         inputSchema: {
@@ -462,7 +462,7 @@ export class DocumentScanApiTools extends BaseApiTools {
 
   private registerReadScanData(): void {
     this.server.registerTool(
-      'read_scan_data',
+      'extension_tool_read_scan_data',
       {
         description: 'Read the next chunk of scan data from an active scan job',
         inputSchema: {
@@ -507,7 +507,7 @@ export class DocumentScanApiTools extends BaseApiTools {
 
   private registerCancelScan(): void {
     this.server.registerTool(
-      'cancel_scan',
+      'extension_tool_cancel_scan',
       {
         description: 'Cancel an active scan job',
         inputSchema: {

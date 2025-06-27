@@ -78,7 +78,7 @@ export class TabGroupsApiTools extends BaseApiTools {
 
   private registerGet(): void {
     this.server.registerTool(
-      'get_tab_group',
+      'extension_tool_get_tab_group',
       {
         description: 'Get details about a specific tab group',
         inputSchema: {
@@ -114,7 +114,7 @@ export class TabGroupsApiTools extends BaseApiTools {
 
   private registerQuery(): void {
     this.server.registerTool(
-      'query_tab_groups',
+      'extension_tool_query_tab_groups',
       {
         description: 'Search for tab groups that match specified criteria',
         inputSchema: {
@@ -175,7 +175,7 @@ export class TabGroupsApiTools extends BaseApiTools {
 
   private registerUpdate(): void {
     this.server.registerTool(
-      'update_tab_group',
+      'extension_tool_update_tab_group',
       {
         description: 'Modify properties of a tab group',
         inputSchema: {
@@ -230,7 +230,7 @@ export class TabGroupsApiTools extends BaseApiTools {
 
   private registerMove(): void {
     this.server.registerTool(
-      'move_tab_group',
+      'extension_tool_move_tab_group',
       {
         description: 'Move a tab group within its window or to a new window',
         inputSchema: {

@@ -177,7 +177,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerListActiveTabs(): void {
     this.server.registerTool(
-      'list_active_tabs',
+      'extension_tool_list_active_tabs',
       {
         description: 'Lists all tabs grouped by domain',
         inputSchema: {},
@@ -240,7 +240,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerCreateTab(): void {
     this.server.registerTool(
-      'create_tab',
+      'extension_tool_create_tab',
       {
         description: 'Create a new browser tab',
         inputSchema: {
@@ -267,7 +267,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerUpdateTab(): void {
     this.server.registerTool(
-      'update_tab',
+      'extension_tool_update_tab',
       {
         description:
           'Update properties of an existing tab. If no tabId is specified, operates on the currently active tab',
@@ -310,7 +310,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerCloseTabs(): void {
     this.server.registerTool(
-      'close_tabs',
+      'extension_tool_close_tabs',
       {
         description: 'Close one or more tabs',
         inputSchema: {
@@ -330,7 +330,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerGetAllTabs(): void {
     this.server.registerTool(
-      'get_all_tabs',
+      'extension_tool_get_all_tabs',
       {
         description: 'Get information about all open tabs',
         inputSchema: {
@@ -360,7 +360,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerNavigateHistory(): void {
     this.server.registerTool(
-      'navigate_tab_history',
+      'extension_tool_navigate_tab_history',
       {
         description:
           "Navigate forward or backward in a tab's history. If no tabId is specified, operates on the currently active tab",
@@ -395,7 +395,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerReloadTab(): void {
     this.server.registerTool(
-      'reload_tab',
+      'extension_tool_reload_tab',
       {
         description: 'Reload a tab. If no tabId is specified, operates on the currently active tab',
         inputSchema: {
@@ -426,7 +426,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerCaptureVisibleTab(): void {
     this.server.registerTool(
-      'capture_visible_tab',
+      'extension_tool_capture_visible_tab',
       {
         description:
           'Take a screenshot of the visible area of the currently active tab in a window',
@@ -452,7 +452,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerDetectLanguage(): void {
     this.server.registerTool(
-      'detect_tab_language',
+      'extension_tool_detect_tab_language',
       {
         description: 'Detects the primary language of the content in a tab',
         inputSchema: {
@@ -472,7 +472,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerDiscardTab(): void {
     this.server.registerTool(
-      'discard_tab',
+      'extension_tool_discard_tab',
       {
         description:
           'Discards a tab from memory. Discarded tabs are still visible but need to reload when activated',
@@ -499,7 +499,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerDuplicateTab(): void {
     this.server.registerTool(
-      'duplicate_tab',
+      'extension_tool_duplicate_tab',
       {
         description: 'Duplicates a tab',
         inputSchema: {
@@ -522,7 +522,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerGetTab(): void {
     this.server.registerTool(
-      'get_tab',
+      'extension_tool_get_tab',
       {
         description: 'Retrieves details about a specific tab',
         inputSchema: {
@@ -542,7 +542,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerGetZoom(): void {
     this.server.registerTool(
-      'get_tab_zoom',
+      'extension_tool_get_tab_zoom',
       {
         description: 'Gets the current zoom factor of a tab',
         inputSchema: {
@@ -562,7 +562,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerSetZoom(): void {
     this.server.registerTool(
-      'set_tab_zoom',
+      'extension_tool_set_tab_zoom',
       {
         description: 'Sets the zoom factor for a tab',
         inputSchema: {
@@ -587,7 +587,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerGetZoomSettings(): void {
     this.server.registerTool(
-      'get_tab_zoom_settings',
+      'extension_tool_get_tab_zoom_settings',
       {
         description: 'Gets the current zoom settings of a tab',
         inputSchema: {
@@ -607,7 +607,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerSetZoomSettings(): void {
     this.server.registerTool(
-      'set_tab_zoom_settings',
+      'extension_tool_set_tab_zoom_settings',
       {
         description: 'Sets zoom settings for a tab (how zoom changes are handled)',
         inputSchema: {
@@ -639,7 +639,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerGroupTabs(): void {
     this.server.registerTool(
-      'group_tabs',
+      'extension_tool_group_tabs',
       {
         description: 'Groups one or more tabs together',
         inputSchema: {
@@ -678,7 +678,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerUngroupTabs(): void {
     this.server.registerTool(
-      'ungroup_tabs',
+      'extension_tool_ungroup_tabs',
       {
         description: 'Removes tabs from their groups',
         inputSchema: {
@@ -698,7 +698,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerHighlightTabs(): void {
     this.server.registerTool(
-      'highlight_tabs',
+      'extension_tool_highlight_tabs',
       {
         description: 'Highlights the given tabs and focuses on the first one',
         inputSchema: {
@@ -726,7 +726,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerMoveTabs(): void {
     this.server.registerTool(
-      'move_tabs',
+      'extension_tool_move_tabs',
       {
         description: 'Moves tabs to a new position within their window or to another window',
         inputSchema: {
@@ -757,7 +757,7 @@ export class TabsApiTools extends BaseApiTools {
 
   private registerSendMessage(): void {
     this.server.registerTool(
-      'send_message_to_tab',
+      'extension_tool_send_message_to_tab',
       {
         description: 'Sends a message to content scripts in a specific tab',
         inputSchema: {

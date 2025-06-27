@@ -83,7 +83,7 @@ export class AudioApiTools extends BaseApiTools {
 
   private registerGetDevices(): void {
     this.server.registerTool(
-      'get_audio_devices',
+      'extension_tool_get_audio_devices',
       {
         description: 'Get a list of audio devices filtered based on criteria',
         inputSchema: {
@@ -145,7 +145,7 @@ export class AudioApiTools extends BaseApiTools {
 
   private registerGetMute(): void {
     this.server.registerTool(
-      'get_audio_mute',
+      'extension_tool_get_audio_mute',
       {
         description: 'Get the system-wide mute state for the specified stream type',
         inputSchema: {
@@ -179,7 +179,7 @@ export class AudioApiTools extends BaseApiTools {
 
   private registerSetActiveDevices(): void {
     this.server.registerTool(
-      'set_active_audio_devices',
+      'extension_tool_set_active_audio_devices',
       {
         description: 'Set lists of active input and/or output devices',
         inputSchema: {
@@ -238,7 +238,7 @@ export class AudioApiTools extends BaseApiTools {
 
   private registerSetMute(): void {
     this.server.registerTool(
-      'set_audio_mute',
+      'extension_tool_set_audio_mute',
       {
         description:
           'Set mute state for a stream type. The mute state will apply to all audio devices with the specified audio stream type',
@@ -274,7 +274,7 @@ export class AudioApiTools extends BaseApiTools {
 
   private registerSetProperties(): void {
     this.server.registerTool(
-      'set_audio_device_properties',
+      'extension_tool_set_audio_device_properties',
       {
         description: 'Set the properties for the input or output device',
         inputSchema: {

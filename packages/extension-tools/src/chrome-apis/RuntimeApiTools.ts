@@ -130,7 +130,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerConnect(): void {
     this.server.registerTool(
-      'runtime_connect',
+      'extension_tool_runtime_connect',
       {
         description: 'Connect to listeners within an extension or other extensions/apps',
         inputSchema: {
@@ -191,7 +191,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerConnectNative(): void {
     this.server.registerTool(
-      'runtime_connect_native',
+      'extension_tool_runtime_connect_native',
       {
         description:
           'Connect to a native application in the host machine. Requires "nativeMessaging" permission',
@@ -216,7 +216,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerGetContexts(): void {
     this.server.registerTool(
-      'runtime_get_contexts',
+      'extension_tool_runtime_get_contexts',
       {
         description: 'Fetch information about active contexts associated with this extension',
         inputSchema: {
@@ -299,7 +299,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerGetManifest(): void {
     this.server.registerTool(
-      'runtime_get_manifest',
+      'extension_tool_runtime_get_manifest',
       {
         description: 'Get details about the app or extension from the manifest',
         inputSchema: {},
@@ -326,7 +326,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerGetPackageDirectoryEntry(): void {
     this.server.registerTool(
-      'runtime_get_package_directory_entry',
+      'extension_tool_runtime_get_package_directory_entry',
       {
         description: 'Get a DirectoryEntry for the package directory',
         inputSchema: {},
@@ -358,7 +358,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerGetPlatformInfo(): void {
     this.server.registerTool(
-      'runtime_get_platform_info',
+      'extension_tool_runtime_get_platform_info',
       {
         description: 'Get information about the current platform',
         inputSchema: {},
@@ -389,7 +389,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerGetURL(): void {
     this.server.registerTool(
-      'runtime_get_url',
+      'extension_tool_runtime_get_url',
       {
         description:
           'Convert a relative path within an app/extension install directory to a fully-qualified URL',
@@ -418,7 +418,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerOpenOptionsPage(): void {
     this.server.registerTool(
-      'runtime_open_options_page',
+      'extension_tool_runtime_open_options_page',
       {
         description: "Open the extension's options page",
         inputSchema: {},
@@ -445,7 +445,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerReload(): void {
     this.server.registerTool(
-      'runtime_reload',
+      'extension_tool_runtime_reload',
       {
         description: 'Reload the app or extension',
         inputSchema: {},
@@ -463,7 +463,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerRequestUpdateCheck(): void {
     this.server.registerTool(
-      'runtime_request_update_check',
+      'extension_tool_runtime_request_update_check',
       {
         description: 'Request an immediate update check for this app/extension',
         inputSchema: {},
@@ -493,7 +493,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerRestart(): void {
     this.server.registerTool(
-      'runtime_restart',
+      'extension_tool_runtime_restart',
       {
         description: 'Restart the ChromeOS device when the app runs in kiosk mode',
         inputSchema: {},
@@ -511,7 +511,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerRestartAfterDelay(): void {
     this.server.registerTool(
-      'runtime_restart_after_delay',
+      'extension_tool_runtime_restart_after_delay',
       {
         description: 'Restart the ChromeOS device after a delay when the app runs in kiosk mode',
         inputSchema: {
@@ -548,7 +548,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerSendMessage(): void {
     this.server.registerTool(
-      'runtime_send_message',
+      'extension_tool_runtime_send_message',
       {
         description:
           'Send a single message to event listeners within your extension or a different extension/app',
@@ -607,7 +607,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerSendNativeMessage(): void {
     this.server.registerTool(
-      'runtime_send_native_message',
+      'extension_tool_runtime_send_native_message',
       {
         description:
           'Send a single message to a native application. Requires "nativeMessaging" permission',
@@ -642,7 +642,7 @@ export class RuntimeApiTools extends BaseApiTools {
 
   private registerSetUninstallURL(): void {
     this.server.registerTool(
-      'runtime_set_uninstall_url',
+      'extension_tool_runtime_set_uninstall_url',
       {
         description: 'Set the URL to be visited upon uninstallation. Maximum 1023 characters',
         inputSchema: {

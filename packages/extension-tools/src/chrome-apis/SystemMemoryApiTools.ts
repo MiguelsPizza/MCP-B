@@ -61,7 +61,7 @@ export class SystemMemoryApiTools extends BaseApiTools {
 
   private registerGetInfo(): void {
     this.server.registerTool(
-      'get_memory_info',
+      'extension_tool_get_memory_info',
       {
         description: 'Get information about the system memory',
         inputSchema: {},

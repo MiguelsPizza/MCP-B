@@ -84,7 +84,7 @@ export class WebRequestApiTools extends BaseApiTools {
 
   private registerAddListener(): void {
     this.server.registerTool(
-      'add_webrequest_listener',
+      'extension_tool_add_webrequest_listener',
       {
         description: 'Add a listener to a webRequest event to monitor or modify network requests',
         inputSchema: {
@@ -208,7 +208,7 @@ export class WebRequestApiTools extends BaseApiTools {
 
   private registerRemoveListener(): void {
     this.server.registerTool(
-      'remove_webrequest_listener',
+      'extension_tool_remove_webrequest_listener',
       {
         description: 'Remove a webRequest event listener',
         inputSchema: {
@@ -249,7 +249,7 @@ export class WebRequestApiTools extends BaseApiTools {
 
   private registerHasListener(): void {
     this.server.registerTool(
-      'has_webrequest_listener',
+      'extension_tool_has_webrequest_listener',
       {
         description: 'Check if a webRequest event has any listeners',
         inputSchema: {
@@ -289,7 +289,7 @@ export class WebRequestApiTools extends BaseApiTools {
 
   private registerHandlerBehaviorChanged(): void {
     this.server.registerTool(
-      'handler_behavior_changed',
+      'extension_tool_handler_behavior_changed',
       {
         description:
           'Notify that webRequest handler behavior has changed to prevent incorrect caching',
@@ -320,7 +320,7 @@ export class WebRequestApiTools extends BaseApiTools {
 
   private registerGetActiveListeners(): void {
     this.server.registerTool(
-      'get_active_webrequest_listeners',
+      'extension_tool_get_active_webrequest_listeners',
       {
         description: 'Get information about currently active webRequest listeners',
         inputSchema: {},

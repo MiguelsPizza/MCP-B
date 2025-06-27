@@ -65,7 +65,7 @@ export class OffscreenApiTools extends BaseApiTools {
 
   private registerCreateDocument(): void {
     this.server.registerTool(
-      'create_offscreen_document',
+      'extension_tool_create_offscreen_document',
       {
         description: 'Create a new offscreen document for the extension',
         inputSchema: {
@@ -130,7 +130,7 @@ export class OffscreenApiTools extends BaseApiTools {
 
   private registerCloseDocument(): void {
     this.server.registerTool(
-      'close_offscreen_document',
+      'extension_tool_close_offscreen_document',
       {
         description: 'Close the currently-open offscreen document for the extension',
         inputSchema: {},
@@ -157,7 +157,7 @@ export class OffscreenApiTools extends BaseApiTools {
 
   private registerHasOffscreenDocument(): void {
     this.server.registerTool(
-      'has_offscreen_document',
+      'extension_tool_has_offscreen_document',
       {
         description: 'Check if an offscreen document exists for the extension',
         inputSchema: {

@@ -86,7 +86,7 @@ export class PlatformKeysApiTools extends BaseApiTools {
 
   private registerSelectClientCertificates(): void {
     this.server.registerTool(
-      'select_client_certificates',
+      'extension_tool_select_client_certificates',
       {
         description:
           'Filter and select client certificates that match the request and are available to the extension',
@@ -172,7 +172,7 @@ export class PlatformKeysApiTools extends BaseApiTools {
 
   private registerGetKeyPair(): void {
     this.server.registerTool(
-      'get_key_pair',
+      'extension_tool_get_key_pair',
       {
         description: 'Get the key pair for a certificate for usage with platformKeys.subtleCrypto',
         inputSchema: {
@@ -234,7 +234,7 @@ export class PlatformKeysApiTools extends BaseApiTools {
 
   private registerGetKeyPairBySpki(): void {
     this.server.registerTool(
-      'get_key_pair_by_spki',
+      'extension_tool_get_key_pair_by_spki',
       {
         description:
           'Get the key pair identified by a SubjectPublicKeyInfo for usage with platformKeys.subtleCrypto',
@@ -295,7 +295,7 @@ export class PlatformKeysApiTools extends BaseApiTools {
 
   private registerVerifyTLSServerCertificate(): void {
     this.server.registerTool(
-      'verify_tls_server_certificate',
+      'extension_tool_verify_tls_server_certificate',
       {
         description:
           'Verify if a server certificate chain can be trusted for a hostname according to platform trust settings',
@@ -352,7 +352,7 @@ export class PlatformKeysApiTools extends BaseApiTools {
 
   private registerGetSubtleCrypto(): void {
     this.server.registerTool(
-      'get_subtle_crypto',
+      'extension_tool_get_subtle_crypto',
       {
         description: 'Get information about the SubtleCrypto implementation for platform keys',
         inputSchema: {},

@@ -83,7 +83,7 @@ export class FileSystemProviderApiTools extends BaseApiTools {
 
   private registerMount(): void {
     this.server.registerTool(
-      'mount_file_system',
+      'extension_tool_mount_file_system',
       {
         description: 'Mount a file system with the given fileSystemId and displayName',
         inputSchema: {
@@ -172,7 +172,7 @@ export class FileSystemProviderApiTools extends BaseApiTools {
 
   private registerUnmount(): void {
     this.server.registerTool(
-      'unmount_file_system',
+      'extension_tool_unmount_file_system',
       {
         description: 'Unmount a file system with the given fileSystemId',
         inputSchema: {
@@ -201,7 +201,7 @@ export class FileSystemProviderApiTools extends BaseApiTools {
 
   private registerGet(): void {
     this.server.registerTool(
-      'get_file_system',
+      'extension_tool_get_file_system',
       {
         description: 'Get information about a file system with the specified fileSystemId',
         inputSchema: {
@@ -250,7 +250,7 @@ export class FileSystemProviderApiTools extends BaseApiTools {
 
   private registerGetAll(): void {
     this.server.registerTool(
-      'get_all_file_systems',
+      'extension_tool_get_all_file_systems',
       {
         description: 'Get all file systems mounted by the extension',
         inputSchema: {},
@@ -290,7 +290,7 @@ export class FileSystemProviderApiTools extends BaseApiTools {
 
   private registerNotify(): void {
     this.server.registerTool(
-      'notify_file_system_changes',
+      'extension_tool_notify_file_system_changes',
       {
         description:
           'Notify about changes in the watched directory at observedPath in recursive mode',

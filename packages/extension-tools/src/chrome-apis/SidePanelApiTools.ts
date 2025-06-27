@@ -82,7 +82,7 @@ export class SidePanelApiTools extends BaseApiTools {
 
   private registerGetOptions(): void {
     this.server.registerTool(
-      'get_side_panel_options',
+      'extension_tool_get_side_panel_options',
       {
         description:
           'Get the active side panel configuration for a specific tab or default settings',
@@ -126,7 +126,7 @@ export class SidePanelApiTools extends BaseApiTools {
 
   private registerSetOptions(): void {
     this.server.registerTool(
-      'set_side_panel_options',
+      'extension_tool_set_side_panel_options',
       {
         description: 'Configure the side panel settings for a specific tab or default behavior',
         inputSchema: {
@@ -188,7 +188,7 @@ export class SidePanelApiTools extends BaseApiTools {
 
   private registerGetPanelBehavior(): void {
     this.server.registerTool(
-      'get_side_panel_behavior',
+      'extension_tool_get_side_panel_behavior',
       {
         description: 'Get the current side panel behavior configuration',
         inputSchema: {},
@@ -217,7 +217,7 @@ export class SidePanelApiTools extends BaseApiTools {
 
   private registerSetPanelBehavior(): void {
     this.server.registerTool(
-      'set_side_panel_behavior',
+      'extension_tool_set_side_panel_behavior',
       {
         description:
           'Configure the side panel behavior, such as opening when the action icon is clicked',
@@ -260,7 +260,7 @@ export class SidePanelApiTools extends BaseApiTools {
 
   private registerOpen(): void {
     this.server.registerTool(
-      'open_side_panel',
+      'extension_tool_open_side_panel',
       {
         description:
           'Open the side panel for the extension. This may only be called in response to a user action',

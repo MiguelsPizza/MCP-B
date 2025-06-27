@@ -55,7 +55,7 @@ export class PageCaptureApiTools extends BaseApiTools {
 
   private registerSaveAsMHTML(): void {
     this.server.registerTool(
-      'save_as_mhtml',
+      'extension_tool_save_as_mhtml',
       {
         description: 'Save the content of a tab as MHTML format',
         inputSchema: {

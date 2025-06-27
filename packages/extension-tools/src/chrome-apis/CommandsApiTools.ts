@@ -61,7 +61,7 @@ export class CommandsApiTools extends BaseApiTools {
 
   private registerGetAll(): void {
     this.server.registerTool(
-      'get_all_commands',
+      'extension_tool_get_all_commands',
       {
         description: 'Get all registered extension commands and their keyboard shortcuts',
         inputSchema: {},

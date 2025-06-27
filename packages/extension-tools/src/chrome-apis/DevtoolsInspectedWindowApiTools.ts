@@ -66,7 +66,7 @@ export class DevtoolsInspectedWindowApiTools extends BaseApiTools {
 
   private registerEval(): void {
     this.server.registerTool(
-      'eval_inspected_window',
+      'extension_tool_eval_inspected_window',
       {
         description: 'Evaluate JavaScript expression in the context of the inspected page',
         inputSchema: {
@@ -155,7 +155,7 @@ export class DevtoolsInspectedWindowApiTools extends BaseApiTools {
 
   private registerReload(): void {
     this.server.registerTool(
-      'reload_inspected_window',
+      'extension_tool_reload_inspected_window',
       {
         description: 'Reload the inspected page',
         inputSchema: {
@@ -207,7 +207,7 @@ export class DevtoolsInspectedWindowApiTools extends BaseApiTools {
 
   private registerGetResources(): void {
     this.server.registerTool(
-      'get_inspected_window_resources',
+      'extension_tool_get_inspected_window_resources',
       {
         description: 'Get all resources loaded by the inspected page',
         inputSchema: {},

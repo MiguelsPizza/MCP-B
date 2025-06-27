@@ -72,7 +72,7 @@ export class SessionsApiTools extends BaseApiTools {
 
   private registerGetDevices(): void {
     this.server.registerTool(
-      'get_devices',
+      'extension_tool_get_devices',
       {
         description: 'Retrieve all devices with synced sessions',
         inputSchema: {
@@ -138,7 +138,7 @@ export class SessionsApiTools extends BaseApiTools {
 
   private registerGetRecentlyClosed(): void {
     this.server.registerTool(
-      'get_recently_closed',
+      'extension_tool_get_recently_closed',
       {
         description: 'Get the list of recently closed tabs and/or windows',
         inputSchema: {
@@ -203,7 +203,7 @@ export class SessionsApiTools extends BaseApiTools {
 
   private registerRestore(): void {
     this.server.registerTool(
-      'restore_session',
+      'extension_tool_restore_session',
       {
         description: 'Reopen a recently closed window or tab',
         inputSchema: {

@@ -86,7 +86,7 @@ export class HistoryApiTools extends BaseApiTools {
 
   private registerAddUrl(): void {
     this.server.registerTool(
-      'add_url',
+      'extension_tool_add_url',
       {
         description:
           'Add a URL to the history at the current time with a transition type of "link"',
@@ -116,7 +116,7 @@ export class HistoryApiTools extends BaseApiTools {
 
   private registerDeleteAll(): void {
     this.server.registerTool(
-      'delete_all_history',
+      'extension_tool_delete_all_history',
       {
         description: 'Delete all items from the browser history',
         inputSchema: {},
@@ -143,7 +143,7 @@ export class HistoryApiTools extends BaseApiTools {
 
   private registerDeleteRange(): void {
     this.server.registerTool(
-      'delete_history_range',
+      'extension_tool_delete_history_range',
       {
         description:
           'Remove all items within the specified date range from history. Pages will not be removed unless all visits fall within the range',
@@ -191,7 +191,7 @@ export class HistoryApiTools extends BaseApiTools {
 
   private registerDeleteUrl(): void {
     this.server.registerTool(
-      'delete_url',
+      'extension_tool_delete_url',
       {
         description: 'Remove all occurrences of the given URL from history',
         inputSchema: {
@@ -225,7 +225,7 @@ export class HistoryApiTools extends BaseApiTools {
 
   private registerGetVisits(): void {
     this.server.registerTool(
-      'get_visits',
+      'extension_tool_get_visits',
       {
         description: 'Retrieve information about visits to a specific URL',
         inputSchema: {
@@ -272,7 +272,7 @@ export class HistoryApiTools extends BaseApiTools {
 
   private registerSearch(): void {
     this.server.registerTool(
-      'search_history',
+      'extension_tool_search_history',
       {
         description: 'Search the history for the last visit time of each page matching the query',
         inputSchema: {

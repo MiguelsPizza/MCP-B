@@ -122,7 +122,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerDownload(): void {
     this.server.registerTool(
-      'download_file',
+      'extension_tool_download_file',
       {
         description: 'Download a file from a URL',
         inputSchema: {
@@ -192,7 +192,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerSearch(): void {
     this.server.registerTool(
-      'search_downloads',
+      'extension_tool_search_downloads',
       {
         description: 'Search for downloads matching specified criteria',
         inputSchema: {
@@ -356,7 +356,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerPause(): void {
     this.server.registerTool(
-      'pause_download',
+      'extension_tool_pause_download',
       {
         description: 'Pause a download',
         inputSchema: {
@@ -385,7 +385,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerResume(): void {
     this.server.registerTool(
-      'resume_download',
+      'extension_tool_resume_download',
       {
         description: 'Resume a paused download',
         inputSchema: {
@@ -414,7 +414,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerCancel(): void {
     this.server.registerTool(
-      'cancel_download',
+      'extension_tool_cancel_download',
       {
         description: 'Cancel a download',
         inputSchema: {
@@ -443,7 +443,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerGetFileIcon(): void {
     this.server.registerTool(
-      'get_file_icon',
+      'extension_tool_get_file_icon',
       {
         description: 'Retrieve an icon for the specified download',
         inputSchema: {
@@ -485,7 +485,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerOpen(): void {
     this.server.registerTool(
-      'open_download',
+      'extension_tool_open_download',
       {
         description: 'Open the downloaded file if the download is complete',
         inputSchema: {
@@ -505,7 +505,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerShow(): void {
     this.server.registerTool(
-      'show_download',
+      'extension_tool_show_download',
       {
         description: 'Show the downloaded file in its folder in a file manager',
         inputSchema: {
@@ -525,7 +525,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerShowDefaultFolder(): void {
     this.server.registerTool(
-      'show_default_folder',
+      'extension_tool_show_default_folder',
       {
         description: 'Show the default Downloads folder in a file manager',
         inputSchema: {},
@@ -543,7 +543,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerErase(): void {
     this.server.registerTool(
-      'erase_downloads',
+      'extension_tool_erase_downloads',
       {
         description: 'Erase matching downloads from history without deleting the downloaded files',
         inputSchema: {
@@ -643,7 +643,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerRemoveFile(): void {
     this.server.registerTool(
-      'remove_file',
+      'extension_tool_remove_file',
       {
         description: 'Remove the downloaded file if it exists and the download is complete',
         inputSchema: {
@@ -672,7 +672,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerAcceptDanger(): void {
     this.server.registerTool(
-      'accept_danger',
+      'extension_tool_accept_danger',
       {
         description: 'Prompt the user to accept a dangerous download',
         inputSchema: {
@@ -701,7 +701,7 @@ export class DownloadsApiTools extends BaseApiTools {
 
   private registerSetUiOptions(): void {
     this.server.registerTool(
-      'set_ui_options',
+      'extension_tool_set_ui_options',
       {
         description:
           'Change the download UI of every window associated with the current browser profile',

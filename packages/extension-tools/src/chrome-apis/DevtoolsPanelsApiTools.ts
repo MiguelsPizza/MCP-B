@@ -76,7 +76,7 @@ export class DevtoolsPanelsApiTools extends BaseApiTools {
 
   private registerCreatePanel(): void {
     this.server.registerTool(
-      'create_panel',
+      'extension_tool_create_panel',
       {
         description: 'Create a new devtools panel with specified title and icon',
         inputSchema: {
@@ -114,7 +114,7 @@ export class DevtoolsPanelsApiTools extends BaseApiTools {
 
   private registerCreateSidebarPane(): void {
     this.server.registerTool(
-      'create_sidebar_pane',
+      'extension_tool_create_sidebar_pane',
       {
         description: 'Create a sidebar pane in the Elements panel',
         inputSchema: {
@@ -146,7 +146,7 @@ export class DevtoolsPanelsApiTools extends BaseApiTools {
 
   private registerGetThemeColor(): void {
     this.server.registerTool(
-      'get_theme_color',
+      'extension_tool_get_theme_color',
       {
         description: 'Get the current theme color of the devtools',
         inputSchema: {},
@@ -168,7 +168,7 @@ export class DevtoolsPanelsApiTools extends BaseApiTools {
 
   private registerOpenResource(): void {
     this.server.registerTool(
-      'open_resource',
+      'extension_tool_open_resource',
       {
         description: 'Open a resource in the Sources panel',
         inputSchema: {
@@ -211,7 +211,7 @@ export class DevtoolsPanelsApiTools extends BaseApiTools {
 
   private registerSetOpenResourceHandler(): void {
     this.server.registerTool(
-      'set_open_resource_handler',
+      'extension_tool_set_open_resource_handler',
       {
         description: 'Set a handler for when resources are opened in the devtools',
         inputSchema: {

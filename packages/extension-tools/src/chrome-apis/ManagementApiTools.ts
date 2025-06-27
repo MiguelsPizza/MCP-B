@@ -117,7 +117,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerGet(): void {
     this.server.registerTool(
-      'get_extension',
+      'extension_tool_get_extension',
       {
         description: 'Get information about an installed extension, app, or theme by ID',
         inputSchema: {
@@ -170,7 +170,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerGetAll(): void {
     this.server.registerTool(
-      'get_all_extensions',
+      'extension_tool_get_all_extensions',
       {
         description: 'Get information about all installed extensions, apps, and themes',
         inputSchema: {},
@@ -226,7 +226,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerGetSelf(): void {
     this.server.registerTool(
-      'get_self',
+      'extension_tool_get_self',
       {
         description: 'Get information about the calling extension, app, or theme',
         inputSchema: {},
@@ -277,7 +277,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerSetEnabled(): void {
     this.server.registerTool(
-      'set_extension_enabled',
+      'extension_tool_set_extension_enabled',
       {
         description: 'Enable or disable an extension, app, or theme',
         inputSchema: {
@@ -310,7 +310,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerUninstall(): void {
     this.server.registerTool(
-      'uninstall_extension',
+      'extension_tool_uninstall_extension',
       {
         description: 'Uninstall an extension, app, or theme',
         inputSchema: {
@@ -348,7 +348,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerUninstallSelf(): void {
     this.server.registerTool(
-      'uninstall_self',
+      'extension_tool_uninstall_self',
       {
         description: 'Uninstall the calling extension',
         inputSchema: {
@@ -385,7 +385,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerLaunchApp(): void {
     this.server.registerTool(
-      'launch_app',
+      'extension_tool_launch_app',
       {
         description: 'Launch an application',
         inputSchema: {
@@ -414,7 +414,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerCreateAppShortcut(): void {
     this.server.registerTool(
-      'create_app_shortcut',
+      'extension_tool_create_app_shortcut',
       {
         description: 'Create a shortcut for an app',
         inputSchema: {
@@ -443,7 +443,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerGenerateAppForLink(): void {
     this.server.registerTool(
-      'generate_app_for_link',
+      'extension_tool_generate_app_for_link',
       {
         description: 'Generate a bookmark app for a URL',
         inputSchema: {
@@ -485,7 +485,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerSetLaunchType(): void {
     this.server.registerTool(
-      'set_app_launch_type',
+      'extension_tool_set_app_launch_type',
       {
         description: 'Set the launch type of an app',
         inputSchema: {
@@ -522,7 +522,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerGetPermissionWarningsById(): void {
     this.server.registerTool(
-      'get_permission_warnings_by_id',
+      'extension_tool_get_permission_warnings_by_id',
       {
         description: 'Get permission warnings for an installed extension by ID',
         inputSchema: {
@@ -555,7 +555,7 @@ export class ManagementApiTools extends BaseApiTools {
 
   private registerGetPermissionWarningsByManifest(): void {
     this.server.registerTool(
-      'get_permission_warnings_by_manifest',
+      'extension_tool_get_permission_warnings_by_manifest',
       {
         description: 'Get permission warnings for an extension manifest',
         inputSchema: {

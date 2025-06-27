@@ -98,7 +98,7 @@ export class UserScriptsApiTools extends BaseApiTools {
 
   private registerRegister(): void {
     this.server.registerTool(
-      'register_user_scripts',
+      'extension_tool_register_user_scripts',
       {
         description: 'Register one or more user scripts for this extension',
         inputSchema: {
@@ -200,7 +200,7 @@ export class UserScriptsApiTools extends BaseApiTools {
 
   private registerGetScripts(): void {
     this.server.registerTool(
-      'get_user_scripts',
+      'extension_tool_get_user_scripts',
       {
         description: 'Get all dynamically-registered user scripts for this extension',
         inputSchema: {
@@ -253,7 +253,7 @@ export class UserScriptsApiTools extends BaseApiTools {
 
   private registerUpdate(): void {
     this.server.registerTool(
-      'update_user_scripts',
+      'extension_tool_update_user_scripts',
       {
         description: 'Update one or more user scripts for this extension',
         inputSchema: {
@@ -344,7 +344,7 @@ export class UserScriptsApiTools extends BaseApiTools {
 
   private registerUnregister(): void {
     this.server.registerTool(
-      'unregister_user_scripts',
+      'extension_tool_unregister_user_scripts',
       {
         description: 'Unregister dynamically-registered user scripts for this extension',
         inputSchema: {
@@ -399,7 +399,7 @@ export class UserScriptsApiTools extends BaseApiTools {
 
   private registerConfigureWorld(): void {
     this.server.registerTool(
-      'configure_user_script_world',
+      'extension_tool_configure_user_script_world',
       {
         description: 'Configure the USER_SCRIPT execution environment',
         inputSchema: {
@@ -442,7 +442,7 @@ export class UserScriptsApiTools extends BaseApiTools {
 
   private registerGetWorldConfigurations(): void {
     this.server.registerTool(
-      'get_world_configurations',
+      'extension_tool_get_world_configurations',
       {
         description: 'Retrieve all registered world configurations',
         inputSchema: {},
@@ -478,7 +478,7 @@ export class UserScriptsApiTools extends BaseApiTools {
 
   private registerResetWorldConfiguration(): void {
     this.server.registerTool(
-      'reset_world_configuration',
+      'extension_tool_reset_world_configuration',
       {
         description: 'Reset the configuration for a user script world to defaults',
         inputSchema: {
@@ -512,7 +512,7 @@ export class UserScriptsApiTools extends BaseApiTools {
 
   private registerExecute(): void {
     this.server.registerTool(
-      'execute_user_script',
+      'extension_tool_execute_user_script',
       {
         description: 'Inject a script into a target context',
         inputSchema: {

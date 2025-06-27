@@ -87,7 +87,7 @@ export class CookiesApiTools extends BaseApiTools {
 
   private registerGetCookie(): void {
     this.server.registerTool(
-      'get_cookie',
+      'extension_tool_get_cookie',
       {
         description: 'Retrieve information about a single cookie by name and URL',
         inputSchema: {
@@ -155,7 +155,7 @@ export class CookiesApiTools extends BaseApiTools {
 
   private registerGetAllCookies(): void {
     this.server.registerTool(
-      'get_all_cookies',
+      'extension_tool_get_all_cookies',
       {
         description: 'Retrieve all cookies that match the given criteria',
         inputSchema: {
@@ -235,7 +235,7 @@ export class CookiesApiTools extends BaseApiTools {
 
   private registerGetAllCookieStores(): void {
     this.server.registerTool(
-      'get_all_cookie_stores',
+      'extension_tool_get_all_cookie_stores',
       {
         description: 'List all existing cookie stores',
         inputSchema: {},
@@ -270,7 +270,7 @@ export class CookiesApiTools extends BaseApiTools {
 
   private registerGetPartitionKey(): void {
     this.server.registerTool(
-      'get_partition_key',
+      'extension_tool_get_partition_key',
       {
         description: 'Get the partition key for a specific frame',
         inputSchema: {
@@ -317,7 +317,7 @@ export class CookiesApiTools extends BaseApiTools {
 
   private registerSetCookie(): void {
     this.server.registerTool(
-      'set_cookie',
+      'extension_tool_set_cookie',
       {
         description:
           'Set a cookie with the given data; may overwrite equivalent cookies if they exist',
@@ -436,7 +436,7 @@ export class CookiesApiTools extends BaseApiTools {
 
   private registerRemoveCookie(): void {
     this.server.registerTool(
-      'remove_cookie',
+      'extension_tool_remove_cookie',
       {
         description: 'Delete a cookie by name',
         inputSchema: {

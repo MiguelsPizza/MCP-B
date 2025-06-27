@@ -67,7 +67,7 @@ export class LoginStateApiTools extends BaseApiTools {
 
   private registerGetProfileType(): void {
     this.server.registerTool(
-      'get_profile_type',
+      'extension_tool_get_profile_type',
       {
         description:
           'Get the type of the profile the extension is in (signin profile or user profile)',
@@ -103,7 +103,7 @@ export class LoginStateApiTools extends BaseApiTools {
 
   private registerGetSessionState(): void {
     this.server.registerTool(
-      'get_session_state',
+      'extension_tool_get_session_state',
       {
         description:
           'Get the current session state (unknown, OOBE screen, login screen, in session, lock screen, or RMA screen)',

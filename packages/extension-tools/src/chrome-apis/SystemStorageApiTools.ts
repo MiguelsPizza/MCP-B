@@ -72,7 +72,7 @@ export class SystemStorageApiTools extends BaseApiTools {
 
   private registerGetInfo(): void {
     this.server.registerTool(
-      'get_storage_info',
+      'extension_tool_get_storage_info',
       {
         description: 'Get information about all attached storage devices',
         inputSchema: {},
@@ -110,7 +110,7 @@ export class SystemStorageApiTools extends BaseApiTools {
 
   private registerEjectDevice(): void {
     this.server.registerTool(
-      'eject_storage_device',
+      'extension_tool_eject_storage_device',
       {
         description: 'Eject a removable storage device',
         inputSchema: {
@@ -150,7 +150,7 @@ export class SystemStorageApiTools extends BaseApiTools {
 
   private registerGetAvailableCapacity(): void {
     this.server.registerTool(
-      'get_available_capacity',
+      'extension_tool_get_available_capacity',
       {
         description: 'Get the available capacity of a specified storage device',
         inputSchema: {

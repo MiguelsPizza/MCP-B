@@ -55,7 +55,7 @@ export class EnterpriseNetworkingAttributesApiTools extends BaseApiTools {
 
   private registerGetNetworkDetails(): void {
     this.server.registerTool(
-      'get_network_details',
+      'extension_tool_get_network_details',
       {
         description:
           'Get network details for the current network connection including enterprise networking attributes',

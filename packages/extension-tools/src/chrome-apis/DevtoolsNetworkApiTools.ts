@@ -73,7 +73,7 @@ export class DevtoolsNetworkApiTools extends BaseApiTools {
 
   private registerGetHAR(): void {
     this.server.registerTool(
-      'get_har',
+      'extension_tool_get_har',
       {
         description:
           'Get the HTTP Archive (HAR) log for the current page, containing all network requests',
@@ -144,7 +144,7 @@ export class DevtoolsNetworkApiTools extends BaseApiTools {
 
   private registerOnNavigated(): void {
     this.server.registerTool(
-      'on_navigated',
+      'extension_tool_on_navigated',
       {
         description: 'Set up a listener for navigation events in the inspected window',
         inputSchema: {
@@ -184,7 +184,7 @@ export class DevtoolsNetworkApiTools extends BaseApiTools {
 
   private registerOnRequestFinished(): void {
     this.server.registerTool(
-      'on_request_finished',
+      'extension_tool_on_request_finished',
       {
         description: 'Set up a listener for network request completion events',
         inputSchema: {

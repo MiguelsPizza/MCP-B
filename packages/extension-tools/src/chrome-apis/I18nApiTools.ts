@@ -79,7 +79,7 @@ export class I18nApiTools extends BaseApiTools {
 
   private registerGetMessage(): void {
     this.server.registerTool(
-      'get_message',
+      'extension_tool_get_message',
       {
         description:
           'Get a localized string for the specified message. Returns empty string if message is missing.',
@@ -142,7 +142,7 @@ export class I18nApiTools extends BaseApiTools {
 
   private registerGetUILanguage(): void {
     this.server.registerTool(
-      'get_ui_language',
+      'extension_tool_get_ui_language',
       {
         description:
           'Get the browser UI language. This is different from accept languages which returns preferred user languages.',
@@ -165,7 +165,7 @@ export class I18nApiTools extends BaseApiTools {
 
   private registerGetAcceptLanguages(): void {
     this.server.registerTool(
-      'get_accept_languages',
+      'extension_tool_get_accept_languages',
       {
         description:
           'Get the accept-languages of the browser. This is different from the locale used by the browser.',
@@ -197,7 +197,7 @@ export class I18nApiTools extends BaseApiTools {
 
   private registerDetectLanguage(): void {
     this.server.registerTool(
-      'detect_language',
+      'extension_tool_detect_language',
       {
         description:
           'Detect the language of provided text using CLD (Compact Language Detector). Returns up to 3 detected languages.',

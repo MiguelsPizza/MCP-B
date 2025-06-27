@@ -109,7 +109,7 @@ export class TtsEngineApiTools extends BaseApiTools {
 
   private registerUpdateVoices(): void {
     this.server.registerTool(
-      'update_voices',
+      'extension_tool_update_voices',
       {
         description: 'Update the list of voices available for speech synthesis',
         inputSchema: {
@@ -149,7 +149,7 @@ export class TtsEngineApiTools extends BaseApiTools {
 
   private registerUpdateLanguage(): void {
     this.server.registerTool(
-      'update_language',
+      'extension_tool_update_language',
       {
         description: 'Update the installation status of a language',
         inputSchema: {
@@ -187,7 +187,7 @@ export class TtsEngineApiTools extends BaseApiTools {
 
   private registerOnSpeak(): void {
     this.server.registerTool(
-      'register_speak_listener',
+      'extension_tool_register_speak_listener',
       {
         description: 'Register a listener for speak events from the TTS engine',
         inputSchema: {},
@@ -220,7 +220,7 @@ export class TtsEngineApiTools extends BaseApiTools {
 
   private registerOnStop(): void {
     this.server.registerTool(
-      'register_stop_listener',
+      'extension_tool_register_stop_listener',
       {
         description: 'Register a listener for stop events from the TTS engine',
         inputSchema: {},
@@ -243,7 +243,7 @@ export class TtsEngineApiTools extends BaseApiTools {
 
   private registerOnPause(): void {
     this.server.registerTool(
-      'register_pause_listener',
+      'extension_tool_register_pause_listener',
       {
         description: 'Register a listener for pause events from the TTS engine',
         inputSchema: {},
@@ -266,7 +266,7 @@ export class TtsEngineApiTools extends BaseApiTools {
 
   private registerOnResume(): void {
     this.server.registerTool(
-      'register_resume_listener',
+      'extension_tool_register_resume_listener',
       {
         description: 'Register a listener for resume events from the TTS engine',
         inputSchema: {},
@@ -289,7 +289,7 @@ export class TtsEngineApiTools extends BaseApiTools {
 
   private registerOnSpeakWithAudioStream(): void {
     this.server.registerTool(
-      'register_speak_audio_stream_listener',
+      'extension_tool_register_speak_audio_stream_listener',
       {
         description: 'Register a listener for speak events with audio stream support',
         inputSchema: {},
@@ -330,7 +330,7 @@ export class TtsEngineApiTools extends BaseApiTools {
 
   private registerOnInstallLanguageRequest(): void {
     this.server.registerTool(
-      'register_install_language_listener',
+      'extension_tool_register_install_language_listener',
       {
         description: 'Register a listener for language installation requests',
         inputSchema: {},
@@ -361,7 +361,7 @@ export class TtsEngineApiTools extends BaseApiTools {
 
   private registerOnLanguageStatusRequest(): void {
     this.server.registerTool(
-      'register_language_status_listener',
+      'extension_tool_register_language_status_listener',
       {
         description: 'Register a listener for language status requests',
         inputSchema: {},
@@ -388,7 +388,7 @@ export class TtsEngineApiTools extends BaseApiTools {
 
   private registerOnUninstallLanguageRequest(): void {
     this.server.registerTool(
-      'register_uninstall_language_listener',
+      'extension_tool_register_uninstall_language_listener',
       {
         description: 'Register a listener for language uninstallation requests',
         inputSchema: {},

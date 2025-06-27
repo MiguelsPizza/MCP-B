@@ -60,7 +60,7 @@ export class DesktopCaptureApiTools extends BaseApiTools {
 
   private registerChooseDesktopMedia(): void {
     this.server.registerTool(
-      'choose_desktop_media',
+      'extension_tool_choose_desktop_media',
       {
         description: 'Shows desktop media picker UI with the specified set of sources',
         inputSchema: {
@@ -130,7 +130,7 @@ export class DesktopCaptureApiTools extends BaseApiTools {
 
   private registerCancelChooseDesktopMedia(): void {
     this.server.registerTool(
-      'cancel_choose_desktop_media',
+      'extension_tool_cancel_choose_desktop_media',
       {
         description: 'Hides desktop media picker dialog shown by chooseDesktopMedia',
         inputSchema: {

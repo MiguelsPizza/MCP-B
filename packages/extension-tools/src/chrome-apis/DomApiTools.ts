@@ -55,7 +55,7 @@ export class DomApiTools extends BaseApiTools {
 
   private registerOpenOrClosedShadowRoot(): void {
     this.server.registerTool(
-      'open_or_closed_shadow_root',
+      'extension_tool_open_or_closed_shadow_root',
       {
         description:
           'Gets the open shadow root or the closed shadow root hosted by the specified element',

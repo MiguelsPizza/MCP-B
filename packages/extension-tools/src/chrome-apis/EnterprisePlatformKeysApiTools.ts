@@ -88,7 +88,7 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
 
   private registerGetTokens(): void {
     this.server.registerTool(
-      'get_tokens',
+      'extension_tool_get_tokens',
       {
         description: 'Get the available platform keys tokens',
         inputSchema: {},
@@ -123,7 +123,7 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
 
   private registerGetCertificates(): void {
     this.server.registerTool(
-      'get_certificates',
+      'extension_tool_get_certificates',
       {
         description: 'Get certificates from a platform keys token',
         inputSchema: {
@@ -177,7 +177,7 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
 
   private registerImportCertificate(): void {
     this.server.registerTool(
-      'import_certificate',
+      'extension_tool_import_certificate',
       {
         description: 'Import a certificate to a platform keys token',
         inputSchema: {
@@ -218,7 +218,7 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
 
   private registerRemoveCertificate(): void {
     this.server.registerTool(
-      'remove_certificate',
+      'extension_tool_remove_certificate',
       {
         description: 'Remove a certificate from a platform keys token',
         inputSchema: {
@@ -259,7 +259,7 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
 
   private registerChallengeMachineKey(): void {
     this.server.registerTool(
-      'challenge_machine_key',
+      'extension_tool_challenge_machine_key',
       {
         description: 'Challenge the machine key for enterprise attestation',
         inputSchema: {
@@ -323,7 +323,7 @@ export class EnterprisePlatformKeysApiTools extends BaseApiTools {
 
   private registerChallengeUserKey(): void {
     this.server.registerTool(
-      'challenge_user_key',
+      'extension_tool_challenge_user_key',
       {
         description: 'Challenge the user key for enterprise attestation',
         inputSchema: {

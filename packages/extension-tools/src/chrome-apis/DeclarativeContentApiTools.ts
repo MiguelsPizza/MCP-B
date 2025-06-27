@@ -74,7 +74,7 @@ export class DeclarativeContentApiTools extends BaseApiTools {
 
   private registerAddRules(): void {
     this.server.registerTool(
-      'add_declarative_rules',
+      'extension_tool_add_declarative_rules',
       {
         description:
           'Add declarative content rules to control when the extension action is enabled',
@@ -263,7 +263,7 @@ export class DeclarativeContentApiTools extends BaseApiTools {
 
   private registerRemoveRules(): void {
     this.server.registerTool(
-      'remove_declarative_rules',
+      'extension_tool_remove_declarative_rules',
       {
         description: 'Remove declarative content rules',
         inputSchema: {
@@ -301,7 +301,7 @@ export class DeclarativeContentApiTools extends BaseApiTools {
 
   private registerGetRules(): void {
     this.server.registerTool(
-      'get_declarative_rules',
+      'extension_tool_get_declarative_rules',
       {
         description: 'Get existing declarative content rules',
         inputSchema: {

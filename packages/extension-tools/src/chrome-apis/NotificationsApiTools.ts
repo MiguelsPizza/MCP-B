@@ -82,7 +82,7 @@ export class NotificationsApiTools extends BaseApiTools {
 
   private registerCreateNotification(): void {
     this.server.registerTool(
-      'create_notification',
+      'extension_tool_create_notification',
       {
         description: 'Create and display a notification',
         inputSchema: {
@@ -223,7 +223,7 @@ export class NotificationsApiTools extends BaseApiTools {
 
   private registerUpdateNotification(): void {
     this.server.registerTool(
-      'update_notification',
+      'extension_tool_update_notification',
       {
         description: 'Update an existing notification',
         inputSchema: {
@@ -336,7 +336,7 @@ export class NotificationsApiTools extends BaseApiTools {
 
   private registerClearNotification(): void {
     this.server.registerTool(
-      'clear_notification',
+      'extension_tool_clear_notification',
       {
         description: 'Clear a specific notification',
         inputSchema: {
@@ -371,7 +371,7 @@ export class NotificationsApiTools extends BaseApiTools {
 
   private registerGetAllNotifications(): void {
     this.server.registerTool(
-      'get_all_notifications',
+      'extension_tool_get_all_notifications',
       {
         description: 'Get all active notifications for this extension',
         inputSchema: {},
@@ -404,7 +404,7 @@ export class NotificationsApiTools extends BaseApiTools {
 
   private registerGetPermissionLevel(): void {
     this.server.registerTool(
-      'get_permission_level',
+      'extension_tool_get_permission_level',
       {
         description: 'Get the current notification permission level for this extension',
         inputSchema: {},

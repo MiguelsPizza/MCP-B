@@ -56,7 +56,7 @@ export class SystemLogApiTools extends BaseApiTools {
 
   private registerAddLog(): void {
     this.server.registerTool(
-      'add_log',
+      'extension_tool_add_log',
       {
         description: 'Add a new log record to the Chrome system logs',
         inputSchema: {

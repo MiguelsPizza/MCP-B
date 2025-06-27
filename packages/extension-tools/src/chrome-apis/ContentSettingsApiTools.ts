@@ -235,7 +235,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetCookiesSetting(): void {
     this.server.registerTool(
-      'get_cookies_setting',
+      'extension_tool_get_cookies_setting',
       {
         description: 'Get the current cookies content setting for a given pair of URLs',
         inputSchema: {
@@ -291,7 +291,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetCookiesSetting(): void {
     this.server.registerTool(
-      'set_cookies_setting',
+      'extension_tool_set_cookies_setting',
       {
         description: 'Set a new cookies content setting rule',
         inputSchema: {
@@ -343,7 +343,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearCookiesSetting(): void {
     this.server.registerTool(
-      'clear_cookies_setting',
+      'extension_tool_clear_cookies_setting',
       {
         description: 'Clear all cookies content setting rules set by this extension',
         inputSchema: {
@@ -380,7 +380,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetJavascriptSetting(): void {
     this.server.registerTool(
-      'get_javascript_setting',
+      'extension_tool_get_javascript_setting',
       {
         description: 'Get the current JavaScript content setting for a given pair of URLs',
         inputSchema: {
@@ -436,7 +436,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetJavascriptSetting(): void {
     this.server.registerTool(
-      'set_javascript_setting',
+      'extension_tool_set_javascript_setting',
       {
         description: 'Set a new JavaScript content setting rule',
         inputSchema: {
@@ -488,7 +488,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearJavascriptSetting(): void {
     this.server.registerTool(
-      'clear_javascript_setting',
+      'extension_tool_clear_javascript_setting',
       {
         description: 'Clear all JavaScript content setting rules set by this extension',
         inputSchema: {
@@ -525,7 +525,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetImagesSetting(): void {
     this.server.registerTool(
-      'get_images_setting',
+      'extension_tool_get_images_setting',
       {
         description: 'Get the current images content setting for a given pair of URLs',
         inputSchema: {
@@ -581,7 +581,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetImagesSetting(): void {
     this.server.registerTool(
-      'set_images_setting',
+      'extension_tool_set_images_setting',
       {
         description: 'Set a new images content setting rule',
         inputSchema: {
@@ -633,7 +633,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearImagesSetting(): void {
     this.server.registerTool(
-      'clear_images_setting',
+      'extension_tool_clear_images_setting',
       {
         description: 'Clear all images content setting rules set by this extension',
         inputSchema: {
@@ -670,7 +670,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetLocationSetting(): void {
     this.server.registerTool(
-      'get_location_setting',
+      'extension_tool_get_location_setting',
       {
         description: 'Get the current location content setting for a given pair of URLs',
         inputSchema: {
@@ -726,7 +726,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetLocationSetting(): void {
     this.server.registerTool(
-      'set_location_setting',
+      'extension_tool_set_location_setting',
       {
         description: 'Set a new location content setting rule',
         inputSchema: {
@@ -778,7 +778,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearLocationSetting(): void {
     this.server.registerTool(
-      'clear_location_setting',
+      'extension_tool_clear_location_setting',
       {
         description: 'Clear all location content setting rules set by this extension',
         inputSchema: {
@@ -815,7 +815,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetNotificationsSetting(): void {
     this.server.registerTool(
-      'get_notifications_setting',
+      'extension_tool_get_notifications_setting',
       {
         description: 'Get the current notifications content setting for a given pair of URLs',
         inputSchema: {
@@ -871,7 +871,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetNotificationsSetting(): void {
     this.server.registerTool(
-      'set_notifications_setting',
+      'extension_tool_set_notifications_setting',
       {
         description: 'Set a new notifications content setting rule',
         inputSchema: {
@@ -923,7 +923,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearNotificationsSetting(): void {
     this.server.registerTool(
-      'clear_notifications_setting',
+      'extension_tool_clear_notifications_setting',
       {
         description: 'Clear all notifications content setting rules set by this extension',
         inputSchema: {
@@ -963,7 +963,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetPopupsSetting(): void {
     this.server.registerTool(
-      'get_popups_setting',
+      'extension_tool_get_popups_setting',
       {
         description: 'Get the current popups content setting for a given pair of URLs',
         inputSchema: {
@@ -1019,7 +1019,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetPopupsSetting(): void {
     this.server.registerTool(
-      'set_popups_setting',
+      'extension_tool_set_popups_setting',
       {
         description: 'Set a new popups content setting rule',
         inputSchema: {
@@ -1071,7 +1071,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearPopupsSetting(): void {
     this.server.registerTool(
-      'clear_popups_setting',
+      'extension_tool_clear_popups_setting',
       {
         description: 'Clear all popups content setting rules set by this extension',
         inputSchema: {
@@ -1108,7 +1108,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetCameraSetting(): void {
     this.server.registerTool(
-      'get_camera_setting',
+      'extension_tool_get_camera_setting',
       {
         description: 'Get the current camera content setting for a given pair of URLs',
         inputSchema: {
@@ -1164,7 +1164,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetCameraSetting(): void {
     this.server.registerTool(
-      'set_camera_setting',
+      'extension_tool_set_camera_setting',
       {
         description: 'Set a new camera content setting rule',
         inputSchema: {
@@ -1216,7 +1216,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearCameraSetting(): void {
     this.server.registerTool(
-      'clear_camera_setting',
+      'extension_tool_clear_camera_setting',
       {
         description: 'Clear all camera content setting rules set by this extension',
         inputSchema: {
@@ -1253,7 +1253,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetMicrophoneSetting(): void {
     this.server.registerTool(
-      'get_microphone_setting',
+      'extension_tool_get_microphone_setting',
       {
         description: 'Get the current microphone content setting for a given pair of URLs',
         inputSchema: {
@@ -1309,7 +1309,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetMicrophoneSetting(): void {
     this.server.registerTool(
-      'set_microphone_setting',
+      'extension_tool_set_microphone_setting',
       {
         description: 'Set a new microphone content setting rule',
         inputSchema: {
@@ -1361,7 +1361,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearMicrophoneSetting(): void {
     this.server.registerTool(
-      'clear_microphone_setting',
+      'extension_tool_clear_microphone_setting',
       {
         description: 'Clear all microphone content setting rules set by this extension',
         inputSchema: {
@@ -1398,7 +1398,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetAutomaticDownloadsSetting(): void {
     this.server.registerTool(
-      'get_automatic_downloads_setting',
+      'extension_tool_get_automatic_downloads_setting',
       {
         description: 'Get the current automatic downloads content setting for a given pair of URLs',
         inputSchema: {
@@ -1454,7 +1454,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetAutomaticDownloadsSetting(): void {
     this.server.registerTool(
-      'set_automatic_downloads_setting',
+      'extension_tool_set_automatic_downloads_setting',
       {
         description: 'Set a new automatic downloads content setting rule',
         inputSchema: {
@@ -1509,7 +1509,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearAutomaticDownloadsSetting(): void {
     this.server.registerTool(
-      'clear_automatic_downloads_setting',
+      'extension_tool_clear_automatic_downloads_setting',
       {
         description: 'Clear all automatic downloads content setting rules set by this extension',
         inputSchema: {
@@ -1549,7 +1549,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetClipboardSetting(): void {
     this.server.registerTool(
-      'get_clipboard_setting',
+      'extension_tool_get_clipboard_setting',
       {
         description: 'Get the current clipboard content setting for a given pair of URLs',
         inputSchema: {
@@ -1605,7 +1605,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetClipboardSetting(): void {
     this.server.registerTool(
-      'set_clipboard_setting',
+      'extension_tool_set_clipboard_setting',
       {
         description: 'Set a new clipboard content setting rule',
         inputSchema: {
@@ -1657,7 +1657,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearClipboardSetting(): void {
     this.server.registerTool(
-      'clear_clipboard_setting',
+      'extension_tool_clear_clipboard_setting',
       {
         description: 'Clear all clipboard content setting rules set by this extension',
         inputSchema: {
@@ -1694,7 +1694,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetAutoVerifySetting(): void {
     this.server.registerTool(
-      'get_auto_verify_setting',
+      'extension_tool_get_auto_verify_setting',
       {
         description: 'Get the current auto verify content setting for a given pair of URLs',
         inputSchema: {
@@ -1750,7 +1750,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerSetAutoVerifySetting(): void {
     this.server.registerTool(
-      'set_auto_verify_setting',
+      'extension_tool_set_auto_verify_setting',
       {
         description: 'Set a new auto verify content setting rule',
         inputSchema: {
@@ -1802,7 +1802,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerClearAutoVerifySetting(): void {
     this.server.registerTool(
-      'clear_auto_verify_setting',
+      'extension_tool_clear_auto_verify_setting',
       {
         description: 'Clear all auto verify content setting rules set by this extension',
         inputSchema: {
@@ -1839,7 +1839,7 @@ export class ContentSettingsApiTools extends BaseApiTools {
 
   private registerGetPluginsResourceIdentifiers(): void {
     this.server.registerTool(
-      'get_plugins_resource_identifiers',
+      'extension_tool_get_plugins_resource_identifiers',
       {
         description: 'Get a list of resource identifiers for the plugins content type',
         inputSchema: {},

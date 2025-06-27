@@ -83,7 +83,7 @@ export class PrintingApiTools extends BaseApiTools {
 
   private registerGetPrinters(): void {
     this.server.registerTool(
-      'get_printers',
+      'extension_tool_get_printers',
       {
         description:
           'Get the list of available printers on the device. This includes manually added, enterprise and discovered printers.',
@@ -122,7 +122,7 @@ export class PrintingApiTools extends BaseApiTools {
 
   private registerGetPrinterInfo(): void {
     this.server.registerTool(
-      'get_printer_info',
+      'extension_tool_get_printer_info',
       {
         description: 'Get the status and capabilities of a specific printer in CDD format',
         inputSchema: {
@@ -157,7 +157,7 @@ export class PrintingApiTools extends BaseApiTools {
 
   private registerSubmitJob(): void {
     this.server.registerTool(
-      'submit_job',
+      'extension_tool_submit_job',
       {
         description:
           'Submit a print job to a printer. Supported content types are "application/pdf" and "image/png". User confirmation may be required unless extension is allowlisted.',
@@ -284,7 +284,7 @@ export class PrintingApiTools extends BaseApiTools {
 
   private registerCancelJob(): void {
     this.server.registerTool(
-      'cancel_job',
+      'extension_tool_cancel_job',
       {
         description: 'Cancel a previously submitted print job',
         inputSchema: {
@@ -313,7 +313,7 @@ export class PrintingApiTools extends BaseApiTools {
 
   private registerGetJobStatus(): void {
     this.server.registerTool(
-      'get_job_status',
+      'extension_tool_get_job_status',
       {
         description: 'Get the status of a print job',
         inputSchema: {

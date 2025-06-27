@@ -76,7 +76,7 @@ export class VpnProviderApiTools extends BaseApiTools {
 
   private registerCreateConfig(): void {
     this.server.registerTool(
-      'create_vpn_config',
+      'extension_tool_create_vpn_config',
       {
         description: 'Create a new VPN configuration that persists across multiple login sessions',
         inputSchema: {
@@ -110,7 +110,7 @@ export class VpnProviderApiTools extends BaseApiTools {
 
   private registerDestroyConfig(): void {
     this.server.registerTool(
-      'destroy_vpn_config',
+      'extension_tool_destroy_vpn_config',
       {
         description: 'Destroy a VPN configuration created by the extension',
         inputSchema: {
@@ -141,7 +141,7 @@ export class VpnProviderApiTools extends BaseApiTools {
 
   private registerSetParameters(): void {
     this.server.registerTool(
-      'set_vpn_parameters',
+      'extension_tool_set_vpn_parameters',
       {
         description:
           'Set the parameters for the VPN session. Should be called immediately after "connected" is received',
@@ -229,7 +229,7 @@ export class VpnProviderApiTools extends BaseApiTools {
 
   private registerNotifyConnectionStateChanged(): void {
     this.server.registerTool(
-      'notify_vpn_connection_state',
+      'extension_tool_notify_vpn_connection_state',
       {
         description:
           'Notify the VPN session state to the platform. This will succeed only when the VPN session is owned by the extension',
@@ -263,7 +263,7 @@ export class VpnProviderApiTools extends BaseApiTools {
 
   private registerSendPacket(): void {
     this.server.registerTool(
-      'send_vpn_packet',
+      'extension_tool_send_vpn_packet',
       {
         description:
           'Send an IP packet through the tunnel created for the VPN session. This will succeed only when the VPN session is owned by the extension',

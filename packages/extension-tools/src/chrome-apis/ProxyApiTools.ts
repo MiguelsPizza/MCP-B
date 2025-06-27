@@ -71,7 +71,7 @@ export class ProxyApiTools extends BaseApiTools {
 
   private registerGetProxySettings(): void {
     this.server.registerTool(
-      'get_proxy_settings',
+      'extension_tool_get_proxy_settings',
       {
         description: 'Get the current proxy configuration settings',
         inputSchema: {
@@ -108,7 +108,7 @@ export class ProxyApiTools extends BaseApiTools {
 
   private registerSetProxySettings(): void {
     this.server.registerTool(
-      'set_proxy_settings',
+      'extension_tool_set_proxy_settings',
       {
         description: 'Set proxy configuration settings',
         inputSchema: {
@@ -303,7 +303,7 @@ export class ProxyApiTools extends BaseApiTools {
 
   private registerClearProxySettings(): void {
     this.server.registerTool(
-      'clear_proxy_settings',
+      'extension_tool_clear_proxy_settings',
       {
         description: 'Clear proxy settings and revert to default',
         inputSchema: {

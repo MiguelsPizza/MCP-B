@@ -91,7 +91,7 @@ export class IdentityApiTools extends BaseApiTools {
 
   private registerGetAuthToken(): void {
     this.server.registerTool(
-      'get_auth_token',
+      'extension_tool_get_auth_token',
       {
         description:
           'Gets an OAuth2 access token using the client ID and scopes specified in manifest.json',
@@ -156,7 +156,7 @@ export class IdentityApiTools extends BaseApiTools {
 
   private registerGetProfileUserInfo(): void {
     this.server.registerTool(
-      'get_profile_user_info',
+      'extension_tool_get_profile_user_info',
       {
         description:
           'Retrieves email address and obfuscated gaia id of the user signed into a profile',
@@ -198,7 +198,7 @@ export class IdentityApiTools extends BaseApiTools {
 
   private registerGetAccounts(): void {
     this.server.registerTool(
-      'get_accounts',
+      'extension_tool_get_accounts',
       {
         description:
           'Retrieves a list of AccountInfo objects describing the accounts present on the profile',
@@ -231,7 +231,7 @@ export class IdentityApiTools extends BaseApiTools {
 
   private registerGetRedirectURL(): void {
     this.server.registerTool(
-      'get_redirect_url',
+      'extension_tool_get_redirect_url',
       {
         description: 'Generates a redirect URL to be used in launchWebAuthFlow',
         inputSchema: {
@@ -254,7 +254,7 @@ export class IdentityApiTools extends BaseApiTools {
 
   private registerLaunchWebAuthFlow(): void {
     this.server.registerTool(
-      'launch_web_auth_flow',
+      'extension_tool_launch_web_auth_flow',
       {
         description: 'Starts an auth flow at the specified URL with non-Google identity providers',
         inputSchema: {
@@ -311,7 +311,7 @@ export class IdentityApiTools extends BaseApiTools {
 
   private registerRemoveCachedAuthToken(): void {
     this.server.registerTool(
-      'remove_cached_auth_token',
+      'extension_tool_remove_cached_auth_token',
       {
         description: 'Removes an OAuth2 access token from the Identity API token cache',
         inputSchema: {
@@ -342,7 +342,7 @@ export class IdentityApiTools extends BaseApiTools {
 
   private registerClearAllCachedAuthTokens(): void {
     this.server.registerTool(
-      'clear_all_cached_auth_tokens',
+      'extension_tool_clear_all_cached_auth_tokens',
       {
         description:
           'Resets the state of the Identity API by removing all OAuth2 tokens and user preferences',

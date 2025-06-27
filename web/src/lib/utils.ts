@@ -79,3 +79,27 @@ export function mcpToolToJSONSchema(inputSchema: {
     ),
   } as JSONSchema7;
 }
+
+/**
+ * Extract domain from URL with special handling for localhost.
+ * For localhost URLs, includes the port to allow grouping by multiple ports.
+ * @param url - The URL to extract domain from
+ * @returns The domain string, or 'localhost:port' for localhost URLs
+ */
+export function extractDomain(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname;
+    
+    // Special handling for localhost - include port for grouping
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]') {
+      return `localhost:${urlObj.port || '80'}`;
+    }
+    
+    // For other domains, return just the hostname
+    return hostname;
+  } catch {
+    // If URL parsing fails, return a default
+    return 'unknown';
+  }
+}

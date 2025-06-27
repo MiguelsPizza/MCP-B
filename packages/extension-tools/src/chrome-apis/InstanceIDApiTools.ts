@@ -82,7 +82,7 @@ export class InstanceIDApiTools extends BaseApiTools {
 
   private registerGetID(): void {
     this.server.registerTool(
-      'get_instance_id',
+      'extension_tool_get_instance_id',
       {
         description:
           'Retrieve an identifier for the app instance. The same ID will be returned as long as the application identity has not been revoked or expired',
@@ -112,7 +112,7 @@ export class InstanceIDApiTools extends BaseApiTools {
 
   private registerGetCreationTime(): void {
     this.server.registerTool(
-      'get_creation_time',
+      'extension_tool_get_creation_time',
       {
         description:
           'Retrieve the time when the InstanceID has been generated, represented in milliseconds since the epoch',
@@ -143,7 +143,7 @@ export class InstanceIDApiTools extends BaseApiTools {
 
   private registerGetToken(): void {
     this.server.registerTool(
-      'get_token',
+      'extension_tool_get_token',
       {
         description:
           'Return a token that allows the authorized entity to access the service defined by scope',
@@ -201,7 +201,7 @@ export class InstanceIDApiTools extends BaseApiTools {
 
   private registerDeleteToken(): void {
     this.server.registerTool(
-      'delete_token',
+      'extension_tool_delete_token',
       {
         description: 'Revoke a granted token',
         inputSchema: {
@@ -241,7 +241,7 @@ export class InstanceIDApiTools extends BaseApiTools {
 
   private registerDeleteID(): void {
     this.server.registerTool(
-      'delete_instance_id',
+      'extension_tool_delete_instance_id',
       {
         description: 'Reset the app instance identifier and revoke all tokens associated with it',
         inputSchema: {},

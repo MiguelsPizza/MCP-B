@@ -72,7 +72,7 @@ export class TabCaptureApiTools extends BaseApiTools {
 
   private registerCapture(): void {
     this.server.registerTool(
-      'capture_tab',
+      'extension_tool_capture_tab',
       {
         description:
           'Captures the visible area of the currently active tab. Can only be started on the currently active tab after the extension has been invoked.',
@@ -137,7 +137,7 @@ export class TabCaptureApiTools extends BaseApiTools {
 
   private registerGetCapturedTabs(): void {
     this.server.registerTool(
-      'get_captured_tabs',
+      'extension_tool_get_captured_tabs',
       {
         description: 'Returns a list of tabs that have requested capture or are being captured',
         inputSchema: {},
@@ -173,7 +173,7 @@ export class TabCaptureApiTools extends BaseApiTools {
 
   private registerGetMediaStreamId(): void {
     this.server.registerTool(
-      'get_media_stream_id',
+      'extension_tool_get_media_stream_id',
       {
         description:
           'Creates a stream ID to capture the target tab. Returns a media stream ID instead of a media stream.',

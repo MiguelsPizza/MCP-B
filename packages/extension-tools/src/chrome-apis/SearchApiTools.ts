@@ -54,7 +54,7 @@ export class SearchApiTools extends BaseApiTools {
 
   private registerQuery(): void {
     this.server.registerTool(
-      'search_query',
+      'extension_tool_search_query',
       {
         description: 'Search using the default search provider',
         inputSchema: {

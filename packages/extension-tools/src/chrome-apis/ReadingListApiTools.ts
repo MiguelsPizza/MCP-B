@@ -77,7 +77,7 @@ export class ReadingListApiTools extends BaseApiTools {
 
   private registerAddEntry(): void {
     this.server.registerTool(
-      'add_reading_list_entry',
+      'extension_tool_add_reading_list_entry',
       {
         description: 'Add an entry to the reading list if it does not exist',
         inputSchema: {
@@ -119,7 +119,7 @@ export class ReadingListApiTools extends BaseApiTools {
 
   private registerQuery(): void {
     this.server.registerTool(
-      'query_reading_list',
+      'extension_tool_query_reading_list',
       {
         description:
           'Retrieve all entries that match the query criteria. Properties that are not provided will not be matched',
@@ -172,7 +172,7 @@ export class ReadingListApiTools extends BaseApiTools {
 
   private registerRemoveEntry(): void {
     this.server.registerTool(
-      'remove_reading_list_entry',
+      'extension_tool_remove_reading_list_entry',
       {
         description: 'Remove an entry from the reading list if it exists',
         inputSchema: {
@@ -208,7 +208,7 @@ export class ReadingListApiTools extends BaseApiTools {
 
   private registerUpdateEntry(): void {
     this.server.registerTool(
-      'update_reading_list_entry',
+      'extension_tool_update_reading_list_entry',
       {
         description: 'Update a reading list entry if it exists',
         inputSchema: {

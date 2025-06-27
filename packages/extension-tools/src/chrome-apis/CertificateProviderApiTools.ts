@@ -81,7 +81,7 @@ export class CertificateProviderApiTools extends BaseApiTools {
 
   private registerSetCertificates(): void {
     this.server.registerTool(
-      'set_certificates',
+      'extension_tool_set_certificates',
       {
         description:
           'Sets a list of certificates to use in the browser for TLS client authentication',
@@ -156,7 +156,7 @@ export class CertificateProviderApiTools extends BaseApiTools {
 
   private registerReportSignature(): void {
     this.server.registerTool(
-      'report_signature',
+      'extension_tool_report_signature',
       {
         description: 'Reports the signature for a signing request from the browser',
         inputSchema: {
@@ -214,7 +214,7 @@ export class CertificateProviderApiTools extends BaseApiTools {
 
   private registerRequestPin(): void {
     this.server.registerTool(
-      'request_pin',
+      'extension_tool_request_pin',
       {
         description: 'Requests PIN or PUK from the user for certificate operations',
         inputSchema: {
@@ -277,7 +277,7 @@ export class CertificateProviderApiTools extends BaseApiTools {
 
   private registerStopPinRequest(): void {
     this.server.registerTool(
-      'stop_pin_request',
+      'extension_tool_stop_pin_request',
       {
         description: 'Stops an ongoing PIN request flow',
         inputSchema: {
@@ -321,7 +321,7 @@ export class CertificateProviderApiTools extends BaseApiTools {
 
   private registerOnCertificatesUpdateRequested(): void {
     this.server.registerTool(
-      'listen_certificates_update_requested',
+      'extension_tool_listen_certificates_update_requested',
       {
         description: 'Sets up listener for certificate update requests from the browser',
         inputSchema: {},
@@ -353,7 +353,7 @@ export class CertificateProviderApiTools extends BaseApiTools {
 
   private registerOnSignatureRequested(): void {
     this.server.registerTool(
-      'listen_signature_requested',
+      'extension_tool_listen_signature_requested',
       {
         description: 'Sets up listener for signature requests from the browser',
         inputSchema: {},

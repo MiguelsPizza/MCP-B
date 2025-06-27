@@ -98,7 +98,7 @@ export class StorageApiTools extends BaseApiTools {
     const availableAreas = this.getAvailableAreas();
 
     this.server.registerTool(
-      'get_storage',
+      'extension_tool_get_storage',
       {
         description: 'Get data from extension storage',
         inputSchema: {
@@ -139,7 +139,7 @@ export class StorageApiTools extends BaseApiTools {
     const availableAreas = this.getAvailableAreas();
 
     this.server.registerTool(
-      'set_storage',
+      'extension_tool_set_storage',
       {
         description: 'Set data in extension storage',
         inputSchema: {
@@ -176,7 +176,7 @@ export class StorageApiTools extends BaseApiTools {
     const availableAreas = this.getAvailableAreas();
 
     this.server.registerTool(
-      'remove_storage',
+      'extension_tool_remove_storage',
       {
         description: 'Remove specific keys from extension storage',
         inputSchema: {
@@ -210,7 +210,7 @@ export class StorageApiTools extends BaseApiTools {
     const availableAreas = this.getAvailableAreas();
 
     this.server.registerTool(
-      'clear_storage',
+      'extension_tool_clear_storage',
       {
         description: 'Clear all data from a storage area',
         inputSchema: {
@@ -247,7 +247,7 @@ export class StorageApiTools extends BaseApiTools {
     const availableAreas = this.getAvailableAreas();
 
     this.server.registerTool(
-      'get_storage_bytes_in_use',
+      'extension_tool_get_storage_bytes_in_use',
       {
         description: 'Get the amount of storage space used',
         inputSchema: {

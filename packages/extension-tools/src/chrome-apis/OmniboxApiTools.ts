@@ -83,7 +83,7 @@ export class OmniboxApiTools extends BaseApiTools {
 
   private registerSetDefaultSuggestion(): void {
     this.server.registerTool(
-      'set_default_suggestion',
+      'extension_tool_set_default_suggestion',
       {
         description: 'Set the description and styling for the default suggestion in the omnibox',
         inputSchema: {
@@ -110,7 +110,7 @@ export class OmniboxApiTools extends BaseApiTools {
 
   private registerOnInputStarted(): void {
     this.server.registerTool(
-      'add_input_started_listener',
+      'extension_tool_add_input_started_listener',
       {
         description:
           'Add a listener for when user starts a keyword input session by typing the extension keyword',
@@ -132,7 +132,7 @@ export class OmniboxApiTools extends BaseApiTools {
 
   private registerOnInputChanged(): void {
     this.server.registerTool(
-      'add_input_changed_listener',
+      'extension_tool_add_input_changed_listener',
       {
         description: 'Add a listener for when user changes what is typed into the omnibox',
         inputSchema: {
@@ -175,7 +175,7 @@ export class OmniboxApiTools extends BaseApiTools {
 
   private registerOnInputEntered(): void {
     this.server.registerTool(
-      'add_input_entered_listener',
+      'extension_tool_add_input_entered_listener',
       {
         description: 'Add a listener for when user accepts what is typed into the omnibox',
         inputSchema: {},
@@ -209,7 +209,7 @@ export class OmniboxApiTools extends BaseApiTools {
 
   private registerOnInputCancelled(): void {
     this.server.registerTool(
-      'add_input_cancelled_listener',
+      'extension_tool_add_input_cancelled_listener',
       {
         description:
           'Add a listener for when user ends the keyword input session without accepting input',
@@ -231,7 +231,7 @@ export class OmniboxApiTools extends BaseApiTools {
 
   private registerOnDeleteSuggestion(): void {
     this.server.registerTool(
-      'add_delete_suggestion_listener',
+      'extension_tool_add_delete_suggestion_listener',
       {
         description: 'Add a listener for when user deletes a suggested result',
         inputSchema: {},

@@ -118,7 +118,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerGetDynamicRules(): void {
     this.server.registerTool(
-      'get_dynamic_rules',
+      'extension_tool_get_dynamic_rules',
       {
         description: 'Get the current set of dynamic rules for the extension',
       },
@@ -149,7 +149,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerUpdateDynamicRules(): void {
     this.server.registerTool(
-      'update_dynamic_rules',
+      'extension_tool_update_dynamic_rules',
       {
         description: 'Modify the current set of dynamic rules for the extension',
         inputSchema: {
@@ -196,7 +196,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerGetSessionRules(): void {
     this.server.registerTool(
-      'get_session_rules',
+      'extension_tool_get_session_rules',
       {
         description: 'Get the current set of session scoped rules for the extension',
       },
@@ -227,7 +227,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerUpdateSessionRules(): void {
     this.server.registerTool(
-      'update_session_rules',
+      'extension_tool_update_session_rules',
       {
         description: 'Modify the current set of session scoped rules for the extension',
         inputSchema: {
@@ -274,7 +274,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerGetEnabledRulesets(): void {
     this.server.registerTool(
-      'get_enabled_rulesets',
+      'extension_tool_get_enabled_rulesets',
       {
         description: 'Get the ids for the current set of enabled static rulesets',
         inputSchema: {},
@@ -304,7 +304,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerUpdateEnabledRulesets(): void {
     this.server.registerTool(
-      'update_enabled_rulesets',
+      'extension_tool_update_enabled_rulesets',
       {
         description: 'Update the set of enabled static rulesets for the extension',
         inputSchema: {
@@ -351,7 +351,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerUpdateStaticRules(): void {
     this.server.registerTool(
-      'update_static_rules',
+      'extension_tool_update_static_rules',
       {
         description: 'Disable and enable individual static rules in a Ruleset',
         inputSchema: {
@@ -402,7 +402,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerGetAvailableStaticRuleCount(): void {
     this.server.registerTool(
-      'get_available_static_rule_count',
+      'extension_tool_get_available_static_rule_count',
       {
         description:
           'Get the number of static rules an extension can enable before the global static rule limit is reached',
@@ -432,7 +432,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerGetMatchedRules(): void {
     this.server.registerTool(
-      'get_matched_rules',
+      'extension_tool_get_matched_rules',
       {
         description:
           'Get all rules matched for the extension. Requires "declarativeNetRequestFeedback" permission',
@@ -489,7 +489,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerIsRegexSupported(): void {
     this.server.registerTool(
-      'is_regex_supported',
+      'extension_tool_is_regex_supported',
       {
         description:
           'Check if the given regular expression will be supported as a regexFilter rule condition',
@@ -543,7 +543,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerTestMatchOutcome(): void {
     this.server.registerTool(
-      'test_match_outcome',
+      'extension_tool_test_match_outcome',
       {
         description:
           "Check if any of the extension's declarativeNetRequest rules would match a hypothetical request. Only available for unpacked extensions",
@@ -617,7 +617,7 @@ export class DeclarativeNetRequestApiTools extends BaseApiTools {
 
   private registerSetExtensionActionOptions(): void {
     this.server.registerTool(
-      'set_extension_action_options',
+      'extension_tool_set_extension_action_options',
       {
         description:
           "Configure if the action count for tabs should be displayed as the extension action's badge text",

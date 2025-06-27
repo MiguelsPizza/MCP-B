@@ -77,7 +77,7 @@ export class ExtensionApiTools extends BaseApiTools {
 
   private registerGetBackgroundPage(): void {
     this.server.registerTool(
-      'get_background_page',
+      'extension_tool_get_background_page',
       {
         description:
           'Returns the JavaScript window object for the background page running inside the current extension',
@@ -107,7 +107,7 @@ export class ExtensionApiTools extends BaseApiTools {
 
   private registerGetViews(): void {
     this.server.registerTool(
-      'get_views',
+      'extension_tool_get_views',
       {
         description:
           'Returns an array of the JavaScript window objects for each of the pages running inside the current extension',
@@ -166,7 +166,7 @@ export class ExtensionApiTools extends BaseApiTools {
 
   private registerIsAllowedFileSchemeAccess(): void {
     this.server.registerTool(
-      'is_allowed_file_scheme_access',
+      'extension_tool_is_allowed_file_scheme_access',
       {
         description:
           'Retrieves the state of the extension\'s access to the file:// scheme. This corresponds to the user-controlled per-extension "Allow access to File URLs" setting',
@@ -199,7 +199,7 @@ export class ExtensionApiTools extends BaseApiTools {
 
   private registerIsAllowedIncognitoAccess(): void {
     this.server.registerTool(
-      'is_allowed_incognito_access',
+      'extension_tool_is_allowed_incognito_access',
       {
         description:
           'Retrieves the state of the extension\'s access to Incognito-mode. This corresponds to the user-controlled per-extension "Allowed in Incognito" setting',
@@ -233,7 +233,7 @@ export class ExtensionApiTools extends BaseApiTools {
 
   private registerSetUpdateUrlData(): void {
     this.server.registerTool(
-      'set_update_url_data',
+      'extension_tool_set_update_url_data',
       {
         description:
           "Sets the value of the ap CGI parameter used in the extension's update URL. This value is ignored for extensions hosted in the Chrome Extension Gallery",

@@ -62,7 +62,7 @@ export class EnterpriseHardwarePlatformApiTools extends BaseApiTools {
 
   private registerGetHardwarePlatformInfo(): void {
     this.server.registerTool(
-      'get_hardware_platform_info',
+      'extension_tool_get_hardware_platform_info',
       {
         description: 'Get hardware platform information for the device',
         inputSchema: {},

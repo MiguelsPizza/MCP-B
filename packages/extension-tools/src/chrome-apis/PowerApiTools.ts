@@ -68,7 +68,7 @@ export class PowerApiTools extends BaseApiTools {
 
   private registerRequestKeepAwake(): void {
     this.server.registerTool(
-      'request_keep_awake',
+      'extension_tool_request_keep_awake',
       {
         description:
           'Request that power management be temporarily disabled to keep the system or display awake',
@@ -100,7 +100,7 @@ export class PowerApiTools extends BaseApiTools {
 
   private registerReleaseKeepAwake(): void {
     this.server.registerTool(
-      'release_keep_awake',
+      'extension_tool_release_keep_awake',
       {
         description:
           'Release a previously made power management request, allowing normal power management to resume',
@@ -122,7 +122,7 @@ export class PowerApiTools extends BaseApiTools {
 
   private registerReportActivity(): void {
     this.server.registerTool(
-      'report_activity',
+      'extension_tool_report_activity',
       {
         description:
           'Report user activity to wake the screen from dimmed/off state or exit screensaver (ChromeOS only)',

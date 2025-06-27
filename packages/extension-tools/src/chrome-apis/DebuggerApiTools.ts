@@ -77,7 +77,7 @@ export class DebuggerApiTools extends BaseApiTools {
 
   private registerAttach(): void {
     this.server.registerTool(
-      'attach_debugger',
+      'extension_tool_attach_debugger',
       {
         description: 'Attach debugger to a target (tab, extension, or target ID)',
         inputSchema: {
@@ -129,7 +129,7 @@ export class DebuggerApiTools extends BaseApiTools {
 
   private registerDetach(): void {
     this.server.registerTool(
-      'detach_debugger',
+      'extension_tool_detach_debugger',
       {
         description: 'Detach debugger from a target',
         inputSchema: {
@@ -179,7 +179,7 @@ export class DebuggerApiTools extends BaseApiTools {
 
   private registerSendCommand(): void {
     this.server.registerTool(
-      'send_debugger_command',
+      'extension_tool_send_debugger_command',
       {
         description: 'Send a Chrome DevTools Protocol command to a debugging target',
         inputSchema: {
@@ -232,7 +232,7 @@ export class DebuggerApiTools extends BaseApiTools {
 
   private registerGetTargets(): void {
     this.server.registerTool(
-      'get_debug_targets',
+      'extension_tool_get_debug_targets',
       {
         description: 'Get list of available debug targets',
         inputSchema: {},

@@ -81,7 +81,7 @@ export class ContextMenusApiTools extends BaseApiTools {
 
   private registerCreateContextMenu(): void {
     this.server.registerTool(
-      'create_context_menu',
+      'extension_tool_create_context_menu',
       {
         description: 'Create a new context menu item that appears when right-clicking on web pages',
         inputSchema: {
@@ -205,7 +205,7 @@ export class ContextMenusApiTools extends BaseApiTools {
 
   private registerUpdateContextMenu(): void {
     this.server.registerTool(
-      'update_context_menu',
+      'extension_tool_update_context_menu',
       {
         description: 'Update an existing context menu item',
         inputSchema: {
@@ -298,7 +298,7 @@ export class ContextMenusApiTools extends BaseApiTools {
 
   private registerRemoveContextMenu(): void {
     this.server.registerTool(
-      'remove_context_menu',
+      'extension_tool_remove_context_menu',
       {
         description: 'Remove a specific context menu item',
         inputSchema: {
@@ -327,7 +327,7 @@ export class ContextMenusApiTools extends BaseApiTools {
 
   private registerRemoveAllContextMenus(): void {
     this.server.registerTool(
-      'remove_all_context_menus',
+      'extension_tool_remove_all_context_menus',
       {
         description: 'Remove all context menu items created by this extension',
         inputSchema: {},

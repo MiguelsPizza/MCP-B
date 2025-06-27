@@ -81,7 +81,7 @@ export class AlarmsApiTools extends BaseApiTools {
 
   private registerCreateAlarm(): void {
     this.server.registerTool(
-      'create_alarm',
+      'extension_tool_create_alarm',
       {
         description: 'Create an alarm that fires at a specific time or periodically',
         inputSchema: {
@@ -180,7 +180,7 @@ export class AlarmsApiTools extends BaseApiTools {
 
   private registerGetAlarm(): void {
     this.server.registerTool(
-      'get_alarm',
+      'extension_tool_get_alarm',
       {
         description: 'Get details about a specific alarm',
         inputSchema: {
@@ -233,7 +233,7 @@ export class AlarmsApiTools extends BaseApiTools {
 
   private registerGetAllAlarms(): void {
     this.server.registerTool(
-      'get_all_alarms',
+      'extension_tool_get_all_alarms',
       {
         description: 'Get all active alarms',
         inputSchema: {},
@@ -268,7 +268,7 @@ export class AlarmsApiTools extends BaseApiTools {
 
   private registerClearAlarm(): void {
     this.server.registerTool(
-      'clear_alarm',
+      'extension_tool_clear_alarm',
       {
         description: 'Clear a specific alarm',
         inputSchema: {
@@ -316,7 +316,7 @@ export class AlarmsApiTools extends BaseApiTools {
 
   private registerClearAllAlarms(): void {
     this.server.registerTool(
-      'clear_all_alarms',
+      'extension_tool_clear_all_alarms',
       {
         description: 'Clear all alarms',
         inputSchema: {},

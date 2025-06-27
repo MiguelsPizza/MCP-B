@@ -122,7 +122,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerGetFont(): void {
     this.server.registerTool(
-      'get_font',
+      'extension_tool_get_font',
       {
         description: 'Get the font for a given script and generic font family',
         inputSchema: {
@@ -169,7 +169,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerSetFont(): void {
     this.server.registerTool(
-      'set_font',
+      'extension_tool_set_font',
       {
         description: 'Set the font for a given script and generic font family',
         inputSchema: {
@@ -220,7 +220,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerClearFont(): void {
     this.server.registerTool(
-      'clear_font',
+      'extension_tool_clear_font',
       {
         description: 'Clear the font set by this extension, if any',
         inputSchema: {
@@ -265,7 +265,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerGetFontList(): void {
     this.server.registerTool(
-      'get_font_list',
+      'extension_tool_get_font_list',
       {
         description: 'Get a list of fonts on the system',
         inputSchema: {},
@@ -298,7 +298,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerGetDefaultFontSize(): void {
     this.server.registerTool(
-      'get_default_font_size',
+      'extension_tool_get_default_font_size',
       {
         description: 'Get the default font size',
         inputSchema: {},
@@ -328,7 +328,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerSetDefaultFontSize(): void {
     this.server.registerTool(
-      'set_default_font_size',
+      'extension_tool_set_default_font_size',
       {
         description: 'Set the default font size',
         inputSchema: {
@@ -359,7 +359,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerClearDefaultFontSize(): void {
     this.server.registerTool(
-      'clear_default_font_size',
+      'extension_tool_clear_default_font_size',
       {
         description: 'Clear the default font size set by this extension, if any',
         inputSchema: {},
@@ -386,7 +386,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerGetDefaultFixedFontSize(): void {
     this.server.registerTool(
-      'get_default_fixed_font_size',
+      'extension_tool_get_default_fixed_font_size',
       {
         description: 'Get the default size for fixed width fonts',
         inputSchema: {},
@@ -416,7 +416,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerSetDefaultFixedFontSize(): void {
     this.server.registerTool(
-      'set_default_fixed_font_size',
+      'extension_tool_set_default_fixed_font_size',
       {
         description: 'Set the default size for fixed width fonts',
         inputSchema: {
@@ -447,7 +447,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerClearDefaultFixedFontSize(): void {
     this.server.registerTool(
-      'clear_default_fixed_font_size',
+      'extension_tool_clear_default_fixed_font_size',
       {
         description: 'Clear the default fixed font size set by this extension, if any',
         inputSchema: {},
@@ -474,7 +474,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerGetMinimumFontSize(): void {
     this.server.registerTool(
-      'get_minimum_font_size',
+      'extension_tool_get_minimum_font_size',
       {
         description: 'Get the minimum font size',
         inputSchema: {},
@@ -504,7 +504,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerSetMinimumFontSize(): void {
     this.server.registerTool(
-      'set_minimum_font_size',
+      'extension_tool_set_minimum_font_size',
       {
         description: 'Set the minimum font size',
         inputSchema: {
@@ -535,7 +535,7 @@ export class FontSettingsApiTools extends BaseApiTools {
 
   private registerClearMinimumFontSize(): void {
     this.server.registerTool(
-      'clear_minimum_font_size',
+      'extension_tool_clear_minimum_font_size',
       {
         description: 'Clear the minimum font size set by this extension, if any',
         inputSchema: {},

@@ -86,7 +86,7 @@ export class TtsApiTools extends BaseApiTools {
 
   private registerSpeak(): void {
     this.server.registerTool(
-      'speak_text',
+      'extension_tool_speak_text',
       {
         description: 'Speaks text using text-to-speech synthesis',
         inputSchema: {
@@ -213,7 +213,7 @@ export class TtsApiTools extends BaseApiTools {
 
   private registerStop(): void {
     this.server.registerTool(
-      'stop_speech',
+      'extension_tool_stop_speech',
       {
         description: 'Stops any current speech and flushes the queue of pending utterances',
         inputSchema: {},
@@ -231,7 +231,7 @@ export class TtsApiTools extends BaseApiTools {
 
   private registerPause(): void {
     this.server.registerTool(
-      'pause_speech',
+      'extension_tool_pause_speech',
       {
         description: 'Pauses speech synthesis, potentially in the middle of an utterance',
         inputSchema: {},
@@ -249,7 +249,7 @@ export class TtsApiTools extends BaseApiTools {
 
   private registerResume(): void {
     this.server.registerTool(
-      'resume_speech',
+      'extension_tool_resume_speech',
       {
         description: 'If speech was paused, resumes speaking where it left off',
         inputSchema: {},
@@ -267,7 +267,7 @@ export class TtsApiTools extends BaseApiTools {
 
   private registerIsSpeaking(): void {
     this.server.registerTool(
-      'is_speaking',
+      'extension_tool_is_speaking',
       {
         description: 'Checks whether the engine is currently speaking',
         inputSchema: {},
@@ -297,7 +297,7 @@ export class TtsApiTools extends BaseApiTools {
 
   private registerGetVoices(): void {
     this.server.registerTool(
-      'get_voices',
+      'extension_tool_get_voices',
       {
         description: 'Gets an array of all available voices for speech synthesis',
         inputSchema: {},

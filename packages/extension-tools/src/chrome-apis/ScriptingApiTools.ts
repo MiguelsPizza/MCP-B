@@ -105,7 +105,7 @@ export class ScriptingApiTools extends BaseApiTools {
 
   private registerExecuteScript(): void {
     this.server.registerTool(
-      'execute_script',
+      'extension_tool_execute_script',
       {
         description:
           'Execute JavaScript code in a specific tab using chrome.scripting API. Limited by CSP restrictions. If no tabId is specified, operates on the currently active tab',
@@ -183,7 +183,7 @@ export class ScriptingApiTools extends BaseApiTools {
 
   private registerUserScriptExecute(): void {
     this.server.registerTool(
-      'execute_user_script',
+      'extension_tool_execute_user_script',
       {
         description:
           'Execute JavaScript using User Scripts API with no CSP restrictions (Chrome 135+). Requires user to enable developer mode. If no tabId is specified, operates on the currently active tab',
@@ -242,7 +242,7 @@ export class ScriptingApiTools extends BaseApiTools {
 
   private registerUserScriptLegacy(): void {
     this.server.registerTool(
-      'execute_user_script_legacy',
+      'extension_tool_execute_user_script_legacy',
       {
         description:
           'Execute JavaScript using User Scripts API (legacy method for Chrome < 135). No CSP restrictions. If no tabId is specified, operates on the currently active tab',
@@ -347,7 +347,7 @@ export class ScriptingApiTools extends BaseApiTools {
 
   private registerInsertCSS(): void {
     this.server.registerTool(
-      'insert_css',
+      'extension_tool_insert_css',
       {
         description:
           'Insert CSS into a tab. If no tabId is specified, operates on the currently active tab',
@@ -390,7 +390,7 @@ export class ScriptingApiTools extends BaseApiTools {
     }
 
     this.server.registerTool(
-      'remove_css',
+      'extension_tool_remove_css',
       {
         description:
           'Remove previously injected CSS from a tab. If no tabId is specified, operates on the currently active tab',

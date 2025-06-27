@@ -91,7 +91,7 @@ export class WindowsApiTools extends BaseApiTools {
 
   private registerCreate(): void {
     this.server.registerTool(
-      'create_window',
+      'extension_tool_create_window',
       {
         description: 'Create a new browser window with optional sizing, position, or default URL',
         inputSchema: {
@@ -207,7 +207,7 @@ export class WindowsApiTools extends BaseApiTools {
 
   private registerGet(): void {
     this.server.registerTool(
-      'get_window',
+      'extension_tool_get_window',
       {
         description: 'Get details about a specific window',
         inputSchema: {
@@ -267,7 +267,7 @@ export class WindowsApiTools extends BaseApiTools {
 
   private registerGetAll(): void {
     this.server.registerTool(
-      'get_all_windows',
+      'extension_tool_get_all_windows',
       {
         description: 'Get all browser windows',
         inputSchema: {
@@ -329,7 +329,7 @@ export class WindowsApiTools extends BaseApiTools {
 
   private registerGetCurrent(): void {
     this.server.registerTool(
-      'get_current_window',
+      'extension_tool_get_current_window',
       {
         description: 'Get the current window',
         inputSchema: {
@@ -388,7 +388,7 @@ export class WindowsApiTools extends BaseApiTools {
 
   private registerGetLastFocused(): void {
     this.server.registerTool(
-      'get_last_focused_window',
+      'extension_tool_get_last_focused_window',
       {
         description: 'Get the window that was most recently focused',
         inputSchema: {
@@ -447,7 +447,7 @@ export class WindowsApiTools extends BaseApiTools {
 
   private registerRemove(): void {
     this.server.registerTool(
-      'remove_window',
+      'extension_tool_remove_window',
       {
         description: 'Remove (close) a window and all the tabs inside it',
         inputSchema: {
@@ -476,7 +476,7 @@ export class WindowsApiTools extends BaseApiTools {
 
   private registerUpdate(): void {
     this.server.registerTool(
-      'update_window',
+      'extension_tool_update_window',
       {
         description: 'Update the properties of a window',
         inputSchema: {

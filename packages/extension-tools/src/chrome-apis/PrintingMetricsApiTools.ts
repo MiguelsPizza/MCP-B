@@ -62,7 +62,7 @@ export class PrintingMetricsApiTools extends BaseApiTools {
 
   private registerGetPrintJobs(): void {
     this.server.registerTool(
-      'get_print_jobs',
+      'extension_tool_get_print_jobs',
       {
         description:
           'Get the list of finished print jobs with details about printers, settings, and status',

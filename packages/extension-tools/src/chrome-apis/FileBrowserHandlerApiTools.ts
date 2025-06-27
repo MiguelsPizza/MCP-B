@@ -79,7 +79,7 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
 
   private registerGetExecuteEventDetails(): void {
     this.server.registerTool(
-      'get_execute_event_details',
+      'extension_tool_get_execute_event_details',
       {
         description:
           'Get information about the current file browser handler execute event details structure',
@@ -107,7 +107,7 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
 
   private registerAddExecuteListener(): void {
     this.server.registerTool(
-      'add_execute_listener',
+      'extension_tool_add_execute_listener',
       {
         description:
           'Add a listener for file browser handler execute events. This will log events when users execute file browser actions.',
@@ -153,7 +153,7 @@ export class FileBrowserHandlerApiTools extends BaseApiTools {
 
   private registerRemoveExecuteListener(): void {
     this.server.registerTool(
-      'remove_execute_listener',
+      'extension_tool_remove_execute_listener',
       {
         description: 'Remove all execute event listeners for file browser handler',
         inputSchema: {},

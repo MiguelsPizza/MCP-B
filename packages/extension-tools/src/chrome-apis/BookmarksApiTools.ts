@@ -112,7 +112,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerCreate(): void {
     this.server.registerTool(
-      'create_bookmark',
+      'extension_tool_create_bookmark',
       {
         description:
           'Create a bookmark or folder under the specified parent. If url is not provided, it will be a folder',
@@ -163,7 +163,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerGet(): void {
     this.server.registerTool(
-      'get_bookmark',
+      'extension_tool_get_bookmark',
       {
         description: 'Retrieve the specified bookmark(s) by ID',
         inputSchema: {
@@ -210,7 +210,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerGetChildren(): void {
     this.server.registerTool(
-      'get_bookmark_children',
+      'extension_tool_get_bookmark_children',
       {
         description: 'Retrieve the children of the specified bookmark folder',
         inputSchema: {
@@ -256,7 +256,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerGetRecent(): void {
     this.server.registerTool(
-      'get_recent_bookmarks',
+      'extension_tool_get_recent_bookmarks',
       {
         description: 'Retrieve the recently added bookmarks',
         inputSchema: {
@@ -300,7 +300,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerGetSubTree(): void {
     this.server.registerTool(
-      'get_bookmark_subtree',
+      'extension_tool_get_bookmark_subtree',
       {
         description: 'Retrieve part of the bookmarks hierarchy, starting at the specified node',
         inputSchema: {
@@ -346,7 +346,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerGetTree(): void {
     this.server.registerTool(
-      'get_bookmark_tree',
+      'extension_tool_get_bookmark_tree',
       {
         description: 'Retrieve the entire bookmarks hierarchy',
         inputSchema: {},
@@ -389,7 +389,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerMove(): void {
     this.server.registerTool(
-      'move_bookmark',
+      'extension_tool_move_bookmark',
       {
         description: 'Move the specified bookmark or folder to a new location',
         inputSchema: {
@@ -431,7 +431,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerRemove(): void {
     this.server.registerTool(
-      'remove_bookmark',
+      'extension_tool_remove_bookmark',
       {
         description: 'Remove a bookmark or an empty bookmark folder',
         inputSchema: {
@@ -460,7 +460,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerRemoveTree(): void {
     this.server.registerTool(
-      'remove_bookmark_tree',
+      'extension_tool_remove_bookmark_tree',
       {
         description: 'Recursively remove a bookmark folder and all its contents',
         inputSchema: {
@@ -491,7 +491,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerSearch(): void {
     this.server.registerTool(
-      'search_bookmarks',
+      'extension_tool_search_bookmarks',
       {
         description: 'Search for bookmarks matching the given query',
         inputSchema: {
@@ -549,7 +549,7 @@ export class BookmarksApiTools extends BaseApiTools {
 
   private registerUpdate(): void {
     this.server.registerTool(
-      'update_bookmark',
+      'extension_tool_update_bookmark',
       {
         description:
           'Update the properties of a bookmark or folder. Only title and url can be changed',

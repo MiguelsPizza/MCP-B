@@ -64,7 +64,7 @@ export class GcmApiTools extends BaseApiTools {
 
   private registerRegister(): void {
     this.server.registerTool(
-      'gcm_register',
+      'extension_tool_gcm_register',
       {
         description:
           'Register the application with Firebase Cloud Messaging (FCM) to receive messages',
@@ -103,7 +103,7 @@ export class GcmApiTools extends BaseApiTools {
 
   private registerSend(): void {
     this.server.registerTool(
-      'gcm_send',
+      'extension_tool_gcm_send',
       {
         description: 'Send a message through Firebase Cloud Messaging (FCM)',
         inputSchema: {
@@ -189,7 +189,7 @@ export class GcmApiTools extends BaseApiTools {
 
   private registerUnregister(): void {
     this.server.registerTool(
-      'gcm_unregister',
+      'extension_tool_gcm_unregister',
       {
         description: 'Unregister the application from Firebase Cloud Messaging (FCM)',
         inputSchema: {},

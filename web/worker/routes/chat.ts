@@ -36,7 +36,7 @@ const chat = new Hono<{ Bindings: Env }>()
     const openai = createOpenAI({
       apiKey: c.env.OPENAI_API_KEY,
     });
-
+    console.log({ tools: frontendTools(tools) });
     // Stream text generation with tool calling support
     const result = streamText({
       model: openai('gpt-4o'),
@@ -53,7 +53,12 @@ const chat = new Hono<{ Bindings: Env }>()
     });
 
     // Return streaming response
-    return result.toDataStreamResponse();
+    return result.toDataStreamResponse({
+      getErrorMessage: (error) => {
+        console.error('[Chat] Error:', error);
+        return error instanceof Error ? error.message : 'Unknown error';
+      },
+    });
   });
 
 export default chat;

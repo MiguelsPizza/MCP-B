@@ -87,7 +87,7 @@ export class PermissionsApiTools extends BaseApiTools {
 
   private registerRequest(): void {
     this.server.registerTool(
-      'request_permissions',
+      'extension_tool_request_permissions',
       {
         description:
           'Request access to specified permissions, displaying a prompt to the user if necessary',
@@ -153,7 +153,7 @@ export class PermissionsApiTools extends BaseApiTools {
 
   private registerContains(): void {
     this.server.registerTool(
-      'contains_permissions',
+      'extension_tool_contains_permissions',
       {
         description: 'Check if the extension has the specified permissions',
         inputSchema: {
@@ -212,7 +212,7 @@ export class PermissionsApiTools extends BaseApiTools {
 
   private registerGetAll(): void {
     this.server.registerTool(
-      'get_all_permissions',
+      'extension_tool_get_all_permissions',
       {
         description: "Get the extension's current set of permissions",
         inputSchema: {},
@@ -246,7 +246,7 @@ export class PermissionsApiTools extends BaseApiTools {
 
   private registerRemove(): void {
     this.server.registerTool(
-      'remove_permissions',
+      'extension_tool_remove_permissions',
       {
         description: 'Remove access to the specified permissions',
         inputSchema: {
@@ -314,7 +314,7 @@ export class PermissionsApiTools extends BaseApiTools {
 
   private registerAddHostAccessRequest(): void {
     this.server.registerTool(
-      'add_host_access_request',
+      'extension_tool_add_host_access_request',
       {
         description: 'Add a host access request that will be shown to the user',
         inputSchema: {
@@ -381,7 +381,7 @@ export class PermissionsApiTools extends BaseApiTools {
 
   private registerRemoveHostAccessRequest(): void {
     this.server.registerTool(
-      'remove_host_access_request',
+      'extension_tool_remove_host_access_request',
       {
         description: 'Remove a host access request',
         inputSchema: {

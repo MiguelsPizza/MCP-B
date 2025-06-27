@@ -101,7 +101,7 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
 
   private registerAttach(): void {
     this.server.registerTool(
-      'attach_web_authentication_proxy',
+      'extension_tool_attach_web_authentication_proxy',
       {
         description: 'Makes this extension the active Web Authentication API request proxy',
         inputSchema: {},
@@ -134,7 +134,7 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
 
   private registerDetach(): void {
     this.server.registerTool(
-      'detach_web_authentication_proxy',
+      'extension_tool_detach_web_authentication_proxy',
       {
         description:
           'Removes this extension from being the active Web Authentication API request proxy',
@@ -168,7 +168,7 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
 
   private registerCompleteCreateRequest(): void {
     this.server.registerTool(
-      'complete_create_request',
+      'extension_tool_complete_create_request',
       {
         description: 'Reports the result of a navigator.credentials.create() call',
         inputSchema: {
@@ -220,7 +220,7 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
 
   private registerCompleteGetRequest(): void {
     this.server.registerTool(
-      'complete_get_request',
+      'extension_tool_complete_get_request',
       {
         description: 'Reports the result of a navigator.credentials.get() call',
         inputSchema: {
@@ -272,7 +272,7 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
 
   private registerCompleteIsUvpaaRequest(): void {
     this.server.registerTool(
-      'complete_is_uvpaa_request',
+      'extension_tool_complete_is_uvpaa_request',
       {
         description:
           'Reports the result of a PublicKeyCredential.isUserVerifyingPlatformAuthenticator() call',
@@ -313,7 +313,7 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
 
   private registerOnCreateRequest(): void {
     this.server.registerTool(
-      'listen_create_requests',
+      'extension_tool_listen_create_requests',
       {
         description: 'Start listening for WebAuthn navigator.credentials.create() calls',
         inputSchema: {},
@@ -339,7 +339,7 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
 
   private registerOnGetRequest(): void {
     this.server.registerTool(
-      'listen_get_requests',
+      'extension_tool_listen_get_requests',
       {
         description: 'Start listening for WebAuthn navigator.credentials.get() calls',
         inputSchema: {},
@@ -365,7 +365,7 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
 
   private registerOnIsUvpaaRequest(): void {
     this.server.registerTool(
-      'listen_is_uvpaa_requests',
+      'extension_tool_listen_is_uvpaa_requests',
       {
         description:
           'Start listening for PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable() calls',
@@ -391,7 +391,7 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
 
   private registerOnRemoteSessionStateChange(): void {
     this.server.registerTool(
-      'listen_remote_session_state_changes',
+      'extension_tool_listen_remote_session_state_changes',
       {
         description: 'Start listening for remote session state changes',
         inputSchema: {},
@@ -414,7 +414,7 @@ export class WebAuthenticationProxyApiTools extends BaseApiTools {
 
   private registerOnRequestCanceled(): void {
     this.server.registerTool(
-      'listen_request_canceled',
+      'extension_tool_listen_request_canceled',
       {
         description: 'Start listening for canceled WebAuthn requests',
         inputSchema: {},

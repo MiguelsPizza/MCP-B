@@ -105,7 +105,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerGetAllFrames(): void {
     this.server.registerTool(
-      'get_all_frames',
+      'extension_tool_get_all_frames',
       {
         description: 'Retrieves information about all frames of a given tab',
         inputSchema: {
@@ -154,7 +154,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerGetFrame(): void {
     this.server.registerTool(
-      'get_frame',
+      'extension_tool_get_frame',
       {
         description:
           'Retrieves information about the given frame. A frame refers to an iframe or frame of a web page',
@@ -205,7 +205,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerOnBeforeNavigate(): void {
     this.server.registerTool(
-      'on_before_navigate',
+      'extension_tool_on_before_navigate',
       {
         description:
           'Sets up a listener for navigation events that are about to occur. Returns immediately after setting up the listener',
@@ -251,7 +251,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerOnCommitted(): void {
     this.server.registerTool(
-      'on_committed',
+      'extension_tool_on_committed',
       {
         description:
           'Sets up a listener for navigation committed events. Fired when a navigation is committed',
@@ -299,7 +299,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerOnCompleted(): void {
     this.server.registerTool(
-      'on_completed',
+      'extension_tool_on_completed',
       {
         description:
           'Sets up a listener for navigation completed events. Fired when a document and its resources are completely loaded',
@@ -345,7 +345,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerOnCreatedNavigationTarget(): void {
     this.server.registerTool(
-      'on_created_navigation_target',
+      'extension_tool_on_created_navigation_target',
       {
         description:
           'Sets up a listener for new navigation target creation events. Fired when a new window or tab is created to host a navigation',
@@ -388,7 +388,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerOnDOMContentLoaded(): void {
     this.server.registerTool(
-      'on_dom_content_loaded',
+      'extension_tool_on_dom_content_loaded',
       {
         description:
           'Sets up a listener for DOM content loaded events. Fired when the page DOM is fully constructed',
@@ -434,7 +434,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerOnErrorOccurred(): void {
     this.server.registerTool(
-      'on_error_occurred',
+      'extension_tool_on_error_occurred',
       {
         description:
           'Sets up a listener for navigation error events. Fired when an error occurs and navigation is aborted',
@@ -481,7 +481,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerOnHistoryStateUpdated(): void {
     this.server.registerTool(
-      'on_history_state_updated',
+      'extension_tool_on_history_state_updated',
       {
         description:
           'Sets up a listener for history state update events. Fired when the frame history was updated to a new URL',
@@ -529,7 +529,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerOnReferenceFragmentUpdated(): void {
     this.server.registerTool(
-      'on_reference_fragment_updated',
+      'extension_tool_on_reference_fragment_updated',
       {
         description:
           'Sets up a listener for reference fragment update events. Fired when the reference fragment of a frame was updated',
@@ -577,7 +577,7 @@ export class WebNavigationApiTools extends BaseApiTools {
 
   private registerOnTabReplaced(): void {
     this.server.registerTool(
-      'on_tab_replaced',
+      'extension_tool_on_tab_replaced',
       {
         description:
           'Sets up a listener for tab replacement events. Fired when the contents of a tab is replaced by a different tab',

@@ -82,7 +82,7 @@ export class EnterpriseDeviceAttributesApiTools extends BaseApiTools {
 
   private registerGetDirectoryDeviceId(): void {
     this.server.registerTool(
-      'get_directory_device_id',
+      'extension_tool_get_directory_device_id',
       {
         description: 'Get the directory device ID for the Chrome OS device',
         inputSchema: {},
@@ -111,7 +111,7 @@ export class EnterpriseDeviceAttributesApiTools extends BaseApiTools {
 
   private registerGetDeviceSerialNumber(): void {
     this.server.registerTool(
-      'get_device_serial_number',
+      'extension_tool_get_device_serial_number',
       {
         description: 'Get the serial number of the Chrome OS device',
         inputSchema: {},
@@ -140,7 +140,7 @@ export class EnterpriseDeviceAttributesApiTools extends BaseApiTools {
 
   private registerGetDeviceAssetId(): void {
     this.server.registerTool(
-      'get_device_asset_id',
+      'extension_tool_get_device_asset_id',
       {
         description: 'Get the asset ID of the Chrome OS device',
         inputSchema: {},
@@ -169,7 +169,7 @@ export class EnterpriseDeviceAttributesApiTools extends BaseApiTools {
 
   private registerGetDeviceAnnotatedLocation(): void {
     this.server.registerTool(
-      'get_device_annotated_location',
+      'extension_tool_get_device_annotated_location',
       {
         description: 'Get the annotated location of the Chrome OS device',
         inputSchema: {},
@@ -198,7 +198,7 @@ export class EnterpriseDeviceAttributesApiTools extends BaseApiTools {
 
   private registerGetDeviceHostname(): void {
     this.server.registerTool(
-      'get_device_hostname',
+      'extension_tool_get_device_hostname',
       {
         description: 'Get the hostname of the Chrome OS device',
         inputSchema: {},

@@ -61,7 +61,7 @@ export class SystemCpuApiTools extends BaseApiTools {
 
   private registerGetInfo(): void {
     this.server.registerTool(
-      'get_cpu_info',
+      'extension_tool_get_cpu_info',
       {
         description:
           'Get information about the CPU including number of processors, architecture, model, and features',

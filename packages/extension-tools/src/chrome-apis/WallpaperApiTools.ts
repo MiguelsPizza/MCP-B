@@ -56,7 +56,7 @@ export class WallpaperApiTools extends BaseApiTools {
 
   private registerSetWallpaper(): void {
     this.server.registerTool(
-      'set_wallpaper',
+      'extension_tool_set_wallpaper',
       {
         description: 'Set the ChromeOS wallpaper to an image from a URL or data',
         inputSchema: {
