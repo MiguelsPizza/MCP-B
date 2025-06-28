@@ -34,15 +34,7 @@ import { McpToolUIRenderer } from './McpToolUIRenderer';
 import { ToolFallback } from './tool-fallback';
 
 export const Thread: FC = () => {
-  const { client, tools, isLoading, error, isConnected, capabilities, connect, resources } =
-    useMcpClient();
-
-  // Connect on mount
-  useEffect(() => {
-    connect().catch((err) => {
-      console.error('Failed to connect to MCP server:', err);
-    });
-  }, [connect]);
+  const { client, tools, isLoading, error, isConnected, capabilities, resources } = useMcpClient();
 
   useAssistantMCP(tools, client);
 

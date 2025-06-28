@@ -1,6 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { RequestOptions } from '@modelcontextprotocol/sdk/shared/protocol.js';
+import type { RequestOptions } from '@modelcontextprotocol/sdk/shared/protocol.js';
+import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import type {
   Tool as McpTool,
   Resource,
@@ -10,70 +20,69 @@ import {
   ResourceListChangedNotificationSchema,
   ToolListChangedNotificationSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { useMcpContext } from './McpContext';
 
-/**
- * Result object returned by the useMcpClient hook.
- */
-export interface UseMcpClientResult {
-  /** The MCP client instance for making direct calls */
+// type ConnectionState = 'disconnected' | 'connecting' | 'initializing' | 'connected' | 'error';
+
+interface McpClientContextValue {
   client: Client;
-  /** Array of available resources from the MCP server */
-  resources: Resource[];
-  /** Array of available tools from the MCP server */
   tools: McpTool[];
-  /** Whether the hook is currently loading (connecting or fetching initial data) */
-  isLoading: boolean;
-  /** Any error that occurred during connection or data fetching */
-  error: Error | null;
-  /** Function to manually trigger connection */
-  connect: () => Promise<void>;
-  /** Whether the client is currently connected to the MCP server */
+  resources: Resource[];
   isConnected: boolean;
-  /** The server capabilities, available after successful connection */
+  isLoading: boolean;
+  error: Error | null;
   capabilities: ServerCapabilities | null;
+  reconnect: () => Promise<void>;
+}
+
+const McpClientContext = createContext<McpClientContextValue | null>(null);
+
+export interface McpClientProviderProps {
+  children: ReactNode;
+  /**
+   * Client configuration including name and version.
+   */
+  client: Client;
+  /**
+   * Transport instance for the client to connect to.
+   */
+  transport: Transport;
+
+  /**
+   * Options for the client to connect to.
+   */
+  opts: RequestOptions;
 }
 
 /**
- * A React hook for managing MCP client connections and data.
- *
- * This hook handles:
- * - Manual connection to the MCP server via connect()
- * - Fetching and caching of resources and tools
- * - Real-time updates via server notifications
- * - Connection state management
- * - Error handling and cleanup
- *
- * Must be used within an McpProvider context.
- *
- * @param opts - Optional request options to pass to the client connection
- * @returns An object containing the client, data, and connection state
+ * Provider component that creates and manages an MCP client instance.
+ * Handles the connection lifecycle and data fetching automatically.
  *
  * @example
  * ```tsx
- * function MyComponent() {
- *   const { client, resources, tools, isLoading, error, isConnected, connect } = useMcpClient();
+ * import { TabClientTransport } from '@mcp-b/transports';
+import { RequestOptions } from '@modelcontextprotocol/sdk/shared/protocol.js';
+import type { RequestOptions from '@modelcontextprotocol/sdk/shared/protocol.js';
  *
- *   useEffect(() => {
- *     connect().catch(console.error);
- *   }, [connect]);
+ * const transport = new TabClientTransport('mcp', { clientInstanceId: 'my-app' });
  *
- *   if (isLoading) return <div>Connecting...</div>;
- *   if (error) return <div>Error: {error.message}</div>;
- *   if (!isConnected) return <div>Not connected</div>;
- *
+ * function App() {
  *   return (
- *     <div>
- *       <h2>Tools: {tools.length}</h2>
- *       <h2>Resources: {resources.length}</h2>
- *     </div>
+ *     <McpClientProvider
+ *       clientConfig={{ name: 'MyApp', version: '1.0.0' }}
+ *       transport={transport}
+ *     >
+ *       <MyAppContent />
+ *     </McpClientProvider>
  *   );
  * }
  * ```
  */
-export function useMcpClient(opts?: RequestOptions): UseMcpClientResult {
-  const { client, transport } = useMcpContext();
-
+export function McpClientProvider({
+  children,
+  client,
+  transport,
+  opts,
+}: McpClientProviderProps): ReactElement {
   // State management
   const [resources, setResources] = useState<Resource[]>([]);
   const [tools, setTools] = useState<McpTool[]>([]);
@@ -133,7 +142,7 @@ export function useMcpClient(opts?: RequestOptions): UseMcpClientResult {
    * Establishes connection to the MCP server.
    * Safe to call multiple times - will no-op if already connected/connecting.
    */
-  const connect = useCallback(async () => {
+  const reconnect = useCallback(async () => {
     if (!client || !transport) {
       throw new Error('Client or transport not available');
     }
@@ -240,21 +249,42 @@ export function useMcpClient(opts?: RequestOptions): UseMcpClientResult {
   // Reset connection state if client/transport changes
   useEffect(() => {
     connectionStateRef.current = 'disconnected';
+    reconnect();
     setIsConnected(false);
     setCapabilities(null);
     setResources([]);
     setTools([]);
     setError(null);
   }, [client, transport]);
+  return (
+    <McpClientContext.Provider
+      value={{
+        client,
+        tools,
+        resources,
+        isConnected,
+        isLoading,
+        error,
+        capabilities,
+        reconnect,
+      }}
+    >
+      {children}
+    </McpClientContext.Provider>
+  );
+}
 
-  return {
-    client,
-    resources,
-    tools,
-    isLoading,
-    error,
-    connect,
-    isConnected,
-    capabilities,
-  };
+/**
+ * Hook to access the MCP client context.
+ * Must be used within an McpClientProvider.
+ *
+ * @returns The MCP client context including client instance, tools, resources, and connection state.
+ * @throws Error if used outside of McpClientProvider.
+ */
+export function useMcpClient() {
+  const context = useContext(McpClientContext);
+  if (!context) {
+    throw new Error('useMcpClient must be used within an McpClientProvider');
+  }
+  return context;
 }

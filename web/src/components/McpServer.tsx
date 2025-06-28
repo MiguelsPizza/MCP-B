@@ -205,9 +205,10 @@ export default function McpServer() {
     error,
     resources,
     tools: mcpTools,
-    connect,
     isConnected,
-  } = useMcpClient({});
+  } = useMcpClient();
+
+  console.log('mcpTools', mcpTools);
 
   const [expandedTools, setExpandedTools] = useState<Set<string>>(new Set());
   const [callingTools, setCallingTools] = useState<Set<string>>(new Set());
@@ -471,7 +472,7 @@ export default function McpServer() {
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div className="px-3 pb-2.5 space-y-2">
-                {!isConnected && (
+                {/* {!isConnected && (
                   <Button
                     onClick={connect}
                     size="sm"
@@ -481,7 +482,7 @@ export default function McpServer() {
                     <Wifi className="h-3 w-3 mr-1.5" />
                     Connect to Server
                   </Button>
-                )}
+                )} */}
                 {capabilities && (
                   <div className="space-y-1">
                     <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">

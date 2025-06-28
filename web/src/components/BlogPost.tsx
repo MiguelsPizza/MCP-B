@@ -81,19 +81,13 @@ const CodeBlock = ({ code, language }: { code: string; language: string }) => {
 };
 
 const BlogPost = () => {
-  const { client, isConnected, connect } = useMcpClient({});
+  const { client, isConnected } = useMcpClient({});
   const [demoState, setDemoState] = useState({
     createdFirstTodo: false,
     workflowSteps: [] as string[],
     isRunningWorkflow: false,
     currentStep: -1,
   });
-
-  useEffect(() => {
-    connect().catch((error) => {
-      console.error('Failed to connect to MCP server', error);
-    });
-  }, []);
 
   const runDemo = async (demoName: string) => {
     if (!client || !isConnected) {

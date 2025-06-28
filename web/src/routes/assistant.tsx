@@ -1,6 +1,6 @@
 import { AssistantRuntimeProvider } from '@assistant-ui/react';
 import { useChatRuntime } from '@assistant-ui/react-ai-sdk';
-import { McpProvider } from '@mcp-b/mcp-react-hooks';
+import { McpClientProvider } from '@mcp-b/mcp-react-hooks';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { AppSidebar } from '../components/app-sidebar';
@@ -53,15 +53,15 @@ const Assistant = () => {
             } as React.CSSProperties
           }
         >
-          <McpProvider client={SidebarClient} transport={SidebarTransport}>
+          <McpClientProvider client={SidebarClient} transport={SidebarTransport}>
             <AppSidebar activeView={activeView} setActiveView={setActiveView} />
-          </McpProvider>
+          </McpClientProvider>
           <SidebarInset className="transition-all duration-300">
             <div className="flex h-[calc(100vh-20px)]">
               <div className="flex-1 overflow-hidden relative">
-                <McpProvider client={AssistantClient} transport={AssistantTransport}>
+                <McpClientProvider client={AssistantClient} transport={AssistantTransport}>
                   <Thread />
-                </McpProvider>
+                </McpClientProvider>
               </div>
               <div className="w-96 border-l bg-gradient-to-b from-background to-background/80">
                 <div className="h-full flex flex-col">

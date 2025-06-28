@@ -274,16 +274,19 @@ const initializeInMemoryServer = () => {
   promptApiTools.register();
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   server.connect(serverTransport);
-  return clientTransport;
+  return { clientTransport, serverTransport };
 };
 
 const SidebarClient = new Client({ name: 'Sidebar', version: '1.0.0' });
-export const SidebarTransport = initializeInMemoryServer();
+export const { clientTransport: SidebarTransport, serverTransport: SidebarServerTransport } =
+  initializeInMemoryServer();
 
 const AssistantClient = new Client({ name: 'Assistant', version: '1.0.0' });
-export const AssistantTransport = initializeInMemoryServer();
+export const { clientTransport: AssistantTransport, serverTransport: AssistantServerTransport } =
+  initializeInMemoryServer();
 
 const BlogPostClient = new Client({ name: 'BlogPost', version: '1.0.0' });
-export const BlogPostTransport = initializeInMemoryServer();
+export const { clientTransport: BlogPostTransport, serverTransport: BlogPostServerTransport } =
+  initializeInMemoryServer();
 
 export { SidebarClient, AssistantClient, BlogPostClient };

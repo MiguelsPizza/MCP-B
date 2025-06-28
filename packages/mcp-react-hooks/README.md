@@ -1,184 +1,455 @@
 # MCP React Hooks
 
-This library provides a set of React hooks to simplify the integration of the [Model Context Protocol (MCP)](https://github.com/modelcontextprotocol/spec) in React applications. It handles state management, data fetching, and real-time updates from MCP servers, allowing you to focus on building your UI.
+React hooks and providers for the Model Context Protocol (MCP), designed for browser-based applications. This library provides a flexible architecture with three distinct providers for different use cases.
 
-### Installation
+## Installation
 
 ```bash
 npm install @mcp-b/mcp-react-hooks
 ```
 
-### Quick Start
+## Architecture
 
-This example shows how to connect to an MCP server, which could be running in the same browser tab or in a browser extension's background script.
+This library provides three distinct providers for different use cases:
 
-**1. Create the MCP Client & Transport**
+1. **McpServerProvider** - For exposing MCP tools from your web application
+2. **McpClientProvider** - For consuming MCP tools from other servers
+3. **McpMemoryProvider** - For applications that need both client and server with in-memory transport
 
-It's crucial to create your `Client` and `Transport` instances _outside_ of the React component lifecycle to prevent re-connections on every render.
+## Usage
 
-```typescript
-// src/mcp.ts
+### Server-Only Usage
 
-// Import the specific transport you need
-import { TabClientTransport } from '@mcp-b/transports'; // For in-page apps
-import { Client } from '@modelcontextprotocol/sdk/client';
-
-// OR
-// import { ExtensionClientTransport } from '@mcp-b/transports'; // For extension UIs
-
-// Create a single transport instance for your app
-export const transport = new TabClientTransport('mcp', {
-  clientInstanceId: 'my-awesome-app',
-});
-
-// Create a single client instance
-export const mcpClient = new Client({
-  name: 'MyAwesomeApp',
-  version: '1.0.0',
-});
-
-// Note: The connection will be handled by the useMcpClient hook
-```
-
-**2. Wrap Your App with `McpProvider`**
-
-In your main application file, wrap your components with the single, unified `McpProvider`.
+Use `McpServerProvider` when you want to expose MCP tools from your web application:
 
 ```tsx
-// src/App.tsx
-import { McpProvider } from '@mcp-b/mcp-react-hooks';
-import { mcpClient, transport } from './mcp';
-import { MyComponent } from './MyComponent';
+import { McpServerProvider, useMcpServer } from '@mcp-b/mcp-react-hooks';
+import { TabServerTransport } from '@mcp-b/transports';
+import { z } from 'zod';
 
 function App() {
+  const transport = new TabServerTransport({ allowedOrigins: ['*'] });
+  
   return (
-    <McpProvider transport={transport} mcpClient={mcpClient}>
-      <MyComponent />
-    </McpProvider>
+    <McpServerProvider
+      serverConfig={{ name: 'MyWebApp', version: '1.0.0' }}
+      transport={transport}
+      options={{ instructions: 'A helpful web application server.' }}
+    >
+      <ServerTools />
+    </McpServerProvider>
   );
 }
 
-export default App;
+function ServerTools() {
+  const { server, isConnected, registerTool, elicitInput } = useMcpServer();
+  
+  useEffect(() => {
+    if (!isConnected) return;
+    
+    // Register tools using the convenience function
+    const unregisterGreet = registerTool(
+      'greet',
+      {
+        description: 'Greets a user by name',
+        inputSchema: {
+          name: z.string().describe('The name to greet')
+        }
+      },
+      async ({ name }) => ({
+        content: [{ type: 'text', text: `Hello, ${name}!` }]
+      })
+    );
+    
+    // Register a tool that uses elicitation
+    const unregisterBooking = registerTool(
+      'book-restaurant',
+      {
+        description: 'Book a restaurant reservation',
+        inputSchema: {
+          restaurant: z.string(),
+          date: z.string(),
+          partySize: z.number()
+        }
+      },
+      async ({ restaurant, date, partySize }) => {
+        // Check availability (mock)
+        const available = Math.random() > 0.5;
+        
+        if (!available) {
+          // Ask user for alternative dates
+          const result = await elicitInput(
+            `No tables available at ${restaurant} on ${date}. Would you like to check alternative dates?`,
+            {
+              type: 'object',
+              properties: {
+                checkAlternatives: {
+                  type: 'boolean',
+                  title: 'Check alternative dates',
+                  description: 'Would you like me to check other dates?'
+                },
+                flexibleDates: {
+                  type: 'string',
+                  title: 'Date flexibility',
+                  description: 'How flexible are your dates?',
+                  enum: ['next_day', 'same_week', 'next_week']
+                }
+              },
+              required: ['checkAlternatives']
+            }
+          );
+          
+          if (result.action === 'accept' && result.content?.checkAlternatives) {
+            return {
+              content: [{
+                type: 'text',
+                text: `Found alternative dates based on ${result.content.flexibleDates} preference`
+              }]
+            };
+          }
+          
+          return {
+            content: [{
+              type: 'text',
+              text: 'No booking made. Original date not available.'
+            }]
+          };
+        }
+        
+        return {
+          content: [{
+            type: 'text',
+            text: `Booked table for ${partySize} at ${restaurant} on ${date}`
+          }]
+        };
+      }
+    );
+    
+    return () => {
+      unregisterGreet();
+      unregisterBooking();
+    };
+  }, [isConnected, registerTool, elicitInput]);
+  
+  return <div>Server connected: {isConnected ? 'Yes' : 'No'}</div>;
+}
 ```
 
-**3. Use the `useMcpClient` Hook**
+### Client-Only Usage
 
-Now you can access the MCP client, resources, tools, and connection state anywhere in your component tree. The hook automatically handles the connection for you.
+Use `McpClientProvider` when you want to consume MCP tools from other servers:
 
 ```tsx
-// src/MyComponent.tsx
-import { useMcpClient } from '@mcp-b/mcp-react-hooks';
+import { McpClientProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
+import { TabClientTransport } from '@mcp-b/transports';
 
-export function MyComponent() {
-  const { client, resources, tools, isLoading, error, isConnected } = useMcpClient();
+function App() {
+  const transport = new TabClientTransport('mcp', { clientInstanceId: 'my-app' });
+  
+  return (
+    <McpClientProvider
+      clientConfig={{ name: 'MyClient', version: '1.0.0' }}
+      transport={transport}
+    >
+      <ClientTools />
+    </McpClientProvider>
+  );
+}
 
-  if (isLoading) {
-    return <div>Connecting to MCP Server...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  if (!isConnected) {
-    return <div>Not connected to MCP Server</div>;
-  }
-
-  // You can now use the client to call tools
-  const handleToolCall = async () => {
+function ClientTools() {
+  const { client, tools, isConnected, isLoading } = useMcpClient();
+  
+  const callTool = async () => {
     const result = await client.callTool({
-      name: 'some-tool',
-      arguments: { param: 'value' },
+      name: 'greet',
+      arguments: { name: 'World' }
     });
-    console.log(result);
+    console.log('Result:', result);
   };
-
+  
+  if (isLoading) return <div>Loading...</div>;
+  
   return (
     <div>
-      <h2>Available Tools</h2>
-      <ul>
-        {tools.map((tool) => (
-          <li key={tool.name}>{tool.name}</li>
-        ))}
-      </ul>
-
-      <h2>Available Resources</h2>
-      <ul>
-        {resources.map((resource) => (
-          <li key={resource.uri}>
-            {resource.name} ({resource.uri})
-          </li>
-        ))}
-      </ul>
+      <h3>Available Tools: {tools.length}</h3>
+      <button onClick={callTool}>Call Tool</button>
     </div>
   );
 }
 ```
 
-### API Reference
+### Combined Client & Server
 
-#### `<McpProvider>`
+Use `McpMemoryProvider` when you need both client and server in the same application:
 
-A context provider that makes a connected MCP client available to all child components. It works with any type of MCP transport (e.g., `TabClientTransport`, `ExtensionClientTransport`).
+```tsx
+import { McpMemoryProvider, useMcpClient, useMcpServer } from '@mcp-b/mcp-react-hooks';
 
-**Props:**
+function App() {
+  return (
+    <McpMemoryProvider
+      serverConfig={{ name: 'MyServer', version: '1.0.0' }}
+      clientConfig={{ name: 'MyClient', version: '1.0.0' }}
+      serverOptions={{ instructions: 'A helpful assistant.' }}
+    >
+      <MyApp />
+    </McpMemoryProvider>
+  );
+}
 
-- `mcpClient: Client`: An initialized `Client` instance (connection will be handled by the hook).
-- `transport: Transport`: The transport instance to be used by the client.
-- `children: ReactNode`: Your application's components.
+function MyApp() {
+  const { server } = useMcpServer();
+  const { client, tools } = useMcpClient();
+  
+  // Register tools on the server
+  useEffect(() => {
+    const unregister = server.tool(
+      'addNumbers',
+      'Adds two numbers',
+      {
+        a: z.number(),
+        b: z.number()
+      },
+      async ({ a, b }) => ({
+        content: [{ type: 'text', text: `Result: ${a + b}` }]
+      })
+    );
+    
+    return () => unregister();
+  }, [server]);
+  
+  // Call tools with the client
+  const testAddition = async () => {
+    const result = await client.callTool({
+      name: 'addNumbers',
+      arguments: { a: 5, b: 3 }
+    });
+    console.log(result);
+  };
+  
+  return (
+    <div>
+      <p>Tools: {tools.length}</p>
+      <button onClick={testAddition}>Test Addition</button>
+    </div>
+  );
+}
+```
 
-#### `useMcpClient(opts?)`
+## API Reference
 
-A hook for accessing MCP client data and status. Must be used within an `<McpProvider>`. This hook automatically handles the connection to the MCP server.
+### McpServerProvider
 
-**Parameters:**
+Props:
+- `serverConfig: { name: string; version: string }` - Server identification
+- `transport: Transport` - Transport instance for the server
+- `options?: { instructions?: string }` - Optional server configuration
 
-- `opts?: RequestOptions` (optional): Request options to pass to the client connection.
+### McpClientProvider
 
-**Returns:**
+Props:
+- `clientConfig: { name: string; version: string }` - Client identification
+- `transport: Transport` - Transport instance for the client
 
-- `client: Client`: The raw MCP `Client` instance for making direct calls (e.g., `client.callTool(...)`).
-- `resources: Resource[]`: An array of available resources. Automatically updates when the server sends a change notification.
-- `tools: McpTool[]`: An array of available tools. Also updates automatically.
-- `isLoading: boolean`: `true` during the initial connection and data fetch.
-- `error: Error | null`: Any error that occurred during connection or data fetching.
-- `connect: () => Promise<void>`: Function to manually trigger connection (usually not needed as connection happens automatically).
-- `isConnected: boolean`: `true` when successfully connected to the MCP server.
+### McpMemoryProvider
 
-#### `useMcpContext()`
+Props:
+- `serverConfig: { name: string; version: string }` - Server identification
+- `clientConfig: { name: string; version: string }` - Client identification
+- `serverOptions?: { instructions?: string }` - Optional server configuration
 
-A hook for accessing the raw MCP context, including the transport instance. Must be used within an `<McpProvider>`.
+### useMcpServer()
 
-**Returns:**
+Returns:
+- `server: McpServer` - The MCP server instance
+- `isConnected: boolean` - Connection status
+- `error: Error | null` - Connection error if any
+- `elicitInput: (message, schema, options?) => Promise<ElicitResult>` - Elicit input from the user
+- `registerTool: (name, config, callback) => () => void` - Register a tool and get unregister function
 
-- `mcpClient: Client`: The MCP `Client` instance.
-- `transport: Transport`: The MCP `Transport` instance.
-- `capabilities: ServerCapabilities | null`: The capabilities of the connected server.
+### useMcpClient()
 
-#### `<McpServerProvider>`
+Returns:
+- `client: Client` - The MCP client instance
+- `tools: McpTool[]` - Available tools
+- `resources: Resource[]` - Available resources
+- `isConnected: boolean` - Connection status
+- `isLoading: boolean` - Loading state
+- `error: Error | null` - Connection error if any
+- `capabilities: ServerCapabilities | null` - Server capabilities
 
-A provider that makes a connected `McpServer` instance available to all child components.
+## Elicitation Support
 
-**Props:**
+The server can elicit input from users through the client. This is useful for interactive workflows where the server needs user input or confirmation:
 
-- `server: McpServer`: An initialized and connected `McpServer` instance.
-- `children: ReactNode`: Your application's components.
+```tsx
+function InteractiveTools() {
+  const { registerTool, elicitInput, isConnected } = useMcpServer();
 
-#### `useMcpServer()`
+  useEffect(() => {
+    if (!isConnected) return;
 
-A hook for accessing the shared `McpServer` instance. This allows you to dynamically manage tools, resources, and prompts from within React components. It must be used within an `<McpServerProvider>`.
+    const unregister = registerTool(
+      'configure-settings',
+      {
+        description: 'Configure application settings interactively',
+        inputSchema: {
+          setting: z.string().describe('The setting to configure')
+        }
+      },
+      async ({ setting }) => {
+        // Ask user for the new value
+        const result = await elicitInput(
+          `What value would you like to set for "${setting}"?`,
+          {
+            type: 'object',
+            properties: {
+              value: {
+                type: 'string',
+                title: 'New Value',
+                description: `Enter the new value for ${setting}`
+              },
+              persist: {
+                type: 'boolean',
+                title: 'Save to disk',
+                description: 'Should this setting be saved permanently?',
+                default: true
+              }
+            },
+            required: ['value']
+          }
+        );
 
-**Example: Dynamic Tool Registration**
+        if (result.action === 'accept') {
+          const { value, persist } = result.content!;
+          // Apply the setting
+          return {
+            content: [{
+              type: 'text',
+              text: `Set ${setting} to "${value}"${persist ? ' and saved to disk' : ''}`
+            }]
+          };
+        } else if (result.action === 'cancel') {
+          return {
+            content: [{
+              type: 'text',
+              text: 'Configuration cancelled by user'
+            }]
+          };
+        } else {
+          return {
+            content: [{
+              type: 'text',
+              text: 'Configuration rejected'
+            }]
+          };
+        }
+      }
+    );
 
-The following component uses `useEffect` to register a tool when it mounts and automatically unregister it when it unmounts.
+    return unregister;
+  }, [isConnected, registerTool, elicitInput]);
+
+  return null;
+}
+```
+
+### Elicitation Response Actions
+
+The client can respond with three different actions:
+- `accept`: User provided the requested input (includes `content` field)
+- `reject`: User explicitly rejected the request
+- `cancel`: User cancelled the interaction
+
+## Integration with Assistant UI
+
+This library works seamlessly with `@assistant-ui/react`:
+
+```tsx
+import { useAssistantRuntime } from '@assistant-ui/react';
+import { tool } from '@assistant-ui/react';
+import { useMcpClient } from '@mcp-b/mcp-react-hooks';
+
+function AssistantIntegration() {
+  const { client, tools } = useMcpClient();
+  const runtime = useAssistantRuntime();
+  
+  useEffect(() => {
+    if (!client || tools.length === 0) return;
+    
+    // Convert MCP tools to assistant-ui tools
+    const assistantTools = tools.map((mcpTool) => ({
+      name: mcpTool.name,
+      assistantTool: tool({
+        type: 'frontend',
+        description: mcpTool.description,
+        parameters: mcpTool.inputSchema,
+        execute: (args) => client.callTool({
+          name: mcpTool.name,
+          arguments: args,
+        }),
+      }),
+    }));
+    
+    // Register with assistant runtime
+    const unregister = runtime.registerModelContextProvider({
+      getModelContext: () => ({
+        system: 'MCP Tools:',
+        tools: Object.fromEntries(
+          assistantTools.map((t) => [t.name, t.assistantTool])
+        ),
+      }),
+    });
+    
+    return () => unregister();
+  }, [client, tools, runtime]);
+  
+  return <div>Tools registered: {tools.length}</div>;
+}
+```
+
+## Migration from Legacy API
+
+If you're using the old `McpProvider` and `useMcpClient` from `McpContext`, they are still available for backward compatibility:
+
+```tsx
+// Old API (still works)
+import { McpProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
+
+// New API (recommended)
+import { McpClientProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
+```
+
+The main difference is that the new providers handle the connection lifecycle automatically, while the old API required manual connection management.
+
+## Legacy Examples
+
+### Using McpServerProvider (Legacy)
+
+The following example shows the legacy pattern of creating and connecting a server before passing it to the provider:
 
 ```tsx
 import { useEffect } from 'react';
-import { useMcpServer } from '@mcp-b/mcp-react-hooks';
+import { McpServerProvider, useMcpServer } from '@mcp-b/mcp-react-hooks';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+import { TabServerTransport } from '@mcp-b/transports';
 import { z } from 'zod';
 
+// Create and connect server outside React
+const server = new McpServer({ name: 'MyWebAppServer', version: '1.0.0' });
+const transport = new TabServerTransport();
+await server.connect(transport);
+
+function App() {
+  return (
+    <McpServerProvider server={server}>
+      <DynamicGreeterTool />
+    </McpServerProvider>
+  );
+}
+
 function DynamicGreeterTool() {
-  const server = useMcpServer();
+  const { server } = useMcpServer();
 
   useEffect(() => {
     console.log('Registering "greet" tool...');

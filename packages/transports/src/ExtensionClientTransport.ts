@@ -43,9 +43,13 @@ export class ExtensionClientTransport implements Transport {
    */
   async start(): Promise<void> {
     if (this._port) {
-      throw new Error(
+      console.warn(
         'ExtensionClientTransport already started! If using Client class, note that connect() calls start() automatically.'
       );
+      // throw new Error(
+      //   'ExtensionClientTransport already started! If using Client class, note that connect() calls start() automatically.'
+      // );
+      return;
     }
 
     return new Promise((resolve, reject) => {

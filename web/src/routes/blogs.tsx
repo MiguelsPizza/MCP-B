@@ -1,4 +1,4 @@
-import { McpProvider } from '@mcp-b/mcp-react-hooks';
+import { McpClientProvider } from '@mcp-b/mcp-react-hooks';
 import { createFileRoute } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
 import BlogPost from '../components/BlogPost';
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/blogs')({
 
 function RouteComponent() {
   return (
-    <McpProvider client={BlogPostClient} transport={BlogPostTransport}>
+    <McpClientProvider client={BlogPostClient} transport={BlogPostTransport}>
       <div className="min-h-screen relative">
         <div className="absolute top-20 left-10 h-72 w-72 bg-gradient-to-br from-primary/30 to-blue-600/30 rounded-full blur-3xl animate-float-slow" />
         <div className="absolute bottom-20 right-10 h-96 w-96 bg-gradient-to-br from-blue-600/20 to-primary/20 rounded-full blur-3xl animate-float-delayed" />
@@ -43,6 +43,6 @@ function RouteComponent() {
           </div>
         </div>
       </div>
-    </McpProvider>
+    </McpClientProvider>
   );
 }

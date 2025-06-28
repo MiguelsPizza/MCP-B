@@ -36,7 +36,6 @@ const chat = new Hono<{ Bindings: Env }>()
     const openai = createOpenAI({
       apiKey: c.env.OPENAI_API_KEY,
     });
-    console.log({ tools: frontendTools(tools) });
     // Stream text generation with tool calling support
     const result = streamText({
       model: openai('gpt-4o'),
