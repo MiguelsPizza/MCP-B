@@ -16,6 +16,15 @@ export const todoSortSchema = z.object({
 });
 
 /**
+ * Blog page search params
+ * Includes todo sorting parameters and visibility toggle
+ */
+export const blogSearchSchema = z.object({
+  showTodos: z.boolean().optional().default(false).describe('Show todos panel'),
+  ...todoSortSchema.shape,
+});
+
+/**
  * Main page search params
  * Includes tab state, activeView, and todo sorting parameters
  */
@@ -33,3 +42,4 @@ export const indexSearchSchema = z.object({
 // Export types for use in components
 export type TodoSortParams = z.infer<typeof todoSortSchema>;
 export type IndexSearchParams = z.infer<typeof indexSearchSchema>;
+export type BlogSearchParams = z.infer<typeof blogSearchSchema>;

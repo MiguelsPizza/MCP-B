@@ -40,9 +40,9 @@ const Assistant = () => {
   };
 
   return (
-    <div className="min-h-screen relative">
-      <div className="absolute top-20 left-10 h-72 w-72 bg-gradient-to-br from-primary/30 to-blue-600/30 rounded-full blur-3xl animate-float-slow" />
-      <div className="absolute bottom-20 right-10 h-96 w-96 bg-gradient-to-br from-blue-600/20 to-primary/20 rounded-full blur-3xl animate-float-delayed" />
+    <div className="min-h-screen relative bg-background">
+      <div className="absolute top-20 left-10 h-72 w-72 bg-gradient-to-br from-chart-1/30 to-chart-2/30 rounded-full blur-3xl animate-float-slow" />
+      <div className="absolute bottom-20 right-10 h-96 w-96 bg-gradient-to-br from-chart-3/20 to-chart-4/20 rounded-full blur-3xl animate-float-delayed" />
 
       <AssistantRuntimeProvider runtime={runtime}>
         <SidebarProvider
@@ -63,17 +63,17 @@ const Assistant = () => {
                   <Thread />
                 </McpClientProvider>
               </div>
-              <div className="w-96 border-l bg-gradient-to-b from-background to-background/80">
+              <div className="w-96 border-l border-border bg-gradient-to-b from-card to-card/80">
                 <div className="h-full flex flex-col">
-                  <div className="flex items-center justify-between p-4 border-b">
+                  <div className="flex items-center justify-between p-4 border-b border-border bg-muted/50">
                     <div className="flex items-center gap-2">
                       <SidebarTrigger className="lg:hidden" />
-                      <h2 className="mb-4 text-xl font-bold sm:text-2xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      <h2 className="mb-4 text-xl font-bold sm:text-2xl bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                         Tasks
                       </h2>
                     </div>
                   </div>
-                  <div className="flex-1 overflow-hidden">
+                  <div className="flex-1 overflow-hidden bg-background/50">
                     <Todos route="/assistant" />
                   </div>
                 </div>

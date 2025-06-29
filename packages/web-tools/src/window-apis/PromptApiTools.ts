@@ -96,7 +96,7 @@ export class PromptApiTools extends BaseApiTools {
 
   private registerCheckAvailability(): void {
     this.server.registerTool(
-      'extension_tool_check_language_model_availability',
+      'web_tool_check_language_model_availability',
       {
         description: 'Check if the language model is available with specific options',
         inputSchema: {
@@ -162,7 +162,7 @@ export class PromptApiTools extends BaseApiTools {
 
   private registerGetParams(): void {
     this.server.registerTool(
-      'extension_tool_get_language_model_params',
+      'web_tool_get_language_model_params',
       {
         description: "Get the language model's parameter limits and defaults",
         inputSchema: {},
@@ -190,7 +190,7 @@ export class PromptApiTools extends BaseApiTools {
 
   private registerCreateSession(): void {
     this.server.registerTool(
-      'extension_tool_create_language_model_session',
+      'web_tool_create_language_model_session',
       {
         description: 'Create a new language model session',
         inputSchema: {
@@ -268,7 +268,7 @@ export class PromptApiTools extends BaseApiTools {
 
   private registerPrompt(): void {
     this.server.registerTool(
-      'extension_tool_prompt_language_model',
+      'web_tool_prompt_language_model',
       {
         description: 'Send a prompt to a language model session and get the complete response',
         inputSchema: {
@@ -311,7 +311,7 @@ export class PromptApiTools extends BaseApiTools {
 
   private registerPromptStreaming(): void {
     this.server.registerTool(
-      'extension_tool_prompt_language_model_streaming',
+      'web_tool_prompt_language_model_streaming',
       {
         description:
           'Send a prompt to a language model session and get a streaming response (returns first chunk)',
@@ -365,7 +365,7 @@ export class PromptApiTools extends BaseApiTools {
 
   private registerAppend(): void {
     this.server.registerTool(
-      'extension_tool_append_to_language_model_session',
+      'web_tool_append_to_language_model_session',
       {
         description: 'Append messages to a session without prompting for a response',
         inputSchema: {
@@ -403,7 +403,7 @@ export class PromptApiTools extends BaseApiTools {
 
   private registerMeasureInputUsage(): void {
     this.server.registerTool(
-      'extension_tool_measure_language_model_input_usage',
+      'web_tool_measure_language_model_input_usage',
       {
         description: 'Measure how many tokens a prompt would consume without sending it',
         inputSchema: {
@@ -437,7 +437,7 @@ export class PromptApiTools extends BaseApiTools {
   private registerManageSession(): void {
     // List sessions
     this.server.registerTool(
-      'extension_tool_list_language_model_sessions',
+      'web_tool_list_language_model_sessions',
       {
         description: 'List all active language model sessions',
         inputSchema: {},
@@ -465,7 +465,7 @@ export class PromptApiTools extends BaseApiTools {
 
     // Clone session
     this.server.registerTool(
-      'extension_tool_clone_language_model_session',
+      'web_tool_clone_language_model_session',
       {
         description: 'Clone an existing language model session',
         inputSchema: {
@@ -499,7 +499,7 @@ export class PromptApiTools extends BaseApiTools {
 
     // Destroy session
     this.server.registerTool(
-      'extension_tool_destroy_language_model_session',
+      'web_tool_destroy_language_model_session',
       {
         description: 'Destroy a language model session and free resources',
         inputSchema: {

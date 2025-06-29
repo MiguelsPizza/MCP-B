@@ -39,3 +39,4 @@ local-server/node_modules
 local-server/dist
 e2e-tests/test-results
 e2e-tests/playwright-report
+extension/.oldZips
