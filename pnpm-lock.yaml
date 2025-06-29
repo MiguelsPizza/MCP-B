@@ -409,6 +409,30 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
 
+  packages/mcp-react-hook-form:
+    devDependencies:
+      '@hookform/resolvers':
+        specifier: ^3.10.0
+        version: 3.10.0(react-hook-form@7.57.0(react@19.1.0))
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.1.0
+        version: 1.13.2
+      '@types/react':
+        specifier: ^19.0.6
+        version: 19.1.8
+      react:
+        specifier: ^19.0.0
+        version: 19.1.0
+      react-hook-form:
+        specifier: ^7.54.2
+        version: 7.57.0(react@19.1.0)
+      typescript:
+        specifier: ~5.8.3
+        version: 5.8.3
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.64
+
   packages/mcp-react-hooks:
     dependencies:
       '@assistant-ui/react':
@@ -546,6 +570,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.0.1
         version: 5.1.1(react-hook-form@7.57.0(react@19.1.0))
+      '@mcp-b/mcp-react-hook-form':
+        specifier: workspace:*
+        version: link:../packages/mcp-react-hook-form
       '@mcp-b/mcp-react-hooks':
         specifier: workspace:*
         version: link:../packages/mcp-react-hooks

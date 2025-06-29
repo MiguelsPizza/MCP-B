@@ -1,0 +1,52 @@
+{
+  "name": "@mcp-b/mcp-react-hook-form",
+  "version": "0.0.1",
+  "description": "React Hook Form integration for MCP tools - transform forms into AI-callable tools",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "mcp",
+    "react",
+    "hook-form",
+    "forms",
+    "react-hook-form",
+    "zod",
+    "ai",
+    "tools"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "@hookform/resolvers": "^3.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-hook-form": "^7.0.0",
+    "zod": "^3.0.0"
+  },
+  "devDependencies": {
+    "@hookform/resolvers": "^3.10.0",
+    "@modelcontextprotocol/sdk": "^1.1.0",
+    "@types/react": "^19.0.6",
+    "react": "^19.0.0",
+    "react-hook-form": "^7.54.2",
+    "typescript": "~5.8.3",
+    "zod": "^3.24.1"
+  }
+}
