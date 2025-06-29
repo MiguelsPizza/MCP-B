@@ -1,4 +1,4 @@
-# MCP React Hooks
+# @mcp-b/mcp-react-hooks
 
 React hooks and providers for the Model Context Protocol (MCP), designed for browser-based applications. This library provides a flexible architecture with three distinct providers for different use cases.
 
@@ -12,30 +12,85 @@ npm install @mcp-b/mcp-react-hooks
 
 This library provides three distinct providers for different use cases:
 
-1. **McpServerProvider** - For exposing MCP tools from your web application
-2. **McpClientProvider** - For consuming MCP tools from other servers
+1. **McpClientProvider** - For consuming MCP tools from servers
+2. **McpServerProvider** - For exposing MCP tools from your web application  
 3. **McpMemoryProvider** - For applications that need both client and server with in-memory transport
 
 ## Usage
 
-### Server-Only Usage
+### Client Usage with McpClientProvider
+
+Use `McpClientProvider` when you want to consume MCP tools from other servers:
+
+```tsx
+import { McpClientProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { TabClientTransport } from '@mcp-b/transports';
+
+// Create client and transport instances
+const client = new Client({ name: 'MyApp', version: '1.0.0' });
+const transport = new TabClientTransport('mcp', { clientInstanceId: 'my-app' });
+
+function App() {
+  return (
+    <McpClientProvider client={client} transport={transport} opts={{}}>
+      <ClientTools />
+    </McpClientProvider>
+  );
+}
+
+function ClientTools() {
+  const { client, tools, isConnected, isLoading, error } = useMcpClient();
+  
+  const callTool = async (toolName: string, args: any) => {
+    if (!client) return;
+    
+    const result = await client.callTool({
+      name: toolName,
+      arguments: args
+    });
+    
+    console.log('Tool result:', result);
+  };
+  
+  if (isLoading) return <div>Connecting...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  
+  return (
+    <div>
+      <h3>Available Tools: {tools.length}</h3>
+      {tools.map(tool => (
+        <div key={tool.name}>
+          <h4>{tool.name}</h4>
+          <p>{tool.description}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Server Usage with McpServerProvider
 
 Use `McpServerProvider` when you want to expose MCP tools from your web application:
 
 ```tsx
 import { McpServerProvider, useMcpServer } from '@mcp-b/mcp-react-hooks';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { TabServerTransport } from '@mcp-b/transports';
 import { z } from 'zod';
 
+// Create server and transport instances
+const server = new McpServer({ 
+  name: 'MyWebAppServer', 
+  version: '1.0.0',
+  options: { instructions: 'A helpful web application server.' }
+});
+const transport = new TabServerTransport({ allowedOrigins: ['*'] });
+
 function App() {
-  const transport = new TabServerTransport({ allowedOrigins: ['*'] });
-  
   return (
-    <McpServerProvider
-      serverConfig={{ name: 'MyWebApp', version: '1.0.0' }}
-      transport={transport}
-      options={{ instructions: 'A helpful web application server.' }}
-    >
+    <McpServerProvider server={server} transport={transport}>
       <ServerTools />
     </McpServerProvider>
   );
@@ -47,7 +102,7 @@ function ServerTools() {
   useEffect(() => {
     if (!isConnected) return;
     
-    // Register tools using the convenience function
+    // Register a simple tool
     const unregisterGreet = registerTool(
       'greet',
       {
@@ -61,57 +116,42 @@ function ServerTools() {
       })
     );
     
-    // Register a tool that uses elicitation
-    const unregisterBooking = registerTool(
-      'book-restaurant',
+    // Register a tool with user interaction
+    const unregisterConfirm = registerTool(
+      'confirm-action',
       {
-        description: 'Book a restaurant reservation',
+        description: 'Perform an action with user confirmation',
         inputSchema: {
-          restaurant: z.string(),
-          date: z.string(),
-          partySize: z.number()
+          action: z.string().describe('The action to perform')
         }
       },
-      async ({ restaurant, date, partySize }) => {
-        // Check availability (mock)
-        const available = Math.random() > 0.5;
-        
-        if (!available) {
-          // Ask user for alternative dates
-          const result = await elicitInput(
-            `No tables available at ${restaurant} on ${date}. Would you like to check alternative dates?`,
-            {
-              type: 'object',
-              properties: {
-                checkAlternatives: {
-                  type: 'boolean',
-                  title: 'Check alternative dates',
-                  description: 'Would you like me to check other dates?'
-                },
-                flexibleDates: {
-                  type: 'string',
-                  title: 'Date flexibility',
-                  description: 'How flexible are your dates?',
-                  enum: ['next_day', 'same_week', 'next_week']
-                }
+      async ({ action }) => {
+        // Ask user for confirmation
+        const result = await elicitInput(
+          `Do you want to proceed with: ${action}?`,
+          {
+            type: 'object',
+            properties: {
+              confirm: {
+                type: 'boolean',
+                title: 'Confirm',
+                description: 'Proceed with the action?'
               },
-              required: ['checkAlternatives']
-            }
-          );
-          
-          if (result.action === 'accept' && result.content?.checkAlternatives) {
-            return {
-              content: [{
-                type: 'text',
-                text: `Found alternative dates based on ${result.content.flexibleDates} preference`
-              }]
-            };
+              reason: {
+                type: 'string',
+                title: 'Reason (optional)',
+                description: 'Why are you making this choice?'
+              }
+            },
+            required: ['confirm']
           }
-          
+        );
+        
+        if (result.action === 'accept' && result.content?.confirm) {
           return {
             content: [{
               type: 'text',
-              text: 'No booking made. Original date not available.'
+              text: `Action "${action}" completed. Reason: ${result.content.reason || 'None provided'}`
             }]
           };
         }
@@ -119,15 +159,16 @@ function ServerTools() {
         return {
           content: [{
             type: 'text',
-            text: `Booked table for ${partySize} at ${restaurant} on ${date}`
+            text: `Action "${action}" cancelled`
           }]
         };
       }
     );
     
+    // Cleanup on unmount
     return () => {
       unregisterGreet();
-      unregisterBooking();
+      unregisterConfirm();
     };
   }, [isConnected, registerTool, elicitInput]);
   
@@ -135,80 +176,40 @@ function ServerTools() {
 }
 ```
 
-### Client-Only Usage
-
-Use `McpClientProvider` when you want to consume MCP tools from other servers:
-
-```tsx
-import { McpClientProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
-import { TabClientTransport } from '@mcp-b/transports';
-
-function App() {
-  const transport = new TabClientTransport('mcp', { clientInstanceId: 'my-app' });
-  
-  return (
-    <McpClientProvider
-      clientConfig={{ name: 'MyClient', version: '1.0.0' }}
-      transport={transport}
-    >
-      <ClientTools />
-    </McpClientProvider>
-  );
-}
-
-function ClientTools() {
-  const { client, tools, isConnected, isLoading } = useMcpClient();
-  
-  const callTool = async () => {
-    const result = await client.callTool({
-      name: 'greet',
-      arguments: { name: 'World' }
-    });
-    console.log('Result:', result);
-  };
-  
-  if (isLoading) return <div>Loading...</div>;
-  
-  return (
-    <div>
-      <h3>Available Tools: {tools.length}</h3>
-      <button onClick={callTool}>Call Tool</button>
-    </div>
-  );
-}
-```
-
-### Combined Client & Server
+### Combined Client & Server with McpMemoryProvider
 
 Use `McpMemoryProvider` when you need both client and server in the same application:
 
 ```tsx
 import { McpMemoryProvider, useMcpClient, useMcpServer } from '@mcp-b/mcp-react-hooks';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+
+const server = new McpServer({ name: 'MyServer', version: '1.0.0' });
+const client = new Client({ name: 'MyClient', version: '1.0.0' });
 
 function App() {
   return (
-    <McpMemoryProvider
-      serverConfig={{ name: 'MyServer', version: '1.0.0' }}
-      clientConfig={{ name: 'MyClient', version: '1.0.0' }}
-      serverOptions={{ instructions: 'A helpful assistant.' }}
-    >
+    <McpMemoryProvider server={server} client={client}>
       <MyApp />
     </McpMemoryProvider>
   );
 }
 
 function MyApp() {
-  const { server } = useMcpServer();
+  const { registerTool } = useMcpServer();
   const { client, tools } = useMcpClient();
   
   // Register tools on the server
   useEffect(() => {
-    const unregister = server.tool(
+    const unregister = registerTool(
       'addNumbers',
-      'Adds two numbers',
       {
-        a: z.number(),
-        b: z.number()
+        description: 'Adds two numbers',
+        inputSchema: {
+          a: z.number(),
+          b: z.number()
+        }
       },
       async ({ a, b }) => ({
         content: [{ type: 'text', text: `Result: ${a + b}` }]
@@ -216,7 +217,7 @@ function MyApp() {
     );
     
     return () => unregister();
-  }, [server]);
+  }, [registerTool]);
   
   // Call tools with the client
   const testAddition = async () => {
@@ -236,36 +237,173 @@ function MyApp() {
 }
 ```
 
+## Integration with Assistant UI
+
+This library works seamlessly with `@assistant-ui/react` for AI chat interfaces:
+
+```tsx
+import { useAssistantRuntime } from '@assistant-ui/react';
+import { tool } from '@assistant-ui/react';
+import { useMcpClient } from '@mcp-b/mcp-react-hooks';
+import { McpTool } from '@modelcontextprotocol/sdk/types.js';
+
+export function useAssistantMCP(mcpTools: McpTool[], client: Client): void {
+  const runtime = useAssistantRuntime();
+  
+  useEffect(() => {
+    if (!client || mcpTools.length === 0) return;
+    
+    // Convert MCP tools to assistant-ui tools
+    const assistantTools = mcpTools.map((mcpTool) => ({
+      name: mcpTool.name,
+      assistantTool: tool({
+        type: 'frontend',
+        description: mcpTool.description,
+        parameters: mcpTool.inputSchema,
+        execute: async (args) => {
+          const result = await client.callTool({
+            name: mcpTool.name,
+            arguments: args,
+          });
+          
+          // Extract text content from MCP response
+          const textContent = result.content
+            .filter(c => c.type === 'text')
+            .map(c => c.text)
+            .join('\n');
+            
+          return { content: textContent };
+        },
+      }),
+    }));
+    
+    // Register with assistant runtime
+    const unregister = runtime.registerModelContextProvider({
+      getModelContext: () => ({
+        system: 'MCP Tools Available:',
+        tools: Object.fromEntries(
+          assistantTools.map((t) => [t.name, t.assistantTool])
+        ),
+      }),
+    });
+    
+    return () => unregister();
+  }, [client, mcpTools, runtime]);
+}
+
+// Usage in your chat component
+function ChatWithMCP() {
+  const { client, tools } = useMcpClient();
+  
+  // Bridge MCP tools to assistant-ui
+  useAssistantMCP(tools, client);
+  
+  return <Thread />; // Your assistant-ui Thread component
+}
+```
+
+## Real-World Examples
+
+### Multiple Clients for Different UI Sections
+
+```tsx
+// Create separate clients for different parts of your app
+const sidebarClient = new Client({ name: 'Sidebar', version: '1.0.0' });
+const assistantClient = new Client({ name: 'Assistant', version: '1.0.0' });
+
+function App() {
+  return (
+    <AssistantRuntimeProvider runtime={runtime}>
+      <McpClientProvider client={sidebarClient} transport={sidebarTransport}>
+        <AppSidebar />
+      </McpClientProvider>
+      <McpClientProvider client={assistantClient} transport={assistantTransport}>
+        <MainChat />
+      </McpClientProvider>
+    </AssistantRuntimeProvider>
+  );
+}
+```
+
+### Browser Extension Integration
+
+```tsx
+import { ExtensionClientTransport } from '@mcp-b/transports';
+
+// For Chrome extensions
+const transport = new ExtensionClientTransport({ portName: 'mcp' });
+const client = new Client({ name: 'Extension', version: '1.0.0' });
+
+function ExtensionApp() {
+  return (
+    <McpClientProvider client={client} transport={transport} opts={{}}>
+      <ExtensionUI />
+    </McpClientProvider>
+  );
+}
+```
+
+### Dynamic Tool Registration
+
+```tsx
+function DynamicTools() {
+  const { registerTool, isConnected } = useMcpServer();
+  const [customTools, setCustomTools] = useState<(() => void)[]>([]);
+  
+  const addCustomTool = (name: string, description: string) => {
+    if (!isConnected) return;
+    
+    const unregister = registerTool(
+      name,
+      {
+        description,
+        inputSchema: {
+          input: z.string()
+        }
+      },
+      async ({ input }) => ({
+        content: [{ type: 'text', text: `Processed: ${input}` }]
+      })
+    );
+    
+    setCustomTools(prev => [...prev, unregister]);
+  };
+  
+  // Cleanup all custom tools
+  useEffect(() => {
+    return () => {
+      customTools.forEach(unregister => unregister());
+    };
+  }, [customTools]);
+  
+  return (
+    <button onClick={() => addCustomTool(`tool-${Date.now()}`, 'Dynamic tool')}>
+      Add Tool
+    </button>
+  );
+}
+```
+
 ## API Reference
-
-### McpServerProvider
-
-Props:
-- `serverConfig: { name: string; version: string }` - Server identification
-- `transport: Transport` - Transport instance for the server
-- `options?: { instructions?: string }` - Optional server configuration
 
 ### McpClientProvider
 
 Props:
-- `clientConfig: { name: string; version: string }` - Client identification
+- `client: Client` - MCP client instance
 - `transport: Transport` - Transport instance for the client
+- `opts: RequestOptions` - Connection options (optional)
+
+### McpServerProvider
+
+Props:
+- `server: McpServer` - MCP server instance
+- `transport: Transport` - Transport instance for the server
 
 ### McpMemoryProvider
 
 Props:
-- `serverConfig: { name: string; version: string }` - Server identification
-- `clientConfig: { name: string; version: string }` - Client identification
-- `serverOptions?: { instructions?: string }` - Optional server configuration
-
-### useMcpServer()
-
-Returns:
-- `server: McpServer` - The MCP server instance
-- `isConnected: boolean` - Connection status
-- `error: Error | null` - Connection error if any
-- `elicitInput: (message, schema, options?) => Promise<ElicitResult>` - Elicit input from the user
-- `registerTool: (name, config, callback) => () => void` - Register a tool and get unregister function
+- `server: McpServer` - MCP server instance
+- `client: Client` - MCP client instance
 
 ### useMcpClient()
 
@@ -277,200 +415,38 @@ Returns:
 - `isLoading: boolean` - Loading state
 - `error: Error | null` - Connection error if any
 - `capabilities: ServerCapabilities | null` - Server capabilities
+- `reconnect: () => Promise<void>` - Manual reconnection function
 
-## Elicitation Support
+### useMcpServer()
 
-The server can elicit input from users through the client. This is useful for interactive workflows where the server needs user input or confirmation:
+Returns:
+- `server: McpServer` - The MCP server instance
+- `isConnected: boolean` - Connection status
+- `isConnecting: boolean` - Currently connecting
+- `error: Error | null` - Connection error if any
+- `registerTool: (name, config, callback) => RegisteredTool` - Register a tool
+- `elicitInput: (message, schema, options?) => Promise<ElicitResult>` - Request user input
 
-```tsx
-function InteractiveTools() {
-  const { registerTool, elicitInput, isConnected } = useMcpServer();
+## Transport Options
 
-  useEffect(() => {
-    if (!isConnected) return;
+This library works with various transports from `@mcp-b/transports`:
 
-    const unregister = registerTool(
-      'configure-settings',
-      {
-        description: 'Configure application settings interactively',
-        inputSchema: {
-          setting: z.string().describe('The setting to configure')
-        }
-      },
-      async ({ setting }) => {
-        // Ask user for the new value
-        const result = await elicitInput(
-          `What value would you like to set for "${setting}"?`,
-          {
-            type: 'object',
-            properties: {
-              value: {
-                type: 'string',
-                title: 'New Value',
-                description: `Enter the new value for ${setting}`
-              },
-              persist: {
-                type: 'boolean',
-                title: 'Save to disk',
-                description: 'Should this setting be saved permanently?',
-                default: true
-              }
-            },
-            required: ['value']
-          }
-        );
+- **TabServerTransport/TabClientTransport** - For communication between browser tabs
+- **ExtensionClientTransport** - For Chrome extension communication
+- **InMemoryTransport** - For client-server in same process
 
-        if (result.action === 'accept') {
-          const { value, persist } = result.content!;
-          // Apply the setting
-          return {
-            content: [{
-              type: 'text',
-              text: `Set ${setting} to "${value}"${persist ? ' and saved to disk' : ''}`
-            }]
-          };
-        } else if (result.action === 'cancel') {
-          return {
-            content: [{
-              type: 'text',
-              text: 'Configuration cancelled by user'
-            }]
-          };
-        } else {
-          return {
-            content: [{
-              type: 'text',
-              text: 'Configuration rejected'
-            }]
-          };
-        }
-      }
-    );
+## Best Practices
 
-    return unregister;
-  }, [isConnected, registerTool, elicitInput]);
+1. **Create client/server instances outside components** to avoid recreation on re-renders
+2. **Handle connection states** properly with isLoading and error states
+3. **Clean up tools** using the unregister functions in useEffect cleanup
+4. **Use proper error handling** when calling tools
+5. **Implement elicitation handlers** on the client side for interactive workflows
 
-  return null;
-}
-```
+## TypeScript Support
 
-### Elicitation Response Actions
-
-The client can respond with three different actions:
-- `accept`: User provided the requested input (includes `content` field)
-- `reject`: User explicitly rejected the request
-- `cancel`: User cancelled the interaction
-
-## Integration with Assistant UI
-
-This library works seamlessly with `@assistant-ui/react`:
-
-```tsx
-import { useAssistantRuntime } from '@assistant-ui/react';
-import { tool } from '@assistant-ui/react';
-import { useMcpClient } from '@mcp-b/mcp-react-hooks';
-
-function AssistantIntegration() {
-  const { client, tools } = useMcpClient();
-  const runtime = useAssistantRuntime();
-  
-  useEffect(() => {
-    if (!client || tools.length === 0) return;
-    
-    // Convert MCP tools to assistant-ui tools
-    const assistantTools = tools.map((mcpTool) => ({
-      name: mcpTool.name,
-      assistantTool: tool({
-        type: 'frontend',
-        description: mcpTool.description,
-        parameters: mcpTool.inputSchema,
-        execute: (args) => client.callTool({
-          name: mcpTool.name,
-          arguments: args,
-        }),
-      }),
-    }));
-    
-    // Register with assistant runtime
-    const unregister = runtime.registerModelContextProvider({
-      getModelContext: () => ({
-        system: 'MCP Tools:',
-        tools: Object.fromEntries(
-          assistantTools.map((t) => [t.name, t.assistantTool])
-        ),
-      }),
-    });
-    
-    return () => unregister();
-  }, [client, tools, runtime]);
-  
-  return <div>Tools registered: {tools.length}</div>;
-}
-```
-
-## Migration from Legacy API
-
-If you're using the old `McpProvider` and `useMcpClient` from `McpContext`, they are still available for backward compatibility:
-
-```tsx
-// Old API (still works)
-import { McpProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
-
-// New API (recommended)
-import { McpClientProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
-```
-
-The main difference is that the new providers handle the connection lifecycle automatically, while the old API required manual connection management.
-
-## Legacy Examples
-
-### Using McpServerProvider (Legacy)
-
-The following example shows the legacy pattern of creating and connecting a server before passing it to the provider:
-
-```tsx
-import { useEffect } from 'react';
-import { McpServerProvider, useMcpServer } from '@mcp-b/mcp-react-hooks';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
-import { TabServerTransport } from '@mcp-b/transports';
-import { z } from 'zod';
-
-// Create and connect server outside React
-const server = new McpServer({ name: 'MyWebAppServer', version: '1.0.0' });
-const transport = new TabServerTransport();
-await server.connect(transport);
-
-function App() {
-  return (
-    <McpServerProvider server={server}>
-      <DynamicGreeterTool />
-    </McpServerProvider>
-  );
-}
-
-function DynamicGreeterTool() {
-  const { server } = useMcpServer();
-
-  useEffect(() => {
-    console.log('Registering "greet" tool...');
-    const registeredTool = server.tool(
-      'greet',
-      'Responds with a greeting.',
-      { name: z.string().describe('The name to greet') },
-      async ({ name }) => {
-        return {
-          content: [{ type: 'text', text: `Hello, ${name}!` }],
-        };
-      }
-    );
-
-    // The cleanup function from useEffect will run when the component unmounts
-    return () => {
-      console.log('Unregistering "greet" tool...');
-      registeredTool.remove();
-    };
-  }, [server]); // Re-run effect only if the server instance changes
-
-  return <div>The "greet" tool is currently available.</div>;
-}
-```
+This library is written in TypeScript and provides full type safety for:
+- Tool input/output schemas using Zod
+- MCP protocol types
+- React component props
+- Hook return values

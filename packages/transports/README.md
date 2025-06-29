@@ -1,147 +1,246 @@
 # MCP Browser Transports
 
-This library provides MCP `Transport` implementations for use in browser environments, enabling communication between MCP clients and servers within a web page or across a browser extension.
+This library provides MCP `Transport` implementations for browser environments, enabling communication between MCP clients and servers within web pages and browser extensions.
 
-### Installation
+## Installation
 
 ```bash
 npm install @mcp-b/transports
 ```
 
-## Tab Transport (In-Page)
+## Transport Types
 
-Use `TabServerTransport` and `TabClientTransport` when your MCP server and client are running in the same browser tab. The transport uses a `MessageChannel` and a global `window.mcp` object for communication.
+### Tab Transports (In-Page Communication)
 
-### Quick Start: Tab Transport
+Use `TabServerTransport` and `TabClientTransport` when your MCP server and client are running in the same browser tab. The transport uses `window.postMessage` for secure communication with origin validation.
 
-**1. Server Setup**
+### Extension Transports (Cross-Context Communication)
 
-Create an MCP server and connect it to a `TabServerTransport`. This will expose it on `window.mcp`.
+Use `ExtensionClientTransport` and `ExtensionServerTransport` for communication between browser extension components (sidebar, popup, background) and web pages with MCP servers.
+
+## Tab Transport Examples
+
+### Server Setup (Web Page)
+
+Create an MCP server in your web page and expose it via `TabServerTransport`:
 
 ```typescript
-// my-mcp-server.js
 import { TabServerTransport } from '@mcp-b/transports';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-// 1. Create an MCP server
+// Create MCP server with tools
 const server = new McpServer({
-  name: 'WebAppServer',
+  name: 'TODO-APP',
   version: '1.0.0',
+}, {
+  instructions: 'You are a helpful assistant that can create, update, and delete todos.'
 });
 
-// 2. Add a tool
-server.tool('add', { a: z.number(), b: z.number() }, async ({ a, b }) => ({
-  content: [{ type: 'text', text: String(a + b) }],
-}));
+// Register a tool
+server.tool(
+  'createTodo',
+  'Creates a new todo item for the current user',
+  {
+    todoText: z.string().describe('The content of the todo item.')
+  },
+  async (args) => {
+    // Implementation here
+    return {
+      content: [{
+        type: 'text',
+        text: `Todo created: "${args.todoText}"`
+      }]
+    };
+  }
+);
 
-// 3. Create the transport and connect it to the server
-const transport = new TabServerTransport();
+// Connect to transport with CORS configuration
+const transport = new TabServerTransport({
+  allowedOrigins: ['*']  // Configure based on your security needs
+});
 await server.connect(transport);
-
-console.log('MCP Tab Server is running.');
 ```
 
-**2. Client Setup**
+### Client Setup (Same Page)
 
-In your application code, create a client that connects to the server running on the page.
+Connect to the server from within the same page or from an extension content script:
 
 ```typescript
-// my-app.js
 import { TabClientTransport } from '@mcp-b/transports';
-import { Client } from '@modelcontextprotocol/sdk/client';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 
-// 1. Create a transport that connects to the global 'mcp' namespace
-const transport = new TabClientTransport('mcp', {
-  clientInstanceId: 'my-web-app-client',
+// Create transport with target origin
+const transport = new TabClientTransport({
+  targetOrigin: window.location.origin
 });
 
-// 2. Create the client
+// Discover available servers
+const availableServers = await transport.discover();
+if (availableServers.length > 0) {
+  console.log(`Found server: ${availableServers[0].implementation.name}`);
+}
+
+// Create and connect client
 const client = new Client({
-  name: 'WebAppClient',
-  version: '1.0.0',
+  name: 'ExtensionProxyClient',
+  version: '1.0.0'
 });
 
-// 3. Connect and use the client
 await client.connect(transport);
+
+// Use the client
 const result = await client.callTool({
-  name: 'add',
-  arguments: { a: 5, b: 10 },
+  name: 'createTodo',
+  arguments: { todoText: 'Buy groceries' }
+});
+```
+
+## Extension Transport Examples
+
+### Background Script Setup
+
+The extension background script acts as a hub, aggregating tools from multiple tabs:
+
+```typescript
+import { ExtensionServerTransport } from '@mcp-b/transports';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+
+class McpHub {
+  private server: McpServer;
+  
+  constructor() {
+    this.server = new McpServer({
+      name: 'Extension-Hub',
+      version: '1.0.0'
+    });
+    
+    this.setupConnections();
+  }
+  
+  private setupConnections() {
+    chrome.runtime.onConnect.addListener((port) => {
+      if (port.name === 'mcp') {
+        this.handleUiConnection(port);
+      } else if (port.name === 'mcp-content-script-proxy') {
+        this.handleContentScriptConnection(port);
+      }
+    });
+  }
+  
+  private async handleUiConnection(port: chrome.runtime.Port) {
+    const transport = new ExtensionServerTransport(port);
+    await this.server.connect(transport);
+  }
+}
+```
+
+### Content Script Bridge
+
+Content scripts act as a bridge between the page's MCP server and the extension:
+
+```typescript
+import { TabClientTransport } from '@mcp-b/transports';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+
+// Connect to the page's MCP server
+const transport = new TabClientTransport({
+  targetOrigin: window.location.origin
 });
 
-console.log('Result of add(5, 10):', result.content[0].text); // "15"
+const client = new Client({
+  name: 'ExtensionProxyClient',
+  version: '1.0.0'
+});
+
+// Connect to extension background
+const backgroundPort = chrome.runtime.connect({
+  name: 'mcp-content-script-proxy'
+});
+
+// Discover and connect to page server
+await client.connect(transport);
+const pageTools = await client.listTools();
+
+// Register tools with background hub
+backgroundPort.postMessage({
+  type: 'register-tools',
+  tools: pageTools.tools
+});
+
+// Handle tool execution requests from background
+backgroundPort.onMessage.addListener(async (message) => {
+  if (message.type === 'execute-tool') {
+    const result = await client.callTool({
+      name: message.toolName,
+      arguments: message.args || {}
+    });
+    
+    backgroundPort.postMessage({
+      type: 'tool-result',
+      requestId: message.requestId,
+      data: { success: true, payload: result }
+    });
+  }
+});
 ```
 
-## Extension Transport
+### Extension UI Client
 
-Use `ExtensionClientTransport` to allow a browser extension's UI (like a popup or sidebar) to communicate with an MCP server running in a page. This works via a relay through the extension's background script.
-
-### Architecture
-
-`Extension UI <-> Background Script <-> Content Script <-> Page Script`
-
-### Quick Start: Extension Transport
-
-**1. Background Script Setup (`background.ts`)**
-
-Set up the central bridge to route messages between the extension UI and content scripts.
-
-```typescript
-import { setupBackgroundBridge } from '@mcp-b/transports/extension';
-
-// This function listens for connections from UI and content scripts
-// and relays messages between them.
-setupBackgroundBridge();
-```
-
-**2. Content Script Setup (`contentScript.ts`)**
-
-Inject a content script into the target page to relay messages between the page's `window` and the background script.
-
-```typescript
-import { mcpRelay } from '@mcp-b/transports/extension';
-
-// The relay forwards messages from the page to the background script
-// and vice-versa.
-mcpRelay();
-```
-
-**3. Page Script Setup**
-
-Your web application still needs to run a `TabServerTransport` as shown in the "Tab Transport" example above. The content script will automatically connect to it.
-
-**4. Extension UI Client (`popup.tsx` or `sidebar.tsx`)**
-
-Finally, your extension's UI can connect to the page's MCP server.
+Connect from the extension's sidebar or popup to use tools from all connected pages:
 
 ```typescript
 import { ExtensionClientTransport } from '@mcp-b/transports';
-import { Client } from '@modelcontextprotocol/sdk/client';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 
-// 1. Use the ExtensionClientTransport in your UI code
+// Create transport - connects to the extension's background script
 const transport = new ExtensionClientTransport({
-  clientInstanceId: 'my-extension-ui-client',
+  portName: 'mcp'
 });
 
-// 2. Create the MCP client
+// Create MCP client
 const client = new Client({
-  name: 'MyExtensionUI',
-  version: '1.0.0',
+  name: 'Extension Sidepanel',
+  version: '1.0.0'
 });
 
-// 3. Connect and use the client
-async function callPageTool() {
-  try {
-    await client.connect(transport);
-    const result = await client.callTool({
-      name: 'add',
-      arguments: { a: 20, b: 22 },
-    });
-    console.log('Result from page tool:', result.content[0].text); // "42"
-  } catch (error) {
-    console.error('Failed to call tool via extension bridge:', error);
-  }
-}
+// Connect and use
+await client.connect(transport);
 
-callPageTool();
+// List all available tools from all connected tabs
+const tools = await client.listTools();
+
+// Call a tool from a specific website
+const result = await client.callTool({
+  name: 'website_tool_example_com_createTodo',
+  arguments: { todoText: 'Review PR' }
+});
 ```
+
+## Architecture Overview
+
+### Tab Transport Flow
+1. Server creates `TabServerTransport` and listens for messages via `window.postMessage`
+2. Client creates `TabClientTransport` to connect to the server using the same channel
+3. Communication happens securely with origin validation and message direction tracking
+
+### Extension Transport Flow
+1. Web pages run MCP servers with `TabServerTransport`
+2. Content scripts discover these servers and relay to background script
+3. Background script aggregates tools from all tabs using `ExtensionServerTransport`
+4. Extension UI connects via `ExtensionClientTransport` to access all tools
+
+## Key Features
+
+- **Automatic Server Discovery**: Tab clients can discover available servers
+- **Cross-Origin Support**: Configure CORS for tab transports
+- **Tool Namespacing**: Extension hub prefixes tools to avoid conflicts
+- **Connection Management**: Automatic cleanup when tabs close
+- **Type Safety**: Full TypeScript support with proper typing
+
+## Security Considerations
+
+- Tab transports respect origin restrictions
+- Extension transports use Chrome's secure message passing
+- Configure `allowedOrigins` appropriately for your use case
+- Tools execute in their original context (web page)

@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/mcp-react-hooks",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "React hooks for MCP (Model Context Protocol) client",
   "license": "MIT",
   "author": "mcp-b Team",

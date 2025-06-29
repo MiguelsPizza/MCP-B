@@ -348,7 +348,9 @@ server.tool(
 );
 
 // Connect to make it discoverable
-const transport = new TabServerTransport();
+const transport = new TabServerTransport({
+  allowedOrigins: ['*'] // Configure based on your security needs
+});
 await server.connect(transport);`}
                   />
                 </CardContent>
@@ -438,7 +440,7 @@ pnpm build`}
                     <div>
                       <h4 className="font-semibold mb-1">Web Page</h4>
                       <p className="text-sm text-muted-foreground">
-                        Runs an MCP server using TabServerTransport, exposing it on window.mcp
+                        Runs an MCP server using TabServerTransport with secure message passing
                       </p>
                     </div>
                   </div>
@@ -497,8 +499,8 @@ pnpm build`}
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                The Tab Transport uses a MessageChannel and a global window.mcp object for
-                communication. This is perfect for single-page applications that want to expose
+                The Tab Transport uses window.postMessage for secure communication with origin
+                validation. This is perfect for single-page applications that want to expose
                 functionality to AI agents.
               </p>
             </CardContent>
@@ -529,8 +531,10 @@ server.tool(
   })
 );
 
-// 3. Connect to transport
-const transport = new TabServerTransport();
+// 3. Connect to transport with CORS configuration
+const transport = new TabServerTransport({
+  allowedOrigins: ['*'] // Configure based on your security needs
+});
 await server.connect(transport);
 
 console.log('MCP Tab Server is running.');`}
@@ -545,9 +549,9 @@ console.log('MCP Tab Server is running.');`}
                 code={`import { TabClientTransport } from '@mcp-b/transports';
 import { Client } from '@modelcontextprotocol/sdk/client';
 
-// 1. Create transport
-const transport = new TabClientTransport('mcp', {
-  clientInstanceId: 'my-web-app-client',
+// 1. Create transport with target origin
+const transport = new TabClientTransport({
+  targetOrigin: window.location.origin
 });
 
 // 2. Create client
@@ -597,10 +601,31 @@ console.log('Result:', result.content[0].text); // "15"`}
               <CodeBlock
                 language="typescript"
                 title="background.ts"
-                code={`import { setupBackgroundBridge } from '@mcp-b/transports/extension';
+                code={`import { ExtensionServerTransport } from '@mcp-b/transports';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
-// Set up the central bridge to route messages
-setupBackgroundBridge();`}
+// Set up the extension hub
+class McpHub {
+  private server: McpServer;
+  
+  constructor() {
+    this.server = new McpServer({
+      name: 'Extension-Hub',
+      version: '1.0.0'
+    });
+    
+    this.setupConnections();
+  }
+  
+  private setupConnections() {
+    chrome.runtime.onConnect.addListener((port) => {
+      if (port.name === 'mcp') {
+        const transport = new ExtensionServerTransport(port);
+        this.server.connect(transport);
+      }
+    });
+  }
+}`}
               />
             </div>
 
@@ -609,10 +634,33 @@ setupBackgroundBridge();`}
               <CodeBlock
                 language="typescript"
                 title="contentScript.ts"
-                code={`import { mcpRelay } from '@mcp-b/transports/extension';
+                code={`import { TabClientTransport } from '@mcp-b/transports';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 
-// Relay messages between page and background
-mcpRelay();`}
+// Connect to the page's MCP server
+const transport = new TabClientTransport({
+  targetOrigin: window.location.origin
+});
+
+const client = new Client({
+  name: 'ExtensionProxyClient',
+  version: '1.0.0'
+});
+
+// Connect to extension background
+const backgroundPort = chrome.runtime.connect({
+  name: 'mcp-content-script-proxy'
+});
+
+// Discover and connect to page server
+await client.connect(transport);
+const pageTools = await client.listTools();
+
+// Register tools with background hub
+backgroundPort.postMessage({
+  type: 'register-tools',
+  tools: pageTools.tools
+});`}
               />
             </div>
 
@@ -626,7 +674,7 @@ import { Client } from '@modelcontextprotocol/sdk/client';
 
 // 1. Create extension transport
 const transport = new ExtensionClientTransport({
-  clientInstanceId: 'my-extension-ui-client',
+  portName: 'mcp'
 });
 
 // 2. Create MCP client
@@ -659,7 +707,7 @@ console.log('Result from page:', result.content[0].text); // "42"`}
                 @mcp-b/mcp-react-hooks
               </CardTitle>
               <CardDescription>
-                Simplify MCP integration in React applications with ready-to-use hooks
+                React hooks and providers for MCP integration with support for client, server, and combined usage
               </CardDescription>
             </CardHeader>
           </Card>
@@ -671,46 +719,51 @@ console.log('Result from page:', result.content[0].text); // "42"`}
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-3">Basic Usage</h3>
+              <h3 className="text-xl font-semibold mb-3">Client Usage</h3>
               <CodeBlock
                 language="typescript"
-                title="App.tsx"
-                code={`import { McpProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
+                title="ClientApp.tsx"
+                code={`import { McpClientProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { TabClientTransport } from '@mcp-b/transports';
-import { Client } from '@modelcontextprotocol/sdk/client';
 
-// Create transport and client outside components
-const transport = new TabClientTransport('mcp', {
-  clientInstanceId: 'my-react-app',
-});
+// Create client and transport instances
+const client = new Client({ name: 'MyApp', version: '1.0.0' });
+const transport = new TabClientTransport('mcp', { clientInstanceId: 'my-app' });
 
-const mcpClient = new Client({
-  name: 'MyReactApp',
-  version: '1.0.0',
-});
-
-// Wrap your app
 function App() {
   return (
-    <McpProvider transport={transport} mcpClient={mcpClient}>
-      <MyComponent />
-    </McpProvider>
+    <McpClientProvider client={client} transport={transport} opts={{}}>
+      <ClientTools />
+    </McpClientProvider>
   );
 }
 
-// Use the hook in components
-function MyComponent() {
-  const { client, tools, resources, isConnected } = useMcpClient();
-
-  if (!isConnected) {
-    return <div>Connecting to MCP Server...</div>;
-  }
-
+function ClientTools() {
+  const { client, tools, isConnected, isLoading, error } = useMcpClient();
+  
+  const callTool = async (toolName: string, args: any) => {
+    if (!client) return;
+    
+    const result = await client.callTool({
+      name: toolName,
+      arguments: args
+    });
+    
+    console.log('Tool result:', result);
+  };
+  
+  if (isLoading) return <div>Connecting...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  
   return (
     <div>
-      <h2>Available Tools</h2>
+      <h3>Available Tools: {tools.length}</h3>
       {tools.map(tool => (
-        <div key={tool.name}>{tool.name}</div>
+        <div key={tool.name}>
+          <h4>{tool.name}</h4>
+          <p>{tool.description}</p>
+        </div>
       ))}
     </div>
   );
@@ -719,34 +772,183 @@ function MyComponent() {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-3">Dynamic Tool Registration</h3>
+              <h3 className="text-xl font-semibold mb-3">Server Usage</h3>
               <CodeBlock
                 language="typescript"
-                title="DynamicTool.tsx"
-                code={`import { useEffect } from 'react';
-import { useMcpServer } from '@mcp-b/mcp-react-hooks';
+                title="ServerApp.tsx"
+                code={`import { McpServerProvider, useMcpServer } from '@mcp-b/mcp-react-hooks';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { TabServerTransport } from '@mcp-b/transports';
 import { z } from 'zod';
 
-function DynamicGreeterTool() {
-  const server = useMcpServer();
+// Create server and transport instances
+const server = new McpServer({ 
+  name: 'MyWebAppServer', 
+  version: '1.0.0',
+  options: { instructions: 'A helpful web application server.' }
+});
+const transport = new TabServerTransport({ allowedOrigins: ['*'] });
 
+function App() {
+  return (
+    <McpServerProvider server={server} transport={transport}>
+      <ServerTools />
+    </McpServerProvider>
+  );
+}
+
+function ServerTools() {
+  const { server, isConnected, registerTool, elicitInput } = useMcpServer();
+  
   useEffect(() => {
-    const tool = server.tool(
+    if (!isConnected) return;
+    
+    // Register a simple tool
+    const unregisterGreet = registerTool(
       'greet',
-      { name: z.string() },
+      {
+        description: 'Greets a user by name',
+        inputSchema: {
+          name: z.string().describe('The name to greet')
+        }
+      },
       async ({ name }) => ({
-        content: [{ 
-          type: 'text', 
-          text: \`Hello, \${name}!\` 
-        }],
+        content: [{ type: 'text', text: \`Hello, \${name}!\` }]
       })
     );
-
+    
     // Cleanup on unmount
-    return () => tool.remove();
-  }, [server]);
+    return () => unregisterGreet();
+  }, [isConnected, registerTool]);
+  
+  return <div>Server connected: {isConnected ? 'Yes' : 'No'}</div>;
+}`}
+              />
+            </div>
 
-  return <div>Greet tool is active</div>;
+            <div>
+              <h3 className="text-xl font-semibold mb-3">Combined Client & Server</h3>
+              <CodeBlock
+                language="typescript"
+                title="MemoryApp.tsx"
+                code={`import { McpMemoryProvider, useMcpClient, useMcpServer } from '@mcp-b/mcp-react-hooks';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+
+const server = new McpServer({ name: 'MyServer', version: '1.0.0' });
+const client = new Client({ name: 'MyClient', version: '1.0.0' });
+
+function App() {
+  return (
+    <McpMemoryProvider server={server} client={client}>
+      <MyApp />
+    </McpMemoryProvider>
+  );
+}
+
+function MyApp() {
+  const { registerTool } = useMcpServer();
+  const { client, tools } = useMcpClient();
+  
+  // Register tools on the server
+  useEffect(() => {
+    const unregister = registerTool(
+      'addNumbers',
+      {
+        description: 'Adds two numbers',
+        inputSchema: {
+          a: z.number(),
+          b: z.number()
+        }
+      },
+      async ({ a, b }) => ({
+        content: [{ type: 'text', text: \`Result: \${a + b}\` }]
+      })
+    );
+    
+    return () => unregister();
+  }, [registerTool]);
+  
+  // Call tools with the client
+  const testAddition = async () => {
+    const result = await client.callTool({
+      name: 'addNumbers',
+      arguments: { a: 5, b: 3 }
+    });
+    console.log(result);
+  };
+  
+  return (
+    <div>
+      <p>Tools: {tools.length}</p>
+      <button onClick={testAddition}>Test Addition</button>
+    </div>
+  );
+}`}
+              />
+            </div>
+
+            <div>
+              <h3 className="text-xl font-semibold mb-3">Integration with Assistant UI</h3>
+              <CodeBlock
+                language="typescript"
+                title="ChatWithMCP.tsx"
+                code={`import { useAssistantRuntime } from '@assistant-ui/react';
+import { tool } from '@assistant-ui/react';
+import { useMcpClient } from '@mcp-b/mcp-react-hooks';
+
+export function useAssistantMCP(mcpTools: McpTool[], client: Client): void {
+  const runtime = useAssistantRuntime();
+  
+  useEffect(() => {
+    if (!client || mcpTools.length === 0) return;
+    
+    // Convert MCP tools to assistant-ui tools
+    const assistantTools = mcpTools.map((mcpTool) => ({
+      name: mcpTool.name,
+      assistantTool: tool({
+        type: 'frontend',
+        description: mcpTool.description,
+        parameters: mcpTool.inputSchema,
+        execute: async (args) => {
+          const result = await client.callTool({
+            name: mcpTool.name,
+            arguments: args,
+          });
+          
+          // Extract text content from MCP response
+          const textContent = result.content
+            .filter(c => c.type === 'text')
+            .map(c => c.text)
+            .join('\\n');
+            
+          return { content: textContent };
+        },
+      }),
+    }));
+    
+    // Register with assistant runtime
+    const unregister = runtime.registerModelContextProvider({
+      getModelContext: () => ({
+        system: 'MCP Tools Available:',
+        tools: Object.fromEntries(
+          assistantTools.map((t) => [t.name, t.assistantTool])
+        ),
+      }),
+    });
+    
+    return () => unregister();
+  }, [client, mcpTools, runtime]);
+}
+
+// Usage in your chat component
+function ChatWithMCP() {
+  const { client, tools } = useMcpClient();
+  
+  // Bridge MCP tools to assistant-ui
+  useAssistantMCP(tools, client);
+  
+  return <Thread />; // Your assistant-ui Thread component
 }`}
               />
             </div>
@@ -857,7 +1059,7 @@ server.tool(
                   <div>
                     <h4 className="font-mono text-sm mb-2">connect(): Promise&lt;void&gt;</h4>
                     <p className="text-sm text-muted-foreground">
-                      Establishes the connection and exposes the server on window.mcp
+                      Establishes the connection and starts listening for postMessage events
                     </p>
                   </div>
                 </div>
@@ -875,7 +1077,7 @@ server.tool(
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-mono text-sm mb-2">
-                      constructor(namespace: string, options: TabClientTransportOptions)
+                      constructor(options: TabClientTransportOptions)
                     </h4>
                     <p className="text-sm text-muted-foreground mb-2">
                       Creates a new TabClientTransport instance
@@ -884,12 +1086,10 @@ server.tool(
                       <p className="text-xs font-mono mb-1">Parameters:</p>
                       <ul className="text-xs space-y-1">
                         <li>
-                          <code>namespace</code> - The window property where the server is exposed
-                          (e.g., 'mcp')
+                          <code>options.targetOrigin</code> - The origin to send messages to (required for security)
                         </li>
                         <li>
-                          <code>options.clientInstanceId</code> - Unique identifier for this client
-                          instance
+                          <code>options.channelId</code> - Optional channel ID (defaults to 'mcp-default')
                         </li>
                       </ul>
                     </div>
@@ -918,8 +1118,7 @@ server.tool(
                       <p className="text-xs font-mono mb-1">Parameters:</p>
                       <ul className="text-xs space-y-1">
                         <li>
-                          <code>options.clientInstanceId</code> - Unique identifier for this client
-                          instance
+                          <code>options.portName</code> - The name of the port to connect to (e.g., 'mcp')
                         </li>
                       </ul>
                     </div>
@@ -935,9 +1134,9 @@ server.tool(
               <CardContent>
                 <div className="space-y-6">
                   <div>
-                    <h4 className="font-mono text-sm mb-2">useMcpClient(opts?)</h4>
+                    <h4 className="font-mono text-sm mb-2">useMcpClient()</h4>
                     <p className="text-sm text-muted-foreground mb-2">
-                      Hook for accessing MCP client data and status
+                      Hook for accessing MCP client data and status. Must be used within McpClientProvider.
                     </p>
                     <div className="bg-muted p-3 rounded-md">
                       <p className="text-xs font-mono mb-1">Returns:</p>
@@ -946,19 +1145,25 @@ server.tool(
                           <code>client</code> - The MCP Client instance
                         </li>
                         <li>
+                          <code>tools</code> - Array of available tools
+                        </li>
+                        <li>
                           <code>resources</code> - Array of available resources
                         </li>
                         <li>
-                          <code>tools</code> - Array of available tools
+                          <code>isConnected</code> - Connection status
                         </li>
                         <li>
                           <code>isLoading</code> - Loading state
                         </li>
                         <li>
-                          <code>error</code> - Any connection error
+                          <code>error</code> - Connection error if any
                         </li>
                         <li>
-                          <code>isConnected</code> - Connection status
+                          <code>capabilities</code> - Server capabilities
+                        </li>
+                        <li>
+                          <code>reconnect</code> - Manual reconnection function
                         </li>
                       </ul>
                     </div>
@@ -967,15 +1172,58 @@ server.tool(
                   <div>
                     <h4 className="font-mono text-sm mb-2">useMcpServer()</h4>
                     <p className="text-sm text-muted-foreground mb-2">
-                      Hook for accessing the shared MCP server instance
+                      Hook for accessing MCP server functionality. Must be used within McpServerProvider.
                     </p>
                     <div className="bg-muted p-3 rounded-md">
                       <p className="text-xs font-mono mb-1">Returns:</p>
                       <ul className="text-xs space-y-1">
                         <li>
-                          <code>McpServer</code> - The server instance for dynamic tool registration
+                          <code>server</code> - The MCP server instance
+                        </li>
+                        <li>
+                          <code>isConnected</code> - Connection status
+                        </li>
+                        <li>
+                          <code>isConnecting</code> - Currently connecting
+                        </li>
+                        <li>
+                          <code>error</code> - Connection error if any
+                        </li>
+                        <li>
+                          <code>registerTool</code> - Register a tool with automatic cleanup
+                        </li>
+                        <li>
+                          <code>elicitInput</code> - Request user input through the client
                         </li>
                       </ul>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-mono text-sm mb-2">Provider Props</h4>
+                    <div className="space-y-3">
+                      <div>
+                        <p className="text-xs font-mono mb-1">McpClientProvider:</p>
+                        <ul className="text-xs space-y-1">
+                          <li><code>client: Client</code> - MCP client instance</li>
+                          <li><code>transport: Transport</code> - Transport instance</li>
+                          <li><code>opts?: RequestOptions</code> - Connection options</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="text-xs font-mono mb-1">McpServerProvider:</p>
+                        <ul className="text-xs space-y-1">
+                          <li><code>server: McpServer</code> - MCP server instance</li>
+                          <li><code>transport: Transport</code> - Transport instance</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <p className="text-xs font-mono mb-1">McpMemoryProvider:</p>
+                        <ul className="text-xs space-y-1">
+                          <li><code>server: McpServer</code> - MCP server instance</li>
+                          <li><code>client: Client</code> - MCP client instance</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
