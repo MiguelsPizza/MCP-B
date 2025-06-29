@@ -1,15 +1,17 @@
 import path from 'path';
 import { cloudflare } from '@cloudflare/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import svgr from "vite-plugin-svgr";
+
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     // TanStack Router plugin for automatic route generation
-    TanStackRouterVite({
+    tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
     }),
@@ -19,6 +21,7 @@ export default defineConfig({
     tailwindcss(),
     // Cloudflare plugin for deployment
     cloudflare(),
+    svgr()
   ],
   resolve: {
     alias: {

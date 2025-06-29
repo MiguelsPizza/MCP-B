@@ -1,23 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useMcpClient } from '@mcp-b/mcp-react-hooks';
-import {
-  ArrowRight,
-  Calculator,
-  Check,
-  CheckCircle,
-  Clock,
-  Copy,
-  FileText,
-  Loader2,
-  Mail,
-  Package,
-  Play,
-  ShoppingCart,
-  Terminal,
-} from 'lucide-react';
+import { ArrowRight, Check, Copy, ShoppingCart } from 'lucide-react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { toast } from 'sonner';
+import FullSpecMcpB from '../assets/full-spec-mcp-b.svg?react';
+import LocalMcp from '../assets/local-mcp.svg?react';
+import MultiSiteWorkflow from '../assets/multi-site-workflow.svg?react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 
@@ -32,28 +21,28 @@ const CodeBlock = ({ code, language }: { code: string; language: string }) => {
 
   return (
     <div className="relative group">
-      <div className="absolute right-2 top-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute right-3 top-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
         <Button
           onClick={handleCopy}
           size="sm"
           variant="ghost"
-          className="h-8 px-2 text-xs bg-zinc-800/80 hover:bg-zinc-700/80 text-zinc-300"
+          className="h-9 px-3 text-sm bg-zinc-800/90 hover:bg-zinc-700/90 text-zinc-300 shadow-md"
         >
           {copied ? (
             <>
-              <Check className="h-3 w-3 mr-1" />
+              <Check className="h-4 w-4 mr-1.5" />
               Copied
             </>
           ) : (
             <>
-              <Copy className="h-3 w-3 mr-1" />
+              <Copy className="h-4 w-4 mr-1.5" />
               Copy
             </>
           )}
         </Button>
       </div>
-      <div className="overflow-hidden rounded-lg border border-zinc-800">
-        <div className="flex items-center justify-between bg-zinc-900 px-4 py-2 text-xs text-zinc-400">
+      <div className="overflow-hidden rounded-xl border border-zinc-800 shadow-lg">
+        <div className="flex items-center justify-between bg-zinc-900 px-5 py-3 text-sm text-zinc-400">
           <span className="font-mono">{language}</span>
         </div>
         <SyntaxHighlighter
@@ -61,10 +50,10 @@ const CodeBlock = ({ code, language }: { code: string; language: string }) => {
           style={vscDarkPlus}
           customStyle={{
             margin: 0,
-            padding: '1rem',
+            padding: '1.5rem',
             background: '#1e1e1e',
-            fontSize: '0.875rem',
-            lineHeight: '1.5',
+            fontSize: '0.9375rem',
+            lineHeight: '1.7',
           }}
           codeTagProps={{
             style: {
@@ -81,12 +70,9 @@ const CodeBlock = ({ code, language }: { code: string; language: string }) => {
 };
 
 const BlogPost = () => {
-  const { client, isConnected } = useMcpClient({});
+  const { client, isConnected } = useMcpClient();
   const [demoState, setDemoState] = useState({
-    createdFirstTodo: false,
-    workflowSteps: [] as string[],
-    isRunningWorkflow: false,
-    currentStep: -1,
+    authFlowDemo: false,
   });
 
   const runDemo = async (demoName: string) => {
@@ -95,494 +81,407 @@ const BlogPost = () => {
       return;
     }
 
-    if (demoName === 'firstTodo') {
-      try {
-        await client.callTool({
-          name: 'createTodo',
-          arguments: { todoText: 'Learn about mcp-b' },
-        });
-        setDemoState((prev) => ({ ...prev, createdFirstTodo: true }));
-        toast.success('Created your first mcp-b todo!');
-      } catch (error: any) {
-        console.error('First todo creation failed:', error);
-        toast.error('Failed to create todo', {
-          description: error.message || 'Unknown error',
-        });
-      }
-    }
-
-    if (demoName === 'workflow') {
-      const steps = [
-        { text: 'Send PO to accounting', icon: FileText },
-        { text: 'Check inventory for sub-parts', icon: Package },
-        { text: 'Order missing parts from McMaster-Carr', icon: ShoppingCart },
-        { text: 'Schedule machine time', icon: Clock },
-        { text: 'Calculate delivery date', icon: Calculator },
-        { text: 'Email timeline to customer', icon: Mail },
-      ];
-
-      setDemoState((prev) => ({ ...prev, isRunningWorkflow: true, currentStep: -1 }));
-
-      for (let i = 0; i < steps.length; i++) {
-        const step = steps[i];
-        setDemoState((prev) => ({ ...prev, currentStep: i }));
-
-        try {
-          await client.callTool({
-            name: 'createTodo',
-            arguments: { todoText: step.text },
-          });
-          setDemoState((prev) => ({
-            ...prev,
-            workflowSteps: [...prev.workflowSteps, step.text],
-          }));
-          await new Promise((resolve) => setTimeout(resolve, 500));
-        } catch (error: any) {
-          console.error('Workflow step failed:', error);
-          toast.error(`Failed at step: ${step.text}`, {
-            description: error.message || 'Unknown error',
-          });
-          setDemoState((prev) => ({ ...prev, isRunningWorkflow: false }));
-          break;
-        }
-      }
-
-      if (demoState.workflowSteps.length === steps.length - 1) {
-        toast.success('Workflow simulation complete!', {
-          description: 'All tasks have been created successfully',
-        });
-      }
-      setDemoState((prev) => ({ ...prev, isRunningWorkflow: false, currentStep: -1 }));
+    if (demoName === 'authFlow') {
+      // Placeholder for auth flow comparison demo
+      setDemoState((prev) => ({ ...prev, authFlowDemo: true }));
+      toast.success('Authentication flow demo completed!');
     }
   };
 
   return (
-    <article className="max-w-3xl mx-auto px-6 py-12">
+    <article className="max-w-3xl mx-auto px-8 py-16 pb-32">
       {/* Header */}
-      <header className="mb-12">
-        <h1 className="text-4xl font-bold mb-4">
-          mcp-b: Bringing the benefits of MCP to the browser
+      <header className="mb-16">
+        <h1 className="text-5xl font-bold mb-6 leading-tight">
+          MCP is great, but we're putting our servers in the wrong place
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400">
-          And solving some key pain points in the process
-        </p>
       </header>
 
       {/* MCP Status indicator */}
       {isConnected && (
-        <div className="mb-8 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-          <p className="text-sm font-medium text-green-800 dark:text-green-200">
+        <div className="mb-12 p-6 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 shadow-sm">
+          <p className="text-base font-medium text-green-800 dark:text-green-200">
             ✓ mcp-b is active on this page. Try the interactive demos below!
           </p>
         </div>
       )}
 
       {/* Main content */}
-      <div className="prose prose-lg dark:prose-invert max-w-none">
-        <p>
-          I think it's fair to say that MCP has become the de facto standard for allowing LLMs to
-          interact with the external world. I've had a number of conversations that sound something
-          like this:
+      <div className="prose prose-lg dark:prose-invert max-w-none space-y-8">
+        <p className="text-base text-gray-600 dark:text-gray-400 mb-12 italic">
+          This Article assumes you have some knowledge of the Model Context Protocol (MCP). if you
+          are not a dev, or just want to use the extension,{' '}
+          <a href="/" className="text-blue-600 dark:text-blue-400 underline">
+            The MCP-B landing page
+          </a>{' '}
+          is a better place to go.
         </p>
 
-        <blockquote className="my-6 pl-6 border-l-4 border-gray-300 dark:border-gray-700">
-          <p className="italic">"MCP is what is going to replace white collar jobs"</p>
-        </blockquote>
+        <h2 className="text-3xl font-bold mt-16 mb-8">
+          The Current Architecture and Its Limitations
+        </h2>
 
-        <p>
-          As much as this might be true for things like Excel, most white collar jobs take place in
-          some large part, in the browser. The MCP solution to this so far has been "bypass the
-          browser and go straight to the API". As a result, MCP is now trying to re-invent Auth. I
-          think this is a noble cause, and one that has much promise, but it will be some time
-          before you see teams putting any important workflows behind an MCP.
+        <p className="leading-loose text-lg mb-6">
+          Today's MCP implementations follow a predictable pattern. Developers run MCP servers
+          locally, either exposing system processes or wrapping API clients that execute on their
+          machines. Authentication is handled through environment variables or configuration files
+          containing API keys. This works well enough for the intended audience (developers
+          comfortable with command-line tools and JSON configurations) but it creates an
+          insurmountable barrier for everyone else.
         </p>
 
-        <h2 className="text-2xl font-bold mt-12 mb-6">Agents as Users</h2>
+        <div className="my-16 not-prose">
+          <LocalMcp />
+        </div>
 
-        <p>
-          If you want an agent to act on your behalf, you are essentially allowing this agent to be
-          you as far as the backend is concerned. So the obvious solution is to allow the agent to
-          automate the browser since this is where all of the user authentication is already built
-          and presumably stable.
+        <p className="leading-loose text-lg mb-6">
+          The MCP creators recognized this limitation and proposed a solution: remote MCP servers
+          authenticated via OAuth 2.1. Instead of running locally, these servers live in the cloud
+          and expose their functionality via URLs. Users simply add the URL to their configuration,
+          and theoretically, anyone can benefit from MCP's capabilities.
         </p>
 
-        <p>
-          Some very notable projects in this space are BrowserMCP and Playwright MCP. Both aim to
-          interact with backends via the browser instead of interacting with APIs directly. The
-          issue with this approach is the agent experience is terrible. LLM performance
-          significantly degrades when using these automation tools since it forces them to ingest
-          lots of irrelevant context often through its less preferred medium (vision instead of
-          text).
+        <h2 className="text-3xl font-bold mt-16 mb-8">Remote MCPs Have a Serious Auth Problem</h2>
+
+        <p className="leading-loose text-lg mb-6">
+          Moving MCP servers to the cloud introduces a fundamental challenge: authentication and
+          authorization. When a server runs locally, it implicitly operates with the user's
+          permissions. Move that same server to a shared environment, and suddenly you need to
+          answer difficult questions. Which users can access this server? What data are they allowed
+          to see? What actions can they perform?
         </p>
 
-        <h2 className="text-2xl font-bold mt-12 mb-6">The Solution</h2>
-
-        <p>
-          So how do we solve this? How do we get the benefits and safety from existing client side
-          APIs while still providing good AIX for our models?
+        <p className="leading-loose text-lg mb-6">
+          The MCP specification addresses this through OAuth 2.1, a robust but notoriously complex
+          authentication framework. To understand why this is problematic, consider what's required
+          for a single authenticated request: This is just the authentication flow. The
+          implementation requires discovery endpoints, dynamic client registration, PKCE (Proof Key
+          for Code Exchange) to prevent authorization code interception, token refresh logic, and
+          audience validation on every request. What started as a simple protocol for tool
+          integration has morphed into a distributed systems problem requiring expertise in both
+          OAuth and secure API design.
         </p>
 
-        <p>
-          Well, why not use MCP? But instead of declaring the MCP server locally as a script that
-          runs on the computer, just have the MCP server be inside the webpage. That means that any
-          MCP host can connect to this MCP server by visiting the website and leverage existing auth
-          mechanics already in place in the client side API.
+        <p className="leading-loose text-lg mb-6">
+          Even if you successfully implement OAuth, you haven't solved the underlying security
+          challenge. The MCP server still needs to enforce access controls, validate that users can
+          only access their own data, and ensure that the AI assistant operating on their behalf
+          doesn't exceed their permissions. You're essentially rebuilding the entire authentication
+          and authorization layer that already exists in your web application.
         </p>
 
-        {/* First Demo */}
-        {isConnected && !demoState.createdFirstTodo && (
-          <div className="my-8 not-prose">
-            <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-              <CardContent className="pt-6">
-                <p className="text-sm mb-4">
-                  This page is running a mcp-b server right now. Try it:
-                </p>
-                <Button
-                  onClick={() => runDemo('firstTodo')}
-                  size="sm"
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  Create Your First mcp-b Todo
-                </Button>
-              </CardContent>
-            </Card>
+        <h2 className="text-3xl font-bold mt-16 mb-8">
+          A Different Approach: Browser-Native MCP & Turning Your Website into an MCP Server
+        </h2>
+
+        <p className="leading-loose text-lg mb-6">
+          What if we're thinking about this problem incorrectly? Instead of trying to recreate
+          authentication infrastructure, what if we leverage the authentication that already exists?
+        </p>
+
+        <p className="leading-loose text-lg mb-6">
+          Web browsers have spent decades solving exactly these problems. They manage user sessions,
+          handle authentication cookies, enforce same-origin policies, and provide secure
+          communication channels. Every web application already has authentication built in. Why not
+          use it?
+        </p>
+
+        <p className="leading-loose text-lg mb-6">
+          This is the core insight behind MCP-B: instead of running MCP servers as separate
+          processes or cloud services, we embed them directly into web pages. The MCP server becomes
+          part of your web application, using the same authenticated APIs that your frontend already
+          uses.
+        </p>
+
+        <h2 className="text-3xl font-bold mt-16 mb-8">How MCP-B Works</h2>
+
+        <p className="leading-loose text-lg mb-8">
+          The architecture consists of three main components:
+        </p>
+
+        <div className="my-16 not-prose">
+          <FullSpecMcpB />
+        </div>
+
+        <p className="leading-loose text-lg mb-8">
+          <strong>Tab MCP Servers</strong> run inside web pages, implemented in JavaScript alongside
+          your application code. They expose tools that interact with your authenticated APIs using
+          the browser's built-in credential management. When a tool needs to create an invoice, it
+          simply calls your existing API endpoint (which is hopefully properly authenticated) and
+          the browser automatically attaches the appropriate cookies or authorization headers.
+        </p>
+
+        <p className="leading-loose text-lg mb-8">
+          <strong>The MCP-B Extension</strong> acts as a bridge between tab servers and AI
+          assistants. Its content script communicates with TabServerTransports servers via a
+          TabClientTransport, while a background service worker aggregates all available MCP servers
+          across open tabs. This hub maintains a unified tool registry and routes requests to the
+          appropriate tab.
+        </p>
+
+        <p className="leading-loose text-lg mb-8">
+          <strong>Transport Layers</strong> handle the communication between components. The
+          TabBrowserTransport enables secure message passing between content scripts and tab
+          servers, while the ExtensionTransport facilitates communication between the background hub
+          and any connected clients, including the built-in chat interface.
+        </p>
+
+        <p className="leading-loose text-lg mb-6">
+          The beauty of this approach is its simplicity. Authentication just works: Compare this to
+          the OAuth flow we examined earlier. No discovery endpoints, no token management, no PKCE
+          challenges. The browser handles everything using the same session management your users
+          already rely on.
+        </p>
+
+        <div className="my-16 not-prose"></div>
+
+        <h2 className="text-3xl font-bold mt-16 mb-8">
+          How Is This Different From Other Browser Automation MCPs?
+        </h2>
+
+        <p className="leading-loose text-lg mb-6">
+          At this point I should probably call out the existing solutions in the space, and how
+          MCP-B is different.
+        </p>
+
+        <p className="leading-loose text-lg mb-6">
+          The idea of browser automation through MCP is not unique to MCP-B, the difference is how
+          we are going about it. MCP-B is purely JSON-RPC from browser tab, to extension to the
+          local MCP host of your choosing. You are not asking the model to look at a screen shot,
+          use clunky browser automation apis and guess about how to interact with a page. MCP-B
+          exposes exactly what a website wants to open to the AI. Simply put, it gives the model a
+          solid and consistent Agent Experience.
+        </p>
+
+        <h2 className="text-3xl font-bold mt-16 mb-8">Implementation Details</h2>
+
+        <p className="leading-loose text-lg mb-6">
+          Creating a MCP-B server requires minimal code changes to your existing application. Here's
+          a complete implementation:
+        </p>
+
+        <div className="my-16 not-prose">
+          <div className="my-12">
+            <CodeBlock
+              language="typescript"
+              code={`import { TabServerTransport } from '@webmcp/transports';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
+
+const server = new McpServer({ 
+  name: 'invoice-system',
+  version: '1.0.0' 
+});
+
+server.tool('createInvoice', 'Create a new invoice', {
+  customerEmail: z.string().email(),
+  items: z.array(z.object({
+    description: z.string(),
+    amount: z.number()
+  }))
+}, async ({ customerEmail, items }) => {
+  // This is just a normal fetch to your existing API
+  const response = await yourPreAuthorizedApiClient('/api/invoices', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ customerEmail, items })
+  });
+  
+  if (!response.ok) {
+    throw new Error(\`Failed to create invoice: \${response.statusText}\`);
+  }
+  // You get full control over what the model get's to know about the response
+  return { content: [{ type: 'text', text: JSON.stringify(await response.json())  }] };
+});
+
+const transport = new TabServerTransport();
+// This server is now callable by the mcp-b chrome extension
+await server.connect(transport);`}
+            />
           </div>
-        )}
+        </div>
 
-        {demoState.createdFirstTodo && (
-          <div className="my-8 not-prose">
-            <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-              <CheckCircle className="w-5 h-5" />
-              <span className="text-sm font-medium">
-                Success! You just created a todo using mcp-b.
-              </span>
-            </div>
-          </div>
-        )}
-
-        <p>
-          Ok great! We've got the server down, but how do we call it? We still need a client and an
-          LLM to use that client. Does that mean we have to ship a chat app inside every website?
-          That seems like a lot for not much gain. Plus we are still not getting the benefits of
-          multi-domain workflows like you get with existing browser automation MCPs.
+        <p className="leading-loose text-lg mb-6">
+          The key insight here is that your MCP tools are just thin wrappers around your existing
+          APIs. You don't need to implement new authentication, create separate endpoints, or manage
+          additional infrastructure. The same APIs your React components call can now be called by
+          AI assistants, with the same security guarantees.
         </p>
 
-        <p>
-          What if you had a chat application as a browser extension that would automatically connect
-          to the tab's MCP server when the user visits the page? Turns out that is possible and,
-          well, I wrote it.
+        <h2 className="text-3xl font-bold mt-16 mb-8">Try It Live: Extension + MCP in Action</h2>
+
+        <p className="leading-loose text-lg mb-6">
+          Want to see MCP-B in action right now? This page has an MCP server built in, and you can
+          use the extension to interact with it.
         </p>
 
-        <h2 className="text-2xl font-bold mt-12 mb-6">mcp-b Architecture</h2>
-
-        <p>mcp-b introduces two new transports:</p>
-
-        <ol className="my-6 space-y-2">
-          <li>
-            <strong>Tab Transports</strong> - For MCP servers running in web pages
-          </li>
-          <li>
-            <strong>Extension Transports</strong> - For browser extensions to connect as MCP clients
-          </li>
-        </ol>
-
-        <p>The flow is as follows:</p>
-
-        <div className="my-8 not-prose">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-3">
-                  <Terminal className="w-4 h-4 text-gray-500" />
-                  <span>Tab opens → MCP server initializes on window.mcp</span>
+        <div className="my-16 not-prose">
+          <Card className="border-2 border-purple-500/20 bg-gradient-to-br from-purple-50/50 to-blue-50/50 dark:from-purple-950/20 dark:to-blue-950/20 shadow-xl">
+            <CardContent className="p-8">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg shadow-lg">
+                  <ShoppingCart className="w-6 h-6 text-white" />
                 </div>
-                <div className="flex items-center gap-3 ml-6">
-                  <ArrowRight className="w-4 h-4 text-gray-400" />
-                  <span>Extension detects server and injects relay script</span>
-                </div>
-                <div className="flex items-center gap-3 ml-6">
-                  <ArrowRight className="w-4 h-4 text-gray-400" />
-                  <span>Background service worker establishes connection</span>
-                </div>
-                <div className="flex items-center gap-3 ml-6">
-                  <ArrowRight className="w-4 h-4 text-gray-400" />
-                  <span>Extension UI can now call tools on the page</span>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-2">Live Demo: Create a Todo with MCP-B</h3>
+                  <p className="text-base text-muted-foreground mb-6">
+                    Experience the power of browser-native MCP with this simple demo:
+                  </p>
+
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1 w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center text-sm font-semibold">
+                        1
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium mb-1">Install the MCP-B Extension</p>
+                        <a
+                          href="https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                        >
+                          Download from Chrome Web Store
+                          <ArrowRight className="w-3 h-3" />
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1 w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center text-sm font-semibold">
+                        2
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium mb-1">Open the Extension</p>
+                        <p className="text-sm text-muted-foreground">
+                          Click the extension icon in your browser toolbar
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1 w-6 h-6 rounded-full bg-purple-500 text-white flex items-center justify-center text-sm font-semibold">
+                        3
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium mb-1">Create a Todo</p>
+                        <p className="text-sm text-muted-foreground">
+                          Type "Create a todo: Learn about MCP-B" in the chat
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 p-4 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                    <p className="text-sm">
+                      <strong>What's happening:</strong> The extension is calling the{' '}
+                      <code className="px-1.5 py-0.5 bg-blue-200 dark:bg-blue-800 rounded text-xs">
+                        createTodo
+                      </code>{' '}
+                      tool exposed by this page's MCP server. The todo will appear in the list
+                      above!
+                    </p>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <h2 className="text-2xl font-bold mt-12 mb-6">Real World Example</h2>
-
-        <p>
-          So what does this look like from a user perspective? Let's say John Smith working at a
-          machine shop just got an order for 4 valves. His day looks like this:
+        <p className="leading-loose text-lg mb-6">
+          This simple demo showcases the core innovation of MCP-B: your web pages become MCP servers
+          that AI assistants can interact with using your existing authentication. No OAuth flows,
+          no API keys, no complex setup—just the browser you already trust.
         </p>
 
-        <ol className="my-6 space-y-2">
-          <li>Send the PO over to accounting</li>
-          <li>Check the internal IMS to see if they have the right sub parts in stock</li>
-          <li>Go to McMasterCarr.com to order the missing subparts</li>
-          <li>Register the request with the machine shop with the order and required parts</li>
-          <li>Calculate an estimated delivery time</li>
-          <li>Relay this estimate back to the customer</li>
-        </ol>
-
-        <p>
-          If you wanted to realistically have a model automate this workflow, you would need it to
-          visit 6 websites, send emails, read emails and more.
-        </p>
-
-        <p>
-          Let's assume now that each of these websites has their own MCP. An agent in the Chrome
-          sidebar could connect to each of them and know which website to go to based on context.
-          Since this happens in the browser, all auth that is already saved in the browser can be
-          re-used for those domains.
-        </p>
-
-        {/* Workflow Demo */}
-        {isConnected && !demoState.isRunningWorkflow && demoState.workflowSteps.length === 0 && (
-          <div className="my-8 not-prose">
-            <Card className="border-2 border-dashed">
-              <CardContent className="pt-6">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Terminal className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold mb-1">Try the Workflow Demo</h3>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Watch mcp-b simulate John's multi-step workflow by creating todos for each
-                      task
-                    </p>
-                    <Button
-                      onClick={() => runDemo('workflow')}
-                      variant="default"
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    >
-                      <Play className="w-4 h-4 mr-2" />
-                      Run Workflow Simulation
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {(demoState.isRunningWorkflow || demoState.workflowSteps.length > 0) && (
-          <div className="my-8 not-prose">
-            <Card className="overflow-hidden">
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">Workflow Automation in Progress</h3>
-                  {demoState.isRunningWorkflow && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Processing...</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  {[
-                    { text: 'Send PO to accounting', icon: FileText },
-                    { text: 'Check inventory for sub-parts', icon: Package },
-                    { text: 'Order missing parts from McMaster-Carr', icon: ShoppingCart },
-                    { text: 'Schedule machine time', icon: Clock },
-                    { text: 'Calculate delivery date', icon: Calculator },
-                    { text: 'Email timeline to customer', icon: Mail },
-                  ].map((step, i) => {
-                    const isCompleted = demoState.workflowSteps.includes(step.text);
-                    const isActive = demoState.currentStep === i;
-                    const Icon = step.icon;
-
-                    return (
-                      <div
-                        key={i}
-                        className={`
-                          relative flex items-center gap-3 p-3 rounded-lg transition-all duration-300
-                          ${
-                            isCompleted
-                              ? 'bg-green-50 dark:bg-green-950/20'
-                              : isActive
-                                ? 'bg-blue-50 dark:bg-blue-950/20 shadow-sm'
-                                : 'bg-gray-50 dark:bg-gray-950/20'
-                          }
-                        `}
-                      >
-                        <div
-                          className={`
-                          flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300
-                          ${
-                            isCompleted
-                              ? 'bg-green-500 text-white'
-                              : isActive
-                                ? 'bg-blue-500 text-white animate-pulse'
-                                : 'bg-gray-200 dark:bg-gray-700 text-gray-400'
-                          }
-                        `}
-                        >
-                          {isCompleted ? (
-                            <CheckCircle className="w-5 h-5" />
-                          ) : isActive ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                          ) : (
-                            <Icon className="w-5 h-5" />
-                          )}
-                        </div>
-
-                        <div className="flex-1">
-                          <p
-                            className={`
-                            text-sm font-medium transition-colors duration-300
-                            ${
-                              isCompleted
-                                ? 'text-green-700 dark:text-green-300'
-                                : isActive
-                                  ? 'text-blue-700 dark:text-blue-300'
-                                  : 'text-gray-500 dark:text-gray-400'
-                            }
-                          `}
-                          >
-                            {step.text}
-                          </p>
-                          {isActive && (
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              Creating todo item...
-                            </p>
-                          )}
-                        </div>
-
-                        {i < 5 && (
-                          <div
-                            className={`
-                            absolute left-[29px] top-[52px] w-0.5 h-6 transition-colors duration-300
-                            ${isCompleted ? 'bg-green-300 dark:bg-green-700' : 'bg-gray-200 dark:bg-gray-700'}
-                          `}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {!demoState.isRunningWorkflow && demoState.workflowSteps.length > 0 && (
-                  <div className="mt-6 p-4 bg-green-100 dark:bg-green-900/20 rounded-lg">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                      <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                        Workflow completed! {demoState.workflowSteps.length} tasks created
-                        successfully.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        <h2 className="text-2xl font-bold mt-12 mb-6">Code Example</h2>
-
-        <p>Here's how simple it is to add mcp-b to your web app:</p>
-
-        <div className="my-8 not-prose">
-          <CodeBlock
-            language="typescript"
-            code={`// In your web application
-import { TabServerTransport } from '@mcp-b/transports';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
-
-// Create your MCP server
-const server = new McpServer({
-  name: 'TodoApp',
-  version: '1.0.0',
-});
-
-// Expose your APIs as tools
-server.tool('createTodo', 
-  { text: z.string() }, 
-  async ({ text }) => {
-    // This runs with full auth context
-    const todo = await todoAPI.create({ 
-      text, 
-      userId: currentUser.id 
-    });
-    return { content: [{ 
-      type: 'text', 
-      text: \`Created: \${todo.text}\` 
-    }]};
-  }
-);
-
-// Make it discoverable
-const transport = new TabServerTransport();
-await server.connect(transport);`}
-          />
+        <h2 className="text-3xl font-bold mt-16 mb-8">Cross-Site Workflows: The Real Power</h2>
+        <div className="my-16">
+          <MultiSiteWorkflow />
         </div>
-
-        <h2 className="text-2xl font-bold mt-12 mb-6">Expanding Further</h2>
-
-        <p>
-          I have not built it out yet but there is no reason we cannot extend this relay from the
-          extension to a locally running host like Cline or Claude Desktop. In fact BrowserMCP
-          already has this working, just for a different type of browser automation.
+        <p className="leading-loose text-lg mb-6">
+          Where MCP-B truly shines is in enabling workflows that span multiple web applications.
+          Each system maintains its own authentication and access controls. The AI assistant
+          operates with exactly the permissions of the logged-in user—no more, no less. If the user
+          doesn't have access to create purchase orders above a certain amount, neither does the AI.
+          This security model is both simple and robust because it relies on existing, battle-tested
+          mechanisms.
         </p>
 
-        <h2 className="text-2xl font-bold mt-12 mb-6">Why Not Add This to MCP?</h2>
+        <h2 className="text-3xl font-bold mt-16 mb-8">The Path Forward</h2>
 
-        <p>
-          Well someone already tried that (props to them) and it was turned down by the maintainers.
-          That's understandable. They want to focus on keeping the language SDKs consistent and
-          TypeScript (JavaScript) is the only language that can run in the browser.
+        <p className="leading-loose text-lg mb-6">
+          MCP-B represents a fundamental shift in how we think about AI tool integration. Instead of
+          building new infrastructure and authentication systems, we're leveraging the web
+          platform's existing capabilities. This approach offers several advantages:
         </p>
 
-        <p>
-          MCP started as a strict, one server to one client protocol. The Streamable HTTP transport
-          also supports multiple clients (thank god) which is why I based the mcp-b protocol on it.
+        <p className="leading-loose text-lg mb-8">
+          For developers, implementation is straightforward. You're not learning new authentication
+          frameworks or managing additional infrastructure. Your existing APIs become AI-accessible
+          with minimal code changes.
         </p>
 
-        <p>
-          At the moment, mcp-b servers also append the MCP server to window.mcp. There isn't a
-          strong design justification for this. It just felt right. I'm open to changing it to be
-          completely event driven, but I honestly like the idea of moving away from the traditional
-          MCP implementation and going all in on window.mcp.
+        <p className="leading-loose text-lg mb-8">
+          For users, there's no configuration required. They sign into websites normally, and AI
+          assistants automatically gain appropriate access. The security model is intuitive because
+          it mirrors their existing mental model of web permissions.
         </p>
 
-        <h2 className="text-2xl font-bold mt-12 mb-6">Dynamic MCPs</h2>
-
-        <p>
-          One of the exciting things about mcp-b that gives it an advantage over standard MCP
-          servers is the fact that it can leverage simple dynamicism. At Amazon, we have a community
-          driven MCP server for internal applications with many tools. The result? It's basically
-          useless because it gives the model so many options that getting the model to interact well
-          with the tools is difficult and flaky at best.
+        <p className="leading-loose text-lg mb-8">
+          For enterprises, MCP-B provides control without complexity. The MCP server is part of your
+          application, running your code, using your authentication. There's no third-party service
+          to trust, no additional attack surface to defend.
         </p>
 
-        <p>
-          In the browser? We already have tons of tools dynamically changing content on the web.
-          I've got a couple of React hooks but there is so much more that can be done with them.
+        <p className="leading-loose text-lg mb-6">
+          Most importantly, this approach scales. As more websites add MCP-B support, AI assistants
+          become increasingly capable of complex, cross-application workflows. The same network
+          effects that made the web successful can now apply to AI automation.
         </p>
 
-        <h2 className="text-2xl font-bold mt-12 mb-6">Get Involved</h2>
+        <h2 className="text-3xl font-bold mt-16 mb-8">Getting Started</h2>
 
-        <p>
-          Anyway, I need more contributors so please come to the repo and take a look. I will help
-          you onboard an MCP server onto your website for testing. Please reach out to me at{' '}
+        <p className="leading-loose text-lg mb-6">
+          To experiment with MCP-B, start by installing the Chrome extension and visiting a demo
+          site. For your own applications, the @MCP-B/transports package provides everything needed
+          to add MCP support to existing web applications. The implementation typically requires
+          less than 50 lines of code and can be gradually rolled out alongside existing
+          functionality.
+        </p>
+
+        <p className="leading-loose text-lg mb-8">
+          The protocol is open, the transports are extensible, and the potential applications are
+          limited only by imagination. By putting MCP servers where authentication already lives—in
+          the browser—we can finally deliver on the promise of AI automation for everyone, not just
+          developers.
+        </p>
+
+        <p className="leading-loose text-lg mb-6">
+          The future of AI assistance isn't in complex OAuth flows or managed infrastructure. It's
+          in the browser you already have open.
+        </p>
+
+        <p className="mt-16 leading-loose text-lg mb-6">
+          The one thing that is nice about the MCP-B extension is that it acts as an MCP of MCP that
+          other extensions can connect to. If you want to add MCP-B support to your AI extension,
+          please reach out and I will help you onboard it.
+        </p>
+
+        <p className="mt-8 leading-loose text-lg">
+          For implementation details, examples, and to contribute to the project, visit my{' '}
+          <a
+            href="https://github.com/MiguelsPizza/mcp-b"
+            className="text-blue-600 dark:text-blue-400 underline"
+          >
+            GitHub repository
+          </a>{' '}
+          or reach out at{' '}
           <a
             href="mailto:alexmnahas@gmail.com"
             className="text-blue-600 dark:text-blue-400 underline"
           >
             alexmnahas@gmail.com
           </a>
-        </p>
-
-        <p className="mt-6">
-          At the moment the extension is not open source. I'll open source it as soon as it's posted
-          to the Chrome store with some recognition (I've been burned by open sourcing extension
-          code too soon before).
         </p>
       </div>
     </article>

@@ -1,0 +1,15 @@
+flowchart TD
+  subgraph Local["Developer's Machine"]
+    IDE["IDE or Chat Client"]
+    LocalMCP["Local MCP Server"]
+    Config["Configuration + API Keys"]
+  end
+  
+  subgraph External["External Services"]
+    API1["Service API 1"]
+    API2["Service API 2"]
+  end
+  
+  IDE -->|stdio/subprocess| LocalMCP
+  LocalMCP -->|"HTTPS with API key"| API1
+  LocalMCP -->|"HTTPS with API key"| API2

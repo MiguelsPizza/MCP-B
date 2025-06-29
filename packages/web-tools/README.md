@@ -1,4 +1,4 @@
-# @b-mcp/extension-tools
+# @mcp-b/extension-tools
 
 Chrome Extension API tools for Model Context Protocol (MCP) - provides MCP-compatible wrappers for browser extension APIs.
 
@@ -11,11 +11,11 @@ Currently, **62 out of 74** Chrome Extension APIs have been implemented and are 
 ## Installation
 
 ```bash
-npm install @b-mcp/extension-tools @modelcontextprotocol/sdk
+npm install @mcp-b/extension-tools @modelcontextprotocol/sdk
 # or
-pnpm add @b-mcp/extension-tools @modelcontextprotocol/sdk
+pnpm add @mcp-b/extension-tools @modelcontextprotocol/sdk
 # or
-yarn add @b-mcp/extension-tools @modelcontextprotocol/sdk
+yarn add @mcp-b/extension-tools @modelcontextprotocol/sdk
 ```
 
 ## API Implementation Status
@@ -119,7 +119,7 @@ The following Chrome Extension APIs are not yet implemented or need additional w
 Create an MCP server in your Chrome extension's background script:
 
 ```typescript
-import { BookmarksApiTools, StorageApiTools, TabsApiTools } from '@b-mcp/extension-tools';
+import { BookmarksApiTools, StorageApiTools, TabsApiTools } from '@mcp-b/extension-tools';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { WebsocketServerTransport } from '@modelcontextprotocol/sdk/server/websocket.js';
 
@@ -456,8 +456,8 @@ import {
   ScriptingApiTools,
   StorageApiTools,
   TabsApiTools,
-} from '@b-mcp/extension-tools';
-import { ExtensionServerTransport } from '@b-mcp/transports';
+} from '@mcp-b/extension-tools';
+import { ExtensionServerTransport } from '@mcp-b/transports';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 async function setupMcpServer() {
@@ -521,4 +521,4 @@ MIT
 
 - [Model Context Protocol](https://modelcontextprotocol.io)
 - [Chrome Extension APIs](https://developer.chrome.com/docs/extensions/reference/)
-- [B-MCP Project](https://github.com/alxnahas/B-MCP)
+- [MCP-B Project](https://github.com/MiguelsPizza/MCP-B)

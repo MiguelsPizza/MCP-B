@@ -22,7 +22,7 @@ interface AssistantProps {
 
 const Assistant = () => {
   const runtime = useChatRuntime({
-    api: '/api/chat',
+    api: 'api/chat',
   });
 
   const navigate = Route.useNavigate();

@@ -25,18 +25,18 @@ function RouteComponent() {
           titleClassName="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent"
           descriptionClassName="text-muted-foreground"
         />
-        <div className="flex h-[calc(100vh-65px)]">
-          <div className="flex-1 overflow-auto">
+        <div className="flex">
+          <div className="flex-1 min-h-[calc(100vh-200px)]">
             <BlogPost />
           </div>
-          <div className="w-96 border-l bg-gradient-to-b from-background to-background/80">
+          <div className="w-96 border-l bg-gradient-to-b from-background to-background/80 sticky top-0 h-screen">
             <div className="h-full flex flex-col">
               <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="mb-4 text-xl font-bold sm:text-2xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                <h2 className="text-xl font-bold sm:text-2xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   Tasks
                 </h2>
               </div>
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 overflow-auto">
                 <Todos route="/blogs" />
               </div>
             </div>

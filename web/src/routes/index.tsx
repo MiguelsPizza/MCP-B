@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
 import {
@@ -6,10 +7,12 @@ import {
   BookOpen,
   Boxes,
   Building2,
+  Check,
   CheckCircle,
   ChevronRight,
   Chrome,
   Code2,
+  Copy,
   ExternalLink,
   Eye,
   FileCode,
@@ -30,6 +33,8 @@ import {
   Workflow,
   Zap,
 } from 'lucide-react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -39,6 +44,65 @@ import { indexSearchSchema } from '../paramSchemas';
 export const Route = createFileRoute('/')({
   component: IndexRoute,
 });
+
+const CodeBlock = ({ code, language }: { code: string; language: string }) => {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="relative group">
+      <div className="absolute right-2 top-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+        <Button
+          onClick={handleCopy}
+          size="sm"
+          variant="ghost"
+          className="h-8 px-2 text-xs bg-zinc-800/80 hover:bg-zinc-700/80 text-zinc-300"
+        >
+          {copied ? (
+            <>
+              <Check className="h-3 w-3 mr-1" />
+              Copied
+            </>
+          ) : (
+            <>
+              <Copy className="h-3 w-3 mr-1" />
+              Copy
+            </>
+          )}
+        </Button>
+      </div>
+      <div className="overflow-hidden rounded-lg border border-zinc-800">
+        <div className="flex items-center justify-between bg-zinc-900 px-4 py-2 text-xs text-zinc-400">
+          <span className="font-mono">{language}</span>
+        </div>
+        <SyntaxHighlighter
+          language={language}
+          style={vscDarkPlus}
+          customStyle={{
+            margin: 0,
+            padding: '1rem',
+            background: '#1e1e1e',
+            fontSize: '0.875rem',
+            lineHeight: '1.5',
+          }}
+          codeTagProps={{
+            style: {
+              fontFamily:
+                'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
+            },
+          }}
+        >
+          {code}
+        </SyntaxHighlighter>
+      </div>
+    </div>
+  );
+};
 
 function IndexRoute() {
   return (
@@ -75,16 +139,16 @@ function IndexRoute() {
               className="animate-fadeInUp mb-4 max-w-3xl text-lg text-muted-foreground sm:text-xl"
               style={{ animationDelay: '200ms' }}
             >
-              The first-of-its-kind architecture that bridges browser extensions with MCP clients,
-              solving fundamental limitations in both browser automation and AI tool integration.
+              MCP is great, but we're putting our servers in the wrong place. MCP-B runs servers
+              directly inside web pages, solving the authentication problem once and for all.
             </p>
 
             <p
               className="animate-fadeInUp mb-12 max-w-2xl text-base text-muted-foreground"
               style={{ animationDelay: '250ms' }}
             >
-              No API keys, no screen scraping, no complex setups — just install the extension and
-              your AI can work with any website you're logged into.
+              Web browsers have spent decades solving authentication. Every web app already has it
+              built in. Why not use it? No OAuth flows, no API keys, no complex setups.
             </p>
 
             {/* Primary CTA buttons */}
@@ -150,16 +214,54 @@ function IndexRoute() {
                 className="group relative overflow-hidden border-2 border-blue-600/20 bg-gradient-to-br from-background/80 to-background/60 backdrop-blur-sm shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 hover:border-blue-600/40"
                 asChild
               >
-                <a href="#extension">
+                <a
+                  href="https://chromewebstore.google.com/detail/mcp-bextension/daohopfhkdelnpemnhlekblhnikhdhfa"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <span className="relative z-10 flex items-center">
                     <Chrome className="mr-2 h-4 w-4 text-blue-600" />
                     Get Browser Extension
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    <ExternalLink className="ml-2 h-3 w-3 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-blue-600/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                 </a>
               </Button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Video Section */}
+      <section className="px-4 py-20 relative overflow-hidden border-t">
+        <div className="container mx-auto max-w-4xl relative">
+          <div className="mb-8 text-center">
+            <h2 className="animate-fadeInUp mb-4 text-3xl font-bold sm:text-4xl bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent">
+              See MCP-B in Action
+            </h2>
+            <p
+              className="animate-fadeInUp text-lg text-muted-foreground"
+              style={{ animationDelay: '100ms' }}
+            >
+              Watch how AI assistants work across multiple websites with zero configuration
+            </p>
+          </div>
+
+          <div className="animate-fadeInUp" style={{ animationDelay: '200ms' }}>
+            <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group">
+              <div className="aspect-video relative bg-gradient-to-br from-muted/30 to-muted/50 flex items-center justify-center overflow-hidden">
+                {/* Video Placeholder */}
+                <div className="text-center relative z-10">
+                  <div className="inline-flex p-4 rounded-full bg-gradient-to-br from-primary/20 to-blue-600/20 mb-4 group-hover:scale-110 transition-transform">
+                    <PlayCircle className="h-16 w-16 text-primary animate-pulse" />
+                  </div>
+                  <p className="text-lg font-medium text-foreground/80">Demo Video Coming Soon</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Real-world workflows across multiple sites
+                  </p>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </section>
@@ -179,8 +281,8 @@ function IndexRoute() {
               className="animate-fadeInUp text-lg text-muted-foreground max-w-3xl mx-auto"
               style={{ animationDelay: '100ms' }}
             >
-              Browser extensions can't host servers. MCP requires servers. We solved this impossible
-              equation.
+              Today's MCP servers run locally with API keys or in the cloud with complex OAuth. We
+              put them where authentication already lives — in the browser.
             </p>
           </div>
 
@@ -193,11 +295,11 @@ function IndexRoute() {
                   The Breakthrough
                 </Badge>
                 <h3 className="mb-4 text-2xl font-semibold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                  WebSocket Bridge Architecture
+                  Browser-Native MCP Servers
                 </h3>
                 <p className="mb-6 text-muted-foreground">
-                  We created the first architecture that enables browser extensions to act as MCP
-                  servers, opening up an entirely new class of AI capabilities.
+                  Instead of running MCP servers as separate processes or cloud services, we embed
+                  them directly into web pages. The MCP server becomes part of your web application.
                 </p>
 
                 <div className="grid gap-6 md:grid-cols-3">
@@ -206,15 +308,15 @@ function IndexRoute() {
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="text-destructive mt-0.5">•</span>
-                        Extensions can't host servers
+                        Remote MCPs need complex OAuth 2.1
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-destructive mt-0.5">•</span>
-                        MCP requires server architecture
+                        Local MCPs require API keys everywhere
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-destructive mt-0.5">•</span>
-                        No standard solution existed
+                        White-collar work happens in browsers
                       </li>
                     </ul>
                   </div>
@@ -224,15 +326,15 @@ function IndexRoute() {
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">✓</span>
-                        WebSocket bridge pattern
+                        Run MCP servers inside web pages
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">✓</span>
-                        Extension appears as MCP server
+                        Use existing browser authentication
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-primary mt-0.5">✓</span>
-                        Works with all MCP clients
+                        Bridge to any MCP client via extension
                       </li>
                     </ul>
                   </div>
@@ -242,15 +344,15 @@ function IndexRoute() {
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <span className="text-green-500 mt-0.5">→</span>
-                        Claude Desktop connects directly
+                        Authentication just works
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-green-500 mt-0.5">→</span>
-                        Multiple clients supported
+                        No API keys or OAuth flows
                       </li>
                       <li className="flex items-start gap-2">
                         <span className="text-green-500 mt-0.5">→</span>
-                        Full MCP protocol compliance
+                        Works with any website
                       </li>
                     </ul>
                   </div>
@@ -270,16 +372,16 @@ function IndexRoute() {
                     Solves MCP's Authentication Problem
                   </h3>
                   <div className="space-y-3 text-muted-foreground">
-                    <p>Traditional MCP requires:</p>
+                    <p>Remote MCP's OAuth 2.1 requires:</p>
                     <ul className="space-y-2 text-sm ml-4">
-                      <li>• API keys for every service</li>
-                      <li>• Complex credential management</li>
-                      <li>• Technical setup for each site</li>
-                      <li>• Separate authentication flows</li>
+                      <li>• Discovery endpoints & dynamic registration</li>
+                      <li>• PKCE for code interception prevention</li>
+                      <li>• Token refresh logic & audience validation</li>
+                      <li>• Complete auth layer reimplementation</li>
                     </ul>
                     <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-primary/10 to-blue-600/10 border border-primary/20">
                       <p className="text-sm font-medium text-primary">
-                        MCP-B uses your existing browser sessions — zero additional auth needed.
+                        MCP-B just calls your existing APIs — the browser handles everything.
                       </p>
                     </div>
                   </div>
@@ -323,198 +425,143 @@ function IndexRoute() {
             >
               <div className="p-8">
                 <h3 className="mb-6 text-xl font-semibold text-center">
-                  Revolutionary Bridge Architecture
+                  How MCP-B Works: From Web Page to AI Assistant
                 </h3>
 
                 {/* Architecture Diagram */}
-                <div className="space-y-8">
-                  {/* MCP Clients Section */}
-                  <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-6">
+                  <div className="grid gap-4 lg:grid-cols-3">
+                    {/* Web Pages with MCP Servers */}
                     <div className="space-y-4">
                       <h4 className="text-sm font-medium text-muted-foreground text-center">
-                        Development Tools
+                        1. Tab MCP Servers
                       </h4>
-                      <div className="space-y-2">
-                        <Card className="p-3 border-muted bg-muted/30">
-                          <div className="flex items-center gap-2">
-                            <Terminal className="h-4 w-4 text-primary" />
-                            <span className="text-sm font-medium">MCP Inspector</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-1">STDIO only</p>
-                        </Card>
-                        <Card className="p-3 border-blue-600/20 bg-blue-600/5">
-                          <div className="flex items-center gap-2">
-                            <Monitor className="h-4 w-4 text-blue-600" />
-                            <span className="text-sm font-medium">Claude Desktop</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-1">WebSocket native</p>
-                        </Card>
-                        <Card className="p-3 border-blue-600/20 bg-blue-600/5">
-                          <div className="flex items-center gap-2">
-                            <Code2 className="h-4 w-4 text-blue-600" />
-                            <span className="text-sm font-medium">Cursor IDE</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-1">WebSocket native</p>
-                        </Card>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-muted-foreground text-center">
-                        Bridge Layer
-                      </h4>
-                      <Card className="p-6 border-primary bg-gradient-to-br from-primary/10 to-blue-600/10 h-full flex flex-col justify-center">
-                        <div className="text-center space-y-4">
-                          <div className="inline-flex p-3 rounded-lg bg-gradient-to-br from-primary/20 to-blue-600/20">
-                            <Network className="h-8 w-8 text-primary" />
-                          </div>
-                          <div>
-                            <h5 className="font-semibold text-primary">WebSocket Bridge</h5>
-                            <p className="text-xs text-muted-foreground mt-1">localhost:8021</p>
-                          </div>
-                          <div className="space-y-1 text-xs text-muted-foreground">
-                            <p>• Multiple clients</p>
-                            <p>• Connection IDs</p>
-                            <p>• Message routing</p>
-                          </div>
-                        </div>
-                      </Card>
-                    </div>
-
-                    <div className="space-y-4">
-                      <h4 className="text-sm font-medium text-muted-foreground text-center">
-                        Browser Layer
-                      </h4>
-                      <Card className="p-4 border-primary/20 bg-gradient-to-br from-background/95 to-background/80">
+                      <Card className="p-4 border-primary/20 bg-gradient-to-br from-primary/5 to-blue-600/5">
                         <div className="space-y-3">
-                          <div className="flex items-center gap-2">
-                            <Chrome className="h-5 w-5 text-primary" />
-                            <span className="font-medium">Extension Hub</span>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Globe className="h-5 w-5 text-primary" />
+                            <span className="font-medium">Your Web Apps</span>
                           </div>
-                          <div className="pl-7 space-y-1 text-xs text-muted-foreground">
-                            <p>• Acts as MCP Server</p>
-                            <p>• Manages tab tools</p>
-                            <p>• Tool namespacing</p>
+                          <div className="space-y-2 text-xs text-muted-foreground">
+                            <div className="p-2 rounded bg-background/60 border border-primary/10">
+                              <p className="font-medium text-primary mb-1">Tab MCP Server</p>
+                              <p>• TypeScript, in-memory transport</p>
+                              <p>• Wraps your authenticated APIs</p>
+                              <p>• Uses existing cookies/JWT</p>
+                            </div>
+                            <div className="flex items-center gap-1 justify-center text-primary">
+                              <ArrowRight className="h-3 w-3" />
+                              <span className="text-xs">fetch/XHR</span>
+                              <ArrowRight className="h-3 w-3" />
+                            </div>
+                            <div className="p-2 rounded bg-background/60 border border-muted">
+                              <p className="font-medium mb-1">Your Existing APIs</p>
+                              <p>• No changes needed</p>
+                              <p>• Same auth as UI</p>
+                            </div>
                           </div>
                         </div>
                       </Card>
-                      <Card className="p-4 border-blue-600/20 bg-blue-600/5">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <Globe className="h-5 w-5 text-blue-600" />
-                            <span className="font-medium">Browser Tabs</span>
+                    </div>
+
+                    {/* MCP-B Extension */}
+                    <div className="space-y-4">
+                      <h4 className="text-sm font-medium text-muted-foreground text-center">
+                        2. MCP-B Extension
+                      </h4>
+                      <Card className="p-4 border-primary bg-gradient-to-br from-primary/10 to-blue-600/10">
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Chrome className="h-5 w-5 text-primary" />
+                            <span className="font-medium">Chrome Extension</span>
                           </div>
-                          <div className="pl-7 space-y-1 text-xs text-muted-foreground">
-                            <p>• Register tools</p>
-                            <p>• Execute calls</p>
-                            <p>• Return results</p>
+                          <div className="space-y-2">
+                            <div className="p-2 rounded bg-background/80 border border-primary/20">
+                              <p className="text-xs font-medium text-primary mb-1">
+                                Content Scripts
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                Connect to tab servers via postMessage
+                              </p>
+                            </div>
+                            <div className="p-2 rounded bg-background/80 border border-primary/20">
+                              <p className="text-xs font-medium text-primary mb-1">
+                                MCP Hub (Service Worker)
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                • Aggregates all tab tools
+                              </p>
+                              <p className="text-xs text-muted-foreground">• Routes tool calls</p>
+                              <p className="text-xs text-muted-foreground">• Manages connections</p>
+                            </div>
+                            <div className="p-2 rounded bg-background/80 border border-primary/20">
+                              <p className="text-xs font-medium text-primary mb-1">
+                                Built-in Chat UI
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                Side panel AI assistant
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </Card>
+                    </div>
+
+                    {/* MCP Clients */}
+                    <div className="space-y-4">
+                      <h4 className="text-sm font-medium text-muted-foreground text-center">
+                        3. MCP Clients
+                      </h4>
+                      <Card className="p-4 border-blue-600/20 bg-gradient-to-br from-blue-600/5 to-primary/5">
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Network className="h-5 w-5 text-blue-600" />
+                            <span className="font-medium">AI Assistants</span>
+                          </div>
+                          <div className="space-y-2">
+                            <div className="p-2 rounded bg-background/60 border border-blue-600/10">
+                              <p className="text-xs font-medium text-blue-600 mb-1">
+                                Native Bridge
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                • Native messaging tunnel
+                              </p>
+                              <p className="text-xs text-muted-foreground">• Proxy server option</p>
+                            </div>
+                            <div className="text-center py-1">
+                              <ArrowRight className="h-3 w-3 text-blue-600 mx-auto rotate-90" />
+                            </div>
+                            <div className="space-y-1">
+                              <div className="p-1.5 rounded bg-background/60 border border-muted text-xs">
+                                <span className="font-medium">Claude Desktop</span>
+                              </div>
+                              <div className="p-1.5 rounded bg-background/60 border border-muted text-xs">
+                                <span className="font-medium">Cursor IDE</span>
+                              </div>
+                              <div className="p-1.5 rounded bg-background/60 border border-muted text-xs">
+                                <span className="font-medium">Cline / Others</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </Card>
                     </div>
                   </div>
 
-                  {/* Connection Flow Arrows */}
-                  <div className="relative h-16 hidden md:block">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-full max-w-2xl flex items-center justify-between">
-                        <div className="flex-1 border-t-2 border-dashed border-primary/30 relative">
-                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2">
-                            <ArrowRight className="h-4 w-4 text-primary" />
-                          </div>
-                          <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
-                            STDIO / WebSocket
-                          </span>
-                        </div>
-                        <div className="flex-1 border-t-2 border-dashed border-primary/30 relative ml-8">
-                          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2">
-                            <ArrowRight className="h-4 w-4 text-primary" />
-                          </div>
-                          <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-muted-foreground whitespace-nowrap">
-                            WebSocket + ID
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+                  {/* Data Flow */}
+                  <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-muted/30 to-muted/20 border border-muted">
+                    <p className="text-xs text-center text-muted-foreground">
+                      <span className="font-medium">Complete flow:</span> AI requests tool →
+                      Extension routes to tab → Tab MCP executes using your auth → Results flow back
+                      to AI
+                    </p>
                   </div>
                 </div>
 
                 <div className="mt-6 p-4 rounded-lg bg-gradient-to-r from-primary/10 to-blue-600/10 backdrop-blur-sm border border-primary/20">
                   <p className="text-sm text-center font-medium bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                    First architecture to enable browser extensions as full MCP servers
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Multi-Site Workflow Demo */}
-      <section className="px-4 py-20 relative overflow-hidden">
-        <div className="container mx-auto max-w-6xl relative">
-          <div className="mb-12 text-center">
-            <h2 className="animate-fadeInUp mb-4 text-3xl font-bold sm:text-4xl bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent">
-              Multi-Site AI Workflows in Action
-            </h2>
-            <p
-              className="animate-fadeInUp text-lg text-muted-foreground"
-              style={{ animationDelay: '100ms' }}
-            >
-              Watch how one AI assistant handles complex workflows across multiple websites
-            </p>
-          </div>
-
-          <div className="animate-fadeInUp" style={{ animationDelay: '200ms' }}>
-            <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group">
-              <div className="aspect-video relative bg-gradient-to-br from-muted/30 to-muted/50 flex items-center justify-center overflow-hidden">
-                {/* Video Placeholder */}
-                <div className="text-center relative z-10">
-                  <div className="inline-flex p-4 rounded-full bg-gradient-to-br from-primary/20 to-blue-600/20 mb-4 group-hover:scale-110 transition-transform">
-                    <PlayCircle className="h-16 w-16 text-primary animate-pulse" />
-                  </div>
-                  <p className="text-lg font-medium text-foreground/80">Demo Video Coming Soon</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Machine Shop Workflow: 6 Sites, 1 Assistant
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-8">
-                <Badge className="mb-4 bg-gradient-to-r from-primary/10 to-blue-600/10 border-primary/20 backdrop-blur-sm">
-                  <Building2 className="mr-1 h-3 w-3 text-primary" />
-                  Real-World Example
-                </Badge>
-                <h3 className="mb-4 text-2xl font-semibold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  Machine Shop Order Processing
-                </h3>
-                <p className="mb-6 text-muted-foreground">
-                  Watch as an AI assistant handles a complete order workflow across multiple
-                  systems:
-                </p>
-
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {workflowSteps.map((step, index) => (
-                    <div key={step.title} className="flex gap-3 group/step">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-blue-600/20 text-sm font-medium text-primary group-hover/step:from-primary/30 group-hover/step:to-blue-600/30 transition-all">
-                        {index + 1}
-                      </div>
-                      <div>
-                        <h4 className="mb-1 font-medium group-hover/step:text-primary transition-colors">
-                          {step.title}
-                        </h4>
-                        <p className="text-sm text-muted-foreground">{step.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6 rounded-lg bg-gradient-to-r from-primary/10 to-blue-600/10 backdrop-blur-sm p-4 border border-primary/20">
-                  <p className="text-sm font-medium bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                    One AI assistant. Six different websites. Zero API keys.
-                    <span className="block mt-1 text-muted-foreground">
-                      All using existing browser authentication.
-                    </span>
+                    MCP servers run in web pages, extension bridges to AI clients, transport layers
+                    handle the plumbing
                   </p>
                 </div>
               </div>
@@ -525,89 +572,200 @@ function IndexRoute() {
 
       {/* How It Works - Simple for Everyone */}
       <section className="border-t bg-gradient-to-b from-muted/30 to-background px-4 py-20 relative overflow-hidden">
-        <div className="container mx-auto max-w-6xl relative">
+        <div className="container mx-auto max-w-7xl relative">
           <div className="mb-12 text-center">
             <h2 className="animate-fadeInUp mb-4 text-3xl font-bold sm:text-4xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               Incredibly Simple Setup
             </h2>
             <p
-              className="animate-fadeInUp text-lg text-muted-foreground"
+              className="animate-fadeInUp text-lg text-muted-foreground max-w-2xl mx-auto"
               style={{ animationDelay: '100ms' }}
             >
-              Discovery and session handling is automatic — no configuration needed
+              No OAuth flows, no API keys, no complex configuration. Just write a few lines of code
+              and your website becomes AI-ready.
             </p>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-2">
-            {/* For Website Owners */}
-            <div className="animate-fadeInUp" style={{ animationDelay: '100ms' }}>
-              <h3 className="mb-6 text-2xl font-semibold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                For Website Owners
-              </h3>
-              <div className="space-y-4">
-                <Card className="border-primary/20 p-6 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-blue-600/20 group-hover:from-primary/30 group-hover:to-blue-600/30 transition-all">
-                      <Code2 className="h-5 w-5 text-primary" />
-                    </div>
-                    <h4 className="text-lg font-medium">1. Write Your MCP Server</h4>
+          {/* For Developers Section */}
+          <div className="mb-16">
+            <div className="text-center mb-8">
+              <Badge className="mb-4 bg-gradient-to-r from-primary/10 to-blue-600/10 border-primary/20 backdrop-blur-sm">
+                <Code2 className="mr-1 h-3 w-3 text-primary" />
+                For Developers
+              </Badge>
+              <h3 className="text-2xl font-semibold">Add MCP to Your Website in Minutes</h3>
+            </div>
+
+            <div className="max-w-5xl mx-auto">
+              {/* Step 1 */}
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-blue-600/20 text-sm font-medium text-primary">
+                    1
                   </div>
+                  <h4 className="text-lg font-medium">Install the package</h4>
+                </div>
+                <div className="ml-11">
+                  <CodeBlock
+                    language="bash"
+                    code="npm install @webmcp/transports @modelcontextprotocol/sdk"
+                  />
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="mb-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-blue-600/20 text-sm font-medium text-primary">
+                    2
+                  </div>
+                  <h4 className="text-lg font-medium">Create your MCP server</h4>
+                </div>
+                <div className="ml-11">
+                  <CodeBlock
+                    language="typescript"
+                    code={`import { TabServerTransport } from '@webmcp/transports';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
+
+const server = new McpServer({ 
+  name: 'invoice-system',
+  version: '1.0.0' 
+});
+
+server.tool('createInvoice', 'Create a new invoice', {
+  customerEmail: z.string().email(),
+  items: z.array(z.object({
+    description: z.string(),
+    amount: z.number()
+  }))
+}, async ({ customerEmail, items }) => {
+  // This is just a normal fetch to your existing API
+  const response = await yourPreAuthorizedApiClient('/api/invoices', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ customerEmail, items })
+  });
+  
+  if (!response.ok) {
+    throw new Error(\`Failed to create invoice: \${response.statusText}\`);
+  }
+  // You get full control over what the model get's to know about the response
+  return { content: [{ type: 'text', text: JSON.stringify(await response.json())  }] };
+});
+
+const transport = new TabServerTransport();
+// This server is now callable by the mcp-b chrome extension
+await server.connect(transport);`}
+                  />
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-blue-600/20 text-sm font-medium text-primary">
+                    3
+                  </div>
+                  <h4 className="text-lg font-medium">That's it! 🎉</h4>
+                </div>
+                <div className="ml-11">
                   <p className="text-muted-foreground">
-                    Define tools and expose them via{' '}
-                    <code className="rounded bg-gradient-to-r from-primary/10 to-blue-600/10 px-1.5 py-0.5 font-mono text-sm">
-                      window.mcp
-                    </code>
+                    Your MCP server automatically uses your existing authentication. When users with
+                    the MCP-B extension visit your site, their AI assistants can now interact with
+                    your APIs using their active session.
                   </p>
-                  <div className="mt-4 rounded-lg bg-gradient-to-r from-muted/50 to-muted/30 backdrop-blur-sm p-3 border border-primary/10">
-                    <code className="text-sm font-mono text-primary">
-                      window.mcp = createServer(tools)
-                    </code>
+                </div>
+              </div>
+
+              {/* Key Points */}
+              <div className="grid gap-4 sm:grid-cols-3 mt-8">
+                <Card className="p-4 border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">No API Keys</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Uses browser's existing authentication
+                      </p>
+                    </div>
                   </div>
                 </Card>
-
-                <Card className="border-primary/20 p-6 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary/20 to-blue-600/20 group-hover:from-primary/30 group-hover:to-blue-600/30 transition-all animate-pulse">
-                      <Zap className="h-5 w-5 text-primary" />
+                <Card className="p-4 border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">Type-Safe</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Full TypeScript support with Zod validation
+                      </p>
                     </div>
-                    <h4 className="text-lg font-medium">2. That's It!</h4>
                   </div>
-                  <p className="text-muted-foreground">
-                    Discovery, authentication, and session handling are automatic. Your existing
-                    auth works out of the box.
-                  </p>
+                </Card>
+                <Card className="p-4 border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-sm">Secure by Default</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Respects your existing permissions
+                      </p>
+                    </div>
+                  </div>
                 </Card>
               </div>
             </div>
+          </div>
 
-            {/* For Users */}
-            <div className="animate-fadeInUp" style={{ animationDelay: '200ms' }}>
-              <h3 className="mb-6 text-2xl font-semibold bg-gradient-to-r from-blue-600 to-primary bg-clip-text text-transparent">
+          {/* For Users Section */}
+          <div className="border-t pt-12">
+            <div className="text-center mb-8">
+              <Badge className="mb-4 bg-gradient-to-r from-blue-600/10 to-primary/10 border-blue-600/20 backdrop-blur-sm">
+                <Users className="mr-1 h-3 w-3 text-blue-600" />
                 For Users
-              </h3>
-              <div className="space-y-4">
-                <Card className="border-blue-600/20 p-6 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-blue-600/30 transition-all duration-300 group">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600/20 to-primary/20 group-hover:from-blue-600/30 group-hover:to-primary/30 transition-all">
-                      <Monitor className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <h4 className="text-lg font-medium">1. Install Extension</h4>
-                  </div>
-                  <p className="text-muted-foreground">One-click install from Chrome Web Store</p>
-                </Card>
+              </Badge>
+              <h3 className="text-2xl font-semibold">Even Simpler for End Users</h3>
+            </div>
 
-                <Card className="border-blue-600/20 p-6 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-blue-600/30 transition-all duration-300 group">
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600/20 to-primary/20 group-hover:from-blue-600/30 group-hover:to-primary/30 transition-all animate-pulse">
-                      <Network className="h-5 w-5 text-blue-600" />
+            <div className="max-w-3xl mx-auto">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Card className="p-6 border-blue-600/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-blue-600/30 transition-all duration-300 group">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600/20 to-primary/20 text-lg font-medium text-blue-600">
+                      1
                     </div>
-                    <h4 className="text-lg font-medium">2. Browse & Automate</h4>
+                    <h4 className="text-lg font-medium">Install Extension</h4>
                   </div>
                   <p className="text-muted-foreground">
-                    Extension automatically connects to MCP-enabled sites. Your AI assistant can now
-                    work across all of them.
+                    <a
+                      href="https://chromewebstore.google.com/detail/mcp-bextension/daohopfhkdelnpemnhlekblhnikhdhfa"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 underline"
+                    >
+                      One-click install from Chrome Web Store
+                    </a>
+                    . No configuration needed.
                   </p>
                 </Card>
+
+                <Card className="p-6 border-blue-600/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-blue-600/30 transition-all duration-300 group">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600/20 to-primary/20 text-lg font-medium text-blue-600">
+                      2
+                    </div>
+                    <h4 className="text-lg font-medium">Start Using AI</h4>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Visit any MCP-enabled website. Your AI assistant automatically gains access.
+                  </p>
+                </Card>
+              </div>
+
+              <div className="mt-6 p-4 rounded-lg bg-gradient-to-r from-blue-600/10 to-primary/10 backdrop-blur-sm border border-blue-600/20 text-center">
+                <p className="text-sm font-medium bg-gradient-to-r from-blue-600 to-primary bg-clip-text text-transparent">
+                  No API keys to manage. No OAuth to configure. It just works.
+                </p>
               </div>
             </div>
           </div>
@@ -637,7 +795,7 @@ function IndexRoute() {
             >
               <div className="p-8">
                 <h3 className="mb-6 text-xl font-semibold text-center">
-                  The Evolution of Browser AI Integration
+                  How MCP-B Compares to Existing Approaches
                 </h3>
 
                 <div className="grid gap-6 md:grid-cols-3">
@@ -849,8 +1007,15 @@ function IndexRoute() {
         <div className="container mx-auto max-w-6xl relative">
           <div className="mb-12 text-center">
             <h2 className="animate-fadeInUp mb-4 text-3xl font-bold sm:text-4xl bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Enterprise-Ready Features
+              Built for Real-World Use
             </h2>
+            <p
+              className="animate-fadeInUp text-lg text-muted-foreground max-w-2xl mx-auto"
+              style={{ animationDelay: '100ms' }}
+            >
+              MCP-B solves the fundamental problems that have prevented AI from working with web
+              applications
+            </p>
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -900,7 +1065,7 @@ function IndexRoute() {
                 <div className="p-8">
                   <Badge className="mb-4 bg-gradient-to-r from-primary to-blue-600 text-white border-0">
                     <Chrome className="mr-1 h-3 w-3" />
-                    Available Soon
+                    Now Available
                   </Badge>
                   <h3 className="mb-4 text-2xl font-semibold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                     One Extension, Unlimited Possibilities
@@ -910,16 +1075,20 @@ function IndexRoute() {
                     the full power of Model Context Protocol directly to your browser.
                   </p>
                   <div className="space-y-4">
-                    <Button size="lg" className="w-full group gap-2" disabled>
-                      <Chrome className="h-5 w-5" />
-                      Coming to Chrome Web Store
-                      <Badge variant="secondary" className="ml-2">
-                        Soon
-                      </Badge>
+                    <Button size="lg" className="w-full group gap-2" asChild>
+                      <a
+                        href="https://chromewebstore.google.com/detail/mcp-bextension/daohopfhkdelnpemnhlekblhnikhdhfa"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Chrome className="h-5 w-5" />
+                        Install from Chrome Web Store
+                        <ExternalLink className="h-4 w-4 ml-1 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </a>
                     </Button>
                     <Button size="lg" variant="outline" className="w-full group gap-2" asChild>
                       <a
-                        href="https://github.com/yourusername/mcp-b"
+                        href="https://github.com/MiguelsPizza/mcp-b"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -937,14 +1106,14 @@ function IndexRoute() {
                 <Card className="border-primary/20 p-6 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group">
                   <CardHeader className="p-0 mb-3">
                     <CardTitle className="flex items-center gap-2 text-lg">
-                      <MessageSquare className="w-5 h-5 text-primary" />
-                      AI Chat Interface
+                      <Network className="w-5 h-5 text-primary" />
+                      MCP Hub for Extensions
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="p-0">
                     <p className="text-sm text-muted-foreground">
-                      Interact with AI assistants directly in your browser's side panel. Support for
-                      multiple AI providers.
+                      Acts as an MCP of MCPs — other AI extensions can connect to MCP-B to access
+                      all browser tabs' tools.
                     </p>
                   </CardContent>
                 </Card>
@@ -1043,7 +1212,8 @@ function IndexRoute() {
                 Ready to Get Started?
               </h2>
               <p className="mb-8 text-lg text-muted-foreground">
-                Join developers building the next generation of AI-powered browser tools
+                The future of AI assistance isn't in complex OAuth flows or managed infrastructure.
+                It's in the browser you already have open.
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row">
                 <Button
@@ -1052,7 +1222,7 @@ function IndexRoute() {
                   asChild
                 >
                   <a
-                    href="https://github.com/yourusername/mcp-b"
+                    href="https://github.com/MiguelsPizza/mcp-b"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -1108,64 +1278,37 @@ function IndexRoute() {
   );
 }
 
-const workflowSteps = [
-  {
-    title: 'Send PO to Accounting',
-    description: 'Forward purchase order via accounting portal',
-  },
-  {
-    title: 'Check Inventory',
-    description: 'Verify parts availability in internal IMS',
-  },
-  {
-    title: 'Order Missing Parts',
-    description: 'Purchase from McMasterCarr.com',
-  },
-  {
-    title: 'Register Request',
-    description: 'Log order in machine shop system',
-  },
-  {
-    title: 'Calculate Timeline',
-    description: 'Estimate delivery based on all factors',
-  },
-  {
-    title: 'Update Customer',
-    description: 'Send timeline via email',
-  },
-];
-
 const features = [
   {
+    icon: Lock,
+    title: 'Authentication Solved',
+    description: 'Uses existing browser sessions. No OAuth 2.1 complexity, no API keys to manage.',
+  },
+  {
     icon: Workflow,
-    title: 'Multi-Site Workflows',
+    title: 'Cross-Application Workflows',
     description:
-      'One AI assistant can work across Gmail, Slack, GitHub, and any other site you use.',
+      "AI seamlessly works across multiple sites using each site's existing permissions.",
   },
   {
     icon: Shield,
-    title: 'Enterprise Security',
+    title: 'Enterprise Control',
     description:
-      'Leverages browser security model. No API keys floating around, no new attack vectors.',
-  },
-  {
-    icon: Network,
-    title: 'Bridge Architecture',
-    description: 'Revolutionary WebSocket bridge enables extensions to act as MCP servers.',
+      'MCP server is part of your app, running your code, respecting your access controls.',
   },
   {
     icon: FileCode,
-    title: 'Structured Access',
-    description: 'Direct API access instead of screen scraping. Reliable, fast, and maintainable.',
+    title: 'API-First Design',
+    description: 'Direct access to structured data. No screen scraping, no brittle selectors.',
   },
   {
-    icon: Layers,
-    title: 'Full MCP Protocol',
-    description: 'Complete Model Context Protocol implementation with all standard features.',
+    icon: Zap,
+    title: 'Instant Deployment',
+    description: 'Add to existing web apps with ~50 lines of code. No infrastructure changes.',
   },
   {
-    icon: Users,
-    title: 'Zero Setup',
-    description: 'Works instantly with any website you can log into. No configuration needed.',
+    icon: Network,
+    title: 'Extensible Platform',
+    description: 'Acts as an MCP hub that other AI extensions can connect to and extend.',
   },
 ];
