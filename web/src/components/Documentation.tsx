@@ -28,10 +28,12 @@ const CodeBlock = ({
   code,
   language,
   title,
+  isMobile,
 }: {
   code: string;
   language: string;
   title?: string;
+  isMobile?: boolean;
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -43,39 +45,48 @@ const CodeBlock = ({
 
   return (
     <div className="relative group">
-      <div className="absolute right-2 top-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className={cn(
+        "absolute z-10 transition-opacity",
+        isMobile ? "right-1 top-1 opacity-100" : "right-2 top-2 opacity-0 group-hover:opacity-100"
+      )}>
         <Button
           onClick={handleCopy}
           size="sm"
           variant="ghost"
-          className="h-8 px-2 text-xs bg-zinc-800/80 hover:bg-zinc-700/80 text-zinc-300"
-        >
+          className={cn(
+            "bg-zinc-800/80 hover:bg-zinc-700/80 text-zinc-300",
+            isMobile ? "h-7 px-1.5 text-xs" : "h-8 px-2 text-xs"
+          )}>
           {copied ? (
             <>
               <Check className="h-3 w-3 mr-1" />
-              Copied
+              {!isMobile && "Copied"}
             </>
           ) : (
             <>
               <Copy className="h-3 w-3 mr-1" />
-              Copy
+              {!isMobile && "Copy"}
             </>
           )}
         </Button>
       </div>
       <div className="overflow-hidden rounded-lg border border-zinc-800">
-        <div className="flex items-center justify-between bg-zinc-900 px-4 py-2 text-xs text-zinc-400">
-          <span className="font-mono">{title || language}</span>
+        <div className={cn(
+          "flex items-center justify-between bg-zinc-900 text-xs text-zinc-400",
+          isMobile ? "px-3 py-1.5" : "px-4 py-2"
+        )}>
+          <span className="font-mono truncate">{title || language}</span>
         </div>
         <SyntaxHighlighter
           language={language}
           style={vscDarkPlus}
           customStyle={{
             margin: 0,
-            padding: '1rem',
+            padding: isMobile ? '0.75rem' : '1rem',
             background: '#1e1e1e',
-            fontSize: '0.875rem',
+            fontSize: isMobile ? '0.75rem' : '0.875rem',
             lineHeight: '1.5',
+            overflowX: 'auto',
           }}
           codeTagProps={{
             style: {
@@ -110,9 +121,9 @@ const NavItem = ({
       onClick();
     }}
     className={cn(
-      'block px-3 py-2 text-sm rounded-md transition-colors',
+      'block px-3 py-2 text-sm rounded-md transition-all duration-200',
       active
-        ? 'bg-primary/10 text-primary font-medium'
+        ? 'bg-primary/10 text-primary font-medium border-l-2 border-primary ml-[-2px]'
         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
     )}
   >
@@ -120,16 +131,11 @@ const NavItem = ({
   </a>
 );
 
-export const Documentation = () => {
+export const Documentation = ({ isMobile }: { isMobile?: boolean }) => {
   const [activeSection, setActiveSection] = useState('introduction');
-
-  const scrollToSection = (sectionId: string) => {
-    setActiveSection(sectionId);
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  
+  // Debug log
+  console.log('Documentation component - isMobile:', isMobile);
 
   const navigation = [
     { id: 'introduction', title: 'Introduction' },
@@ -142,10 +148,48 @@ export const Documentation = () => {
     { id: 'api-reference', title: 'API Reference' },
   ];
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Track active section based on scroll position using Intersection Observer
+  React.useEffect(() => {
+    const observerOptions = {
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: 0
+    };
+
+    const observerCallback: IntersectionObserverCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observe all sections
+    navigation.forEach(({ id }) => {
+      const element = document.getElementById(id);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar Navigation */}
-      <aside className="w-64 border-r bg-muted/30 p-6 sticky top-0 h-screen overflow-y-auto">
+    <div className={cn("min-h-screen", isMobile ? "relative" : "flex relative")}>
+      {/* Sidebar Navigation - Hidden on mobile */}
+      {!isMobile && (
+        <aside className="w-64 border-r bg-muted/30 p-6 sticky top-0 h-screen overflow-y-auto">
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Book className="h-5 w-5" />
@@ -188,23 +232,57 @@ export const Documentation = () => {
           </div>
         </div>
       </aside>
+      )}
+
+      {/* Mobile Navigation */}
+      {isMobile && (
+        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+          <div className="px-4 py-2">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <div className="flex items-center gap-2 shrink-0 mr-2">
+                <Book className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Docs:</span>
+              </div>
+              <nav className="flex gap-1">
+                {navigation.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollToSection(item.id)}
+                    className={cn(
+                      'shrink-0 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200',
+                      activeSection === item.id
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
+                    )}
+                  >
+                    {item.title}
+                  </button>
+                ))}
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
-      <main className="flex-1 max-w-4xl mx-auto px-8 py-12">
+      <main className={cn(
+        "flex-1 mx-auto",
+        isMobile ? "px-4 py-8" : "max-w-4xl px-8 py-12"
+      )}>
         {/* Header */}
         <header className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-primary/10 rounded-lg">
-              <Globe className="h-8 w-8 text-primary" />
+          <div className={cn("mb-4", isMobile ? "" : "flex items-center gap-3")}>
+            <div className={cn("bg-primary/10 rounded-lg", isMobile ? "p-2 inline-block mb-3" : "p-3")}>
+              <Globe className={cn("text-primary", isMobile ? "h-6 w-6" : "h-8 w-8")} />
             </div>
             <div>
-              <h1 className="text-4xl font-bold">MCP-B Documentation</h1>
-              <p className="text-xl text-muted-foreground mt-1">
+              <h1 className={cn("font-bold", isMobile ? "text-2xl" : "text-4xl")}>MCP-B Documentation</h1>
+              <p className={cn("text-muted-foreground mt-1", isMobile ? "text-base" : "text-xl")}>
                 Browser-based Model Context Protocol
               </p>
             </div>
           </div>
-          <div className="flex gap-2 mt-6">
+          <div className="flex flex-wrap gap-2 mt-6">
             <Badge variant="secondary">v1.0.0</Badge>
             <Badge variant="outline">TypeScript</Badge>
             <Badge variant="outline">React</Badge>
@@ -225,7 +303,7 @@ export const Documentation = () => {
                 AI agents to interact with web applications using existing authentication and
                 structured data access instead of screen scraping.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+              <div className={cn("gap-4 mt-6", isMobile ? "space-y-4" : "grid grid-cols-1 md:grid-cols-2")}>
                 <div className="flex gap-3">
                   <Zap className="h-5 w-5 text-yellow-500 mt-1" />
                   <div>
@@ -295,8 +373,8 @@ export const Documentation = () => {
         <section id="quick-start" className="mb-16">
           <h2 className="text-3xl font-bold mb-6">Quick Start</h2>
 
-          <Tabs defaultValue="web" className="mb-8">
-            <TabsList className="grid w-full grid-cols-2">
+          <Tabs defaultValue="web" className="mb-8 w-full">
+            <TabsList className={cn("grid w-full grid-cols-2", isMobile && "h-auto p-1")}>
               <TabsTrigger value="web">Web Developers</TabsTrigger>
               <TabsTrigger value="extension">Extension Users</TabsTrigger>
             </TabsList>
@@ -310,6 +388,7 @@ export const Documentation = () => {
                   <CodeBlock
                     language="bash"
                     code="npm install @mcp-b/transports @modelcontextprotocol/sdk"
+                    isMobile={isMobile}
                   />
                 </CardContent>
               </Card>
@@ -322,6 +401,7 @@ export const Documentation = () => {
                   <CodeBlock
                     language="typescript"
                     title="app.ts"
+                    isMobile={isMobile}
                     code={`import { TabServerTransport } from '@mcp-b/transports';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import { z } from 'zod';
@@ -374,6 +454,7 @@ await server.connect(transport);`}
                 <CardContent>
                   <CodeBlock
                     language="bash"
+                    isMobile={isMobile}
                     code={`git clone https://github.com/miguelspizza/MCP-B.git
 cd MCP-B
 pnpm install
@@ -388,15 +469,16 @@ pnpm build`}
                 </CardHeader>
                 <CardContent>
                   <ol className="space-y-2 text-sm">
-                    <li>
-                      1. Open Chrome and navigate to{' '}
+                    <li className={isMobile ? "flex flex-col gap-1" : ""}>
+                      <span>1. Open Chrome and navigate to</span>
                       <code className="px-1 py-0.5 bg-muted rounded">chrome://extensions</code>
                     </li>
                     <li>2. Enable "Developer mode"</li>
                     <li>3. Click "Load unpacked"</li>
-                    <li>
-                      4. Select the{' '}
-                      <code className="px-1 py-0.5 bg-muted rounded">extension/dist</code> folder
+                    <li className={isMobile ? "flex flex-col gap-1" : ""}>
+                      <span>4. Select the</span>
+                      <code className="px-1 py-0.5 bg-muted rounded">extension/dist</code>
+                      <span>folder</span>
                     </li>
                   </ol>
                 </CardContent>
@@ -421,8 +503,8 @@ pnpm build`}
           <Card className="mb-8">
             <CardContent className="pt-6">
               <div className="space-y-6">
-                <div className="text-center mb-8">
-                  <pre className="inline-block text-sm text-left">
+                <div className={cn("mb-8", isMobile ? "overflow-x-auto" : "text-center")}>
+                  <pre className={cn("text-left", isMobile ? "text-xs" : "inline-block text-sm")}>
                     {`┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
 │   Web Page      │     │ Content Script  │     │   Extension     │
 │                 │     │                 │     │                 │
@@ -512,6 +594,7 @@ pnpm build`}
               <CodeBlock
                 language="typescript"
                 title="server.ts"
+                isMobile={isMobile}
                 code={`import { TabServerTransport } from '@mcp-b/transports';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import { z } from 'zod';
@@ -546,6 +629,7 @@ console.log('MCP Tab Server is running.');`}
               <CodeBlock
                 language="typescript"
                 title="client.ts"
+                isMobile={isMobile}
                 code={`import { TabClientTransport } from '@mcp-b/transports';
 import { Client } from '@modelcontextprotocol/sdk/client';
 
@@ -601,6 +685,7 @@ console.log('Result:', result.content[0].text); // "15"`}
               <CodeBlock
                 language="typescript"
                 title="background.ts"
+                isMobile={isMobile}
                 code={`import { ExtensionServerTransport } from '@mcp-b/transports';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
@@ -634,6 +719,7 @@ class McpHub {
               <CodeBlock
                 language="typescript"
                 title="contentScript.ts"
+                isMobile={isMobile}
                 code={`import { TabClientTransport } from '@mcp-b/transports';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 
@@ -669,6 +755,7 @@ backgroundPort.postMessage({
               <CodeBlock
                 language="typescript"
                 title="popup.tsx"
+                isMobile={isMobile}
                 code={`import { ExtensionClientTransport } from '@mcp-b/transports';
 import { Client } from '@modelcontextprotocol/sdk/client';
 
@@ -715,7 +802,7 @@ console.log('Result from page:', result.content[0].text); // "42"`}
           <div className="space-y-6">
             <div>
               <h3 className="text-xl font-semibold mb-3">Installation</h3>
-              <CodeBlock language="bash" code="npm install @mcp-b/mcp-react-hooks" />
+              <CodeBlock language="bash" code="npm install @mcp-b/mcp-react-hooks" isMobile={isMobile} />
             </div>
 
             <div>
@@ -723,6 +810,7 @@ console.log('Result from page:', result.content[0].text); // "42"`}
               <CodeBlock
                 language="typescript"
                 title="ClientApp.tsx"
+                isMobile={isMobile}
                 code={`import { McpClientProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { TabClientTransport } from '@mcp-b/transports';
@@ -776,6 +864,7 @@ function ClientTools() {
               <CodeBlock
                 language="typescript"
                 title="ServerApp.tsx"
+                isMobile={isMobile}
                 code={`import { McpServerProvider, useMcpServer } from '@mcp-b/mcp-react-hooks';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { TabServerTransport } from '@mcp-b/transports';
@@ -831,6 +920,7 @@ function ServerTools() {
               <CodeBlock
                 language="typescript"
                 title="MemoryApp.tsx"
+                isMobile={isMobile}
                 code={`import { McpMemoryProvider, useMcpClient, useMcpServer } from '@mcp-b/mcp-react-hooks';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -893,6 +983,7 @@ function MyApp() {
               <CodeBlock
                 language="typescript"
                 title="ChatWithMCP.tsx"
+                isMobile={isMobile}
                 code={`import { useAssistantRuntime } from '@assistant-ui/react';
 import { tool } from '@assistant-ui/react';
 import { useMcpClient } from '@mcp-b/mcp-react-hooks';
@@ -970,6 +1061,7 @@ function ChatWithMCP() {
               <CardContent>
                 <CodeBlock
                   language="typescript"
+                  isMobile={isMobile}
                   code={`server.tool('createTodo', { text: z.string() }, async ({ text }) => {
   const todo = await db.todos.create({ text, completed: false });
   return { content: [{ type: 'text', text: \`Created: \${todo.id}\` }] };
@@ -1003,6 +1095,7 @@ server.tool('listTodos', {}, async () => {
               <CardContent>
                 <CodeBlock
                   language="typescript"
+                  isMobile={isMobile}
                   code={`server.tool(
   'searchProducts',
   { query: z.string(), maxResults: z.number().optional() },
@@ -1234,7 +1327,7 @@ server.tool(
 
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t">
-          <div className="flex items-center justify-between">
+          <div className={cn(isMobile ? "space-y-4" : "flex items-center justify-between")}>
             <p className="text-sm text-muted-foreground">
               MCP-B is not affiliated with Anthropic or the official Model Context Protocol project.
             </p>

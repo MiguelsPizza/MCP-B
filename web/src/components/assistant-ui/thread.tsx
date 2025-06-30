@@ -42,10 +42,10 @@ export const Thread: FC = () => {
     <ThreadPrimitive.Root
       className="bg-background box-border flex h-full flex-col overflow-hidden"
       style={{
-        ['--thread-max-width' as string]: '50rem',
+        ['--thread-max-width' as string]: 'min(50rem, calc(100vw - 2rem))',
       }}
     >
-      <ThreadPrimitive.Viewport className="flex h-full flex-col items-center overflow-y-scroll scroll-smooth bg-inherit px-4 pt-8">
+      <ThreadPrimitive.Viewport className="flex h-full flex-col items-center overflow-y-scroll scroll-smooth bg-inherit px-3 sm:px-4 pt-3 sm:pt-8">
         <ThreadWelcome />
         <McpToolUIRenderer tools={tools} />
 
@@ -62,7 +62,7 @@ export const Thread: FC = () => {
         </ThreadPrimitive.If>
         <ThreadWelcomeSuggestions />
 
-        <div className="sticky bottom-0 mt-3 flex w-full max-w-[var(--thread-max-width)] flex-col items-center justify-end rounded-t-lg bg-inherit pb-4">
+        <div className="sticky bottom-0 mt-2 sm:mt-3 flex w-full max-w-[var(--thread-max-width)] flex-col items-center justify-end rounded-t-lg bg-inherit pb-2 sm:pb-4">
           <ThreadScrollToBottom />
           <Composer />
         </div>
@@ -85,10 +85,10 @@ const ThreadScrollToBottom: FC = () => (
 
 const ThreadWelcome: FC = () => (
   <ThreadPrimitive.Empty>
-    <div className="flex w-full max-w-lg flex-grow flex-col items-center justify-center text-center px-4">
-      <div className="mb-6 p-4 bg-primary/5 rounded-2xl">
+    <div className="flex w-full max-w-lg flex-grow flex-col items-center justify-center text-center px-3 sm:px-4">
+      <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-primary/5 rounded-2xl">
         <svg
-          className="w-16 h-16 mx-auto text-primary"
+          className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-primary"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -101,14 +101,14 @@ const ThreadWelcome: FC = () => (
           />
         </svg>
       </div>
-      <h2 className="text-2xl font-semibold mb-3 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+      <h2 className="text-xl sm:text-2xl font-semibold mb-2 sm:mb-3 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
         Welcome to mcp-b
       </h2>
-      <p className="text-base text-muted-foreground leading-relaxed max-w-md">
+      <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-md">
         Experience the power of Model Context Protocol running directly in your browser. No servers,
         no API keys – just secure, authenticated AI interactions.
       </p>
-      <div className="mt-8 p-4 border border-border/50 rounded-xl bg-card/30">
+      <div className="mt-6 sm:mt-8 p-3 sm:p-4 border border-border/50 rounded-xl bg-card/30">
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
           <span>MCP server active and ready</span>
@@ -170,35 +170,35 @@ const ThreadWelcomeSuggestions: FC = () => {
   };
 
   return (
-    <div className="mt-3 flex w-full flex-col items-center gap-3 max-w-2xl">
+    <div className="mt-3 flex w-full flex-col items-center gap-2 sm:gap-3 max-w-2xl px-3 sm:px-0">
       <p className="text-sm text-muted-foreground font-medium">Try these commands:</p>
 
       {/* Primary quick action buttons */}
-      <div className="flex w-full items-stretch justify-center gap-3">
+      <div className="flex w-full items-stretch justify-center gap-2 sm:gap-3">
         <ThreadPrimitive.Suggestion
-          className="group hover:bg-primary/10 hover:border-primary/30 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-xl border border-border/50 p-4 transition-all ease-out hover:scale-[1.02] hover:shadow-md bg-card/30"
+          className="group hover:bg-primary/10 hover:border-primary/30 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-xl border border-border/50 p-3 sm:p-4 transition-all ease-out hover:scale-[1.02] hover:shadow-md bg-card/30"
           prompt="Create a new todo: Buy groceries"
           method="replace"
           autoSend
         >
           <svg
-            className="w-5 h-5 mb-2 text-primary group-hover:scale-110 transition-transform"
+            className="w-5 h-5 mb-1.5 sm:mb-2 text-primary group-hover:scale-110 transition-transform"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          <span className="text-sm font-medium">Create a todo</span>
+          <span className="text-xs sm:text-sm font-medium">Create a todo</span>
         </ThreadPrimitive.Suggestion>
         <ThreadPrimitive.Suggestion
-          className="group hover:bg-primary/10 hover:border-primary/30 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-xl border border-border/50 p-4 transition-all ease-out hover:scale-[1.02] hover:shadow-md bg-card/30"
+          className="group hover:bg-primary/10 hover:border-primary/30 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-xl border border-border/50 p-3 sm:p-4 transition-all ease-out hover:scale-[1.02] hover:shadow-md bg-card/30"
           prompt="Show me all my todos"
           method="replace"
           autoSend
         >
           <svg
-            className="w-5 h-5 mb-2 text-primary group-hover:scale-110 transition-transform"
+            className="w-5 h-5 mb-1.5 sm:mb-2 text-primary group-hover:scale-110 transition-transform"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -210,7 +210,7 @@ const ThreadWelcomeSuggestions: FC = () => {
               d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
             />
           </svg>
-          <span className="text-sm font-medium">View all todos</span>
+          <span className="text-xs sm:text-sm font-medium">View all todos</span>
         </ThreadPrimitive.Suggestion>
       </div>
 
@@ -239,7 +239,7 @@ const ThreadWelcomeSuggestions: FC = () => {
             {Object.entries(toolPrompts).map(([tool, config]) => (
               <ThreadPrimitive.Suggestion
                 key={tool}
-                className="hover:bg-muted/80 flex flex-col items-start justify-start rounded-lg border p-3 transition-colors ease-in cursor-pointer"
+                className="hover:bg-muted/80 flex flex-col items-start justify-start rounded-lg border p-2 sm:p-3 transition-colors ease-in cursor-pointer"
                 prompt={config.prompt}
                 method="replace"
                 autoSend={config.autoSend}
@@ -258,12 +258,12 @@ const ThreadWelcomeSuggestions: FC = () => {
 };
 
 const Composer: FC = () => (
-  <ComposerPrimitive.Root className="focus-within:border-primary/50 flex w-full flex-wrap items-end rounded-2xl border bg-card/50 backdrop-blur-sm px-3 shadow-lg transition-all ease-in hover:shadow-xl">
+  <ComposerPrimitive.Root className="focus-within:border-primary/50 flex w-full flex-wrap items-end rounded-2xl border bg-card/50 backdrop-blur-sm px-2 sm:px-3 shadow-lg transition-all ease-in hover:shadow-xl">
     <ComposerPrimitive.Input
       rows={1}
       autoFocus
       placeholder="Ask about todos or try the MCP tools..."
-      className="placeholder:text-muted-foreground max-h-40 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
+      className="placeholder:text-muted-foreground max-h-40 flex-grow resize-none border-none bg-transparent px-2 py-3 sm:py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
     />
     <ComposerAction />
   </ComposerPrimitive.Root>
@@ -276,7 +276,7 @@ const ComposerAction: FC = () => (
         <TooltipIconButton
           tooltip="Send"
           variant="default"
-          className="my-2.5 size-8 p-2 transition-opacity ease-in"
+          className="my-2 sm:my-2.5 size-10 sm:size-8 p-2 transition-opacity ease-in"
         >
           <SendHorizontalIcon />
         </TooltipIconButton>
@@ -287,7 +287,7 @@ const ComposerAction: FC = () => (
         <TooltipIconButton
           tooltip="Cancel"
           variant="default"
-          className="my-2.5 size-8 p-2 transition-opacity ease-in"
+          className="my-2 sm:my-2.5 size-10 sm:size-8 p-2 transition-opacity ease-in"
         >
           <CircleStopIcon />
         </TooltipIconButton>
@@ -297,10 +297,10 @@ const ComposerAction: FC = () => (
 );
 
 const UserMessage: FC = () => (
-  <MessagePrimitive.Root className="grid auto-rows-auto grid-cols-[minmax(72px,1fr)_auto] gap-y-2 [&:where(>*)]:col-start-2 w-full max-w-[var(--thread-max-width)] py-4">
+  <MessagePrimitive.Root className="grid auto-rows-auto grid-cols-[minmax(60px,1fr)_auto] sm:grid-cols-[minmax(72px,1fr)_auto] gap-y-2 [&:where(>*)]:col-start-2 w-full max-w-[var(--thread-max-width)] py-3 sm:py-4">
     <UserActionBar />
 
-    <div className="bg-primary/10 text-foreground max-w-[calc(var(--thread-max-width)*0.8)] break-words rounded-2xl px-5 py-3 col-start-2 row-start-2 border border-primary/20">
+    <div className="bg-primary/10 text-foreground max-w-[calc(var(--thread-max-width)*0.9)] sm:max-w-[calc(var(--thread-max-width)*0.8)] break-words rounded-2xl px-3 sm:px-5 py-2 sm:py-3 col-start-2 row-start-2 border border-primary/20 text-sm sm:text-base">
       <MessagePrimitive.Content />
     </div>
 
@@ -338,10 +338,10 @@ const EditComposer: FC = () => (
 );
 
 const AssistantMessage: FC = () => (
-  <MessagePrimitive.Root className="grid grid-cols-[auto_auto_1fr] grid-rows-[auto_1fr] relative w-full max-w-[var(--thread-max-width)] py-4">
-    <div className="col-start-1 row-start-1 mr-3 mt-1.5">
-      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30 flex items-center justify-center">
-        <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <MessagePrimitive.Root className="grid grid-cols-[auto_auto_1fr] grid-rows-[auto_1fr] relative w-full max-w-[var(--thread-max-width)] py-3 sm:py-4">
+    <div className="col-start-1 row-start-1 mr-2 sm:mr-3 mt-1 sm:mt-1.5">
+      <div className="w-8 h-8 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30 flex items-center justify-center">
+        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -351,7 +351,7 @@ const AssistantMessage: FC = () => (
         </svg>
       </div>
     </div>
-    <div className="text-foreground max-w-[calc(var(--thread-max-width)*0.8)] break-words leading-7 col-span-2 col-start-2 row-start-1 my-1.5">
+    <div className="text-foreground max-w-[calc(var(--thread-max-width)*0.9)] sm:max-w-[calc(var(--thread-max-width)*0.8)] break-words leading-6 sm:leading-7 col-span-2 col-start-2 row-start-1 my-1 sm:my-1.5 text-sm sm:text-base">
       <MessagePrimitive.Content
         components={{ Text: MarkdownText, tools: { Fallback: ToolFallback } }}
       />

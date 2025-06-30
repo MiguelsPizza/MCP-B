@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Github, MessagesSquare, Server } from 'lucide-react';
+import { Github, MessagesSquare, Server, ListTodo } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import {
   Sidebar,
@@ -13,10 +13,11 @@ import {
 } from '../components/ui/sidebar';
 import { ThreadList } from './assistant-ui/thread-list';
 import McpServer from './McpServer';
+import Todos from './Todos';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  activeView: 'threads' | 'mcp';
-  setActiveView: (view: 'threads' | 'mcp') => void;
+  activeView: 'threads' | 'mcp' | 'todos';
+  setActiveView: (view: 'threads' | 'mcp' | 'todos') => void;
 }
 
 export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarProps) {
@@ -34,8 +35,8 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
                 }
                 className="flex items-center gap-2"
               >
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/80 to-primary text-primary-foreground">
-                  <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="flex aspect-square size-10 sm:size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/80 to-primary text-primary-foreground">
+                  <svg className="size-5 sm:size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -45,7 +46,7 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
                   </svg>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">MCP-B</span>
+                  <span className="font-semibold text-sm sm:text-base">MCP-B</span>
                   <span className="text-xs text-muted-foreground">Browser MCP</span>
                 </div>
               </a>
@@ -54,31 +55,53 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
         </SidebarMenu>
 
         {/* View Toggle */}
-        <div className="px-2 py-2">
-          <div className="flex gap-1 p-1 bg-sidebar-accent/50 rounded-lg">
+        <div className="px-3 sm:px-2 py-2">
+          <div className="flex gap-1 p-1.5 sm:p-1 bg-sidebar-accent/50 rounded-lg">
             <Button
               variant={activeView === 'threads' ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setActiveView('threads')}
-              className="flex-1 h-7 text-xs"
+              className="flex-1 h-10 sm:h-8 text-xs"
+              title="Threads"
             >
-              <MessagesSquare className="h-3 w-3 mr-1" />
-              Threads
+              <MessagesSquare className="h-4 w-4 sm:h-3.5 sm:w-3.5 md:mr-0 mr-1" />
+              <span className="md:hidden">Threads</span>
+            </Button>
+            <Button
+              variant={activeView === 'todos' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setActiveView('todos')}
+              className="flex-1 h-10 sm:h-8 text-xs lg:hidden"
+              title="Tasks"
+            >
+              <ListTodo className="h-4 w-4 sm:h-3.5 sm:w-3.5 md:mr-0 mr-1" />
+              <span className="md:hidden">Tasks</span>
             </Button>
             <Button
               variant={activeView === 'mcp' ? 'default' : 'ghost'}
               size="sm"
               onClick={() => setActiveView('mcp')}
-              className="flex-1 h-7 text-xs"
+              className="flex-1 h-10 sm:h-8 text-xs"
+              title="MCP"
             >
-              <Server className="h-3 w-3 mr-1" />
-              MCP
+              <Server className="h-4 w-4 sm:h-3.5 sm:w-3.5 md:mr-0 mr-1" />
+              <span className="md:hidden">MCP</span>
             </Button>
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent>{activeView === 'threads' ? <ThreadList /> : <McpServer />}</SidebarContent>
+      <SidebarContent>
+        {activeView === 'threads' ? (
+          <ThreadList />
+        ) : activeView === 'todos' ? (
+          <div className="p-2">
+            <Todos route="/assistant" />
+          </div>
+        ) : (
+          <McpServer />
+        )}
+      </SidebarContent>
 
       <SidebarRail />
       <SidebarFooter>
@@ -90,12 +113,12 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
                 target="_blank"
                 className="flex items-center gap-2"
               >
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Github className="size-4" />
+                <div className="flex aspect-square size-10 sm:size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                  <Github className="size-5 sm:size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">GitHub</span>
-                  <span className="">View mcp-b Source</span>
+                  <span className="font-semibold text-sm sm:text-base">GitHub</span>
+                  <span className="text-xs sm:text-sm">View mcp-b Source</span>
                 </div>
               </a>
             </SidebarMenuButton>

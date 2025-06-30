@@ -29,9 +29,9 @@ export const blogSearchSchema = z.object({
  * Includes tab state, activeView, and todo sorting parameters
  */
 export const indexSearchSchema = z.object({
-  // Sidebar active view state - 'threads' or 'mcp'
+  // Sidebar active view state - 'threads', 'mcp', or 'todos'
   activeView: z
-    .enum(['threads', 'mcp'])
+    .enum(['threads', 'mcp', 'todos'])
     .optional()
     .default('threads')
     .describe('Active sidebar view'),
