@@ -8,7 +8,7 @@ Browser-based Model Context Protocol (MCP) implementation that enables AI assist
 [![Build Status](https://img.shields.io/github/actions/workflow/status/miguelspizza/MCP-B/ci.yml?style=flat-square)](https://github.com/miguelspizza/MCP-B/actions)
 [![GitHub stars](https://img.shields.io/github/stars/miguelspizza/MCP-B?style=flat-square)](https://github.com/miguelspizza/MCP-B/stargazers)
 
-[Quick Start](#quick-start) • [Demo](#demo) • [Installation](#installation) • [Documentation](https://mcp-b.com) • [Contributing](#contributing)
+[Quick Start](#quick-start) • [Demo](#demo) • [Installation](#installation) • [Documentation](https://mcp-b.ai) • [Contributing](#contributing)
 
 ## What is MCP-B?
 
@@ -111,7 +111,7 @@ await server.connect(transport);
 Try MCP-B with our live demo:
 
 1. Install the [Chrome extension](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa)
-2. Visit our [demo application](https://mcp-b.com)
+2. Visit our [demo application](https://mcp-b.ai)
 3. Open the extension and interact with the page through AI
 
 ## Installation
@@ -244,4 +244,4 @@ Created by [@miguelspizza](https://github.com/miguelspizza). Special thanks to A
 
 ---
 
-[Website](https://mcp-b.com) • [GitHub](https://github.com/miguelspizza/MCP-B) • [Email](mailto:alexmnahas@gmail.com)
+[Website](https://mcp-b.ai) • [GitHub](https://github.com/miguelspizza/MCP-B) • [Email](mailto:alexmnahas@gmail.com)

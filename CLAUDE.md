@@ -14,8 +14,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - **Web App**: `cd web && pnpm dev` (Vite development server)
 - **Extension**: `cd extension && pnpm dev` (WXT development)
-- **Extension Firefox**: `cd extension && pnpm dev:firefox`
-- **Local Server/Bridge**: `cd local-server && pnpm dev:bridge` (WebSocket bridge)
 
 ### Database Operations (Web Package)
 
@@ -57,8 +55,7 @@ This is a **Turborepo** monorepo using **PNPM workspaces** with four main applic
 
 1. **Extension** (`/extension/`) - WXT-based browser extension with AI chat interface
 2. **Web** (`/web/`) - Demo todo app with MCP server integration
-3. **Local Server** (`/local-server/`) - WebSocket bridge for MCP clients
-4. **Packages** (`/packages/`) - Shared libraries and transports
+3. **Packages** (`/packages/`) - Shared libraries and transports
 
 ### Core Technologies
 
