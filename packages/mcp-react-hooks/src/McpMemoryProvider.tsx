@@ -1,7 +1,7 @@
-import { ReactElement, ReactNode, useMemo } from 'react';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { type ReactElement, type ReactNode, useMemo } from 'react';
+import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { McpClientProvider } from './McpClientProvider';
 import { McpServerProvider } from './McpServerContext';
 

@@ -1,4 +1,4 @@
-import { router } from '../lib/router';
+import type { router } from '../lib/router';
 
 /**
  * Router instance type

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { useAssistantForm } from '@assistant-ui/react-hook-form';
 import type { Tool as McpTool } from '@modelcontextprotocol/sdk/types.js';
 import { Controller, type ControllerRenderProps } from 'react-hook-form';

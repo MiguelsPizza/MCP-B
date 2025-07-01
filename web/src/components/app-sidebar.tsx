@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import { Github, MessagesSquare, Server, ListTodo } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import {
@@ -36,7 +36,12 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
                 className="flex items-center gap-2"
               >
                 <div className="flex aspect-square size-10 sm:size-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary/80 to-primary text-primary-foreground">
-                  <svg className="size-5 sm:size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg
+                    className="size-5 sm:size-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -112,6 +117,7 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
                 href="https://github.com/miguelspizza/mcp-b"
                 target="_blank"
                 className="flex items-center gap-2"
+                rel="noopener"
               >
                 <div className="flex aspect-square size-10 sm:size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <Github className="size-5 sm:size-4" />

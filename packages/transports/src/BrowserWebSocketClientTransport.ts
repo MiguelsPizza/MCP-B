@@ -1,5 +1,5 @@
-import { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
-import { JSONRPCMessage, JSONRPCMessageSchema } from '@modelcontextprotocol/sdk/types.js';
+import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
+import { type JSONRPCMessage, JSONRPCMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 
 export interface BrowserWebSocketClientTransportOptions {
   maxRetries?: number;
@@ -66,8 +66,7 @@ export class BrowserWebSocketClientTransport implements Transport {
         }
 
         const delay = Math.min(
-          this._options.initialRetryDelay *
-            Math.pow(this._options.retryMultiplier, this._retryCount - 1),
+          this._options.initialRetryDelay * this._options.retryMultiplier ** (this._retryCount - 1),
           this._options.maxRetryDelay
         );
 

@@ -143,7 +143,9 @@ const BlogPost = () => {
           and theoretically, anyone can benefit from MCP's capabilities.
         </p>
 
-        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">Remote MCPs Have a Serious Auth Problem</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">
+          Remote MCPs Have a Serious Auth Problem
+        </h2>
 
         <p className="leading-relaxed sm:leading-loose text-base sm:text-lg mb-4 sm:mb-6">
           Moving MCP servers to the cloud introduces a fundamental challenge: authentication and
@@ -195,7 +197,9 @@ const BlogPost = () => {
           uses.
         </p>
 
-        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">How MCP-B Works</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">
+          How MCP-B Works
+        </h2>
 
         <p className="leading-loose text-lg mb-8">
           The architecture consists of three main components:
@@ -255,7 +259,9 @@ const BlogPost = () => {
           solid and consistent Agent Experience.
         </p>
 
-        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">Implementation Details</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">
+          Implementation Details
+        </h2>
 
         <p className="leading-relaxed sm:leading-loose text-base sm:text-lg mb-4 sm:mb-6">
           Creating a MCP-B server requires minimal code changes to your existing application. Here's
@@ -310,7 +316,9 @@ await server.connect(transport);`}
           AI assistants, with the same security guarantees.
         </p>
 
-        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">Try It Live: Extension + MCP in Action</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">
+          Try It Live: Extension + MCP in Action
+        </h2>
 
         <p className="leading-relaxed sm:leading-loose text-base sm:text-lg mb-4 sm:mb-6">
           Want to see MCP-B in action right now? This page has an MCP server built in, and you can
@@ -325,7 +333,9 @@ await server.connect(transport);`}
                   <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg sm:text-xl font-bold mb-2">Live Demo: Create a Todo with MCP-B</h3>
+                  <h3 className="text-lg sm:text-xl font-bold mb-2">
+                    Live Demo: Create a Todo with MCP-B
+                  </h3>
                   <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
                     Experience the power of browser-native MCP with this simple demo:
                   </p>
@@ -336,7 +346,9 @@ await server.connect(transport);`}
                         1
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium mb-0.5 sm:mb-1 text-sm sm:text-base">Install the MCP-B Extension</p>
+                        <p className="font-medium mb-0.5 sm:mb-1 text-sm sm:text-base">
+                          Install the MCP-B Extension
+                        </p>
                         <a
                           href="https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa"
                           target="_blank"
@@ -354,7 +366,9 @@ await server.connect(transport);`}
                         2
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium mb-0.5 sm:mb-1 text-sm sm:text-base">Open the Extension</p>
+                        <p className="font-medium mb-0.5 sm:mb-1 text-sm sm:text-base">
+                          Open the Extension
+                        </p>
                         <p className="text-xs sm:text-sm text-muted-foreground">
                           Click the extension icon in your browser toolbar
                         </p>
@@ -366,7 +380,9 @@ await server.connect(transport);`}
                         3
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium mb-0.5 sm:mb-1 text-sm sm:text-base">Create a Todo</p>
+                        <p className="font-medium mb-0.5 sm:mb-1 text-sm sm:text-base">
+                          Create a Todo
+                        </p>
                         <p className="text-xs sm:text-sm text-muted-foreground">
                           Type "Create a todo: Learn about MCP-B" in the chat
                         </p>
@@ -396,7 +412,9 @@ await server.connect(transport);`}
           no API keys, no complex setup—just the browser you already trust.
         </p>
 
-        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">Cross-Site Workflows: The Real Power</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">
+          Cross-Site Workflows: The Real Power
+        </h2>
         <div className="my-16">
           <MultiSiteWorkflow />
         </div>
@@ -409,7 +427,9 @@ await server.connect(transport);`}
           mechanisms.
         </p>
 
-        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">The Path Forward</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">
+          The Path Forward
+        </h2>
 
         <p className="leading-relaxed sm:leading-loose text-base sm:text-lg mb-4 sm:mb-6">
           MCP-B represents a fundamental shift in how we think about AI tool integration. Instead of
@@ -441,7 +461,9 @@ await server.connect(transport);`}
           effects that made the web successful can now apply to AI automation.
         </p>
 
-        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">Getting Started</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mt-12 sm:mt-14 lg:mt-16 mb-6 sm:mb-8">
+          Getting Started
+        </h2>
 
         <p className="leading-relaxed sm:leading-loose text-base sm:text-lg mb-4 sm:mb-6">
           To experiment with MCP-B, start by installing the Chrome extension and visiting a demo

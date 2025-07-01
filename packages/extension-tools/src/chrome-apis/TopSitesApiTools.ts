@@ -1,5 +1,5 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { ApiAvailability, BaseApiTools } from '../BaseApiTools';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { type ApiAvailability, BaseApiTools } from '../BaseApiTools';
 
 export interface TopSitesApiToolsOptions {
   getTopSites?: boolean;

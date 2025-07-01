@@ -6,12 +6,14 @@ import { z } from 'zod';
 // Example showing all new server features
 function EnhancedServerExample() {
   const transport = new TabServerTransport();
-  
+
   return (
     <McpServerProvider
       serverConfig={{ name: 'EnhancedServer', version: '1.0.0' }}
       transport={transport}
-      options={{ instructions: 'A server demonstrating elicitation and improved tool registration.' }}
+      options={{
+        instructions: 'A server demonstrating elicitation and improved tool registration.',
+      }}
     >
       <ServerWithElicitation />
     </McpServerProvider>
@@ -35,8 +37,8 @@ function ServerWithElicitation() {
         },
         outputSchema: {
           result: z.number(),
-          expression: z.string()
-        }
+          expression: z.string(),
+        },
       },
       async ({ expression }) => {
         try {
@@ -44,12 +46,12 @@ function ServerWithElicitation() {
           const result = eval(expression);
           return {
             content: [{ type: 'text', text: `${expression} = ${result}` }],
-            structuredContent: { result, expression }
+            structuredContent: { result, expression },
           };
         } catch (error) {
           return {
             content: [{ type: 'text', text: `Error: Invalid expression` }],
-            isError: true
+            isError: true,
           };
         }
       }
@@ -61,49 +63,48 @@ function ServerWithElicitation() {
       {
         description: 'Delete a file with user confirmation',
         inputSchema: {
-          path: z.string().describe('Path to the file to delete')
-        }
+          path: z.string().describe('Path to the file to delete'),
+        },
       },
       async ({ path }) => {
         // Ask user for confirmation
-        const result = await elicitInput(
-          `Are you sure you want to delete the file "${path}"?`,
-          {
-            type: 'object',
-            properties: {
-              confirm: {
-                type: 'boolean',
-                title: 'Confirm deletion',
-                description: 'This action cannot be undone'
-              },
-              createBackup: {
-                type: 'boolean',
-                title: 'Create backup',
-                description: 'Create a backup before deleting?',
-                default: true
-              }
+        const result = await elicitInput(`Are you sure you want to delete the file "${path}"?`, {
+          type: 'object',
+          properties: {
+            confirm: {
+              type: 'boolean',
+              title: 'Confirm deletion',
+              description: 'This action cannot be undone',
             },
-            required: ['confirm']
-          }
-        );
+            createBackup: {
+              type: 'boolean',
+              title: 'Create backup',
+              description: 'Create a backup before deleting?',
+              default: true,
+            },
+          },
+          required: ['confirm'],
+        });
 
         if (result.action === 'accept' && result.content?.confirm) {
-          const backupMsg = result.content.createBackup 
-            ? ' (backup created)' 
-            : '';
+          const backupMsg = result.content.createBackup ? ' (backup created)' : '';
           return {
-            content: [{
-              type: 'text',
-              text: `File "${path}" deleted successfully${backupMsg}`
-            }]
+            content: [
+              {
+                type: 'text',
+                text: `File "${path}" deleted successfully${backupMsg}`,
+              },
+            ],
           };
         }
 
         return {
-          content: [{
-            type: 'text',
-            text: `File deletion cancelled`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `File deletion cancelled`,
+            },
+          ],
         };
       }
     );
@@ -114,13 +115,12 @@ function ServerWithElicitation() {
       {
         description: 'Configure application settings interactively',
         inputSchema: {
-          category: z.enum(['general', 'advanced', 'security'])
-            .describe('Configuration category')
+          category: z.enum(['general', 'advanced', 'security']).describe('Configuration category'),
         },
         annotations: {
           featured: true,
-          requiresAuth: true
-        }
+          requiresAuth: true,
+        },
       },
       async ({ category }) => {
         // Different schemas based on category
@@ -132,15 +132,15 @@ function ServerWithElicitation() {
                 type: 'string' as const,
                 enum: ['light', 'dark', 'auto'],
                 title: 'Theme',
-                default: 'auto'
+                default: 'auto',
               },
               language: {
                 type: 'string' as const,
                 enum: ['en', 'es', 'fr', 'de'],
                 title: 'Language',
-                default: 'en'
-              }
-            }
+                default: 'en',
+              },
+            },
           },
           advanced: {
             type: 'object' as const,
@@ -148,16 +148,16 @@ function ServerWithElicitation() {
               debugMode: {
                 type: 'boolean' as const,
                 title: 'Debug Mode',
-                default: false
+                default: false,
               },
               maxConnections: {
                 type: 'number' as const,
                 title: 'Max Connections',
                 minimum: 1,
                 maximum: 100,
-                default: 10
-              }
-            }
+                default: 10,
+              },
+            },
           },
           security: {
             type: 'object' as const,
@@ -165,40 +165,41 @@ function ServerWithElicitation() {
               twoFactor: {
                 type: 'boolean' as const,
                 title: 'Two-Factor Authentication',
-                default: true
+                default: true,
               },
               sessionTimeout: {
                 type: 'number' as const,
                 title: 'Session Timeout (minutes)',
                 minimum: 5,
                 maximum: 1440,
-                default: 30
-              }
-            }
-          }
+                default: 30,
+              },
+            },
+          },
         };
 
         const schema = schemas[category];
-        const result = await elicitInput(
-          `Configure ${category} settings:`,
-          schema
-        );
+        const result = await elicitInput(`Configure ${category} settings:`, schema);
 
         if (result.action === 'accept') {
           const settings = JSON.stringify(result.content, null, 2);
           return {
-            content: [{
-              type: 'text',
-              text: `Settings updated:\n${settings}`
-            }]
+            content: [
+              {
+                type: 'text',
+                text: `Settings updated:\n${settings}`,
+              },
+            ],
           };
         }
 
         return {
-          content: [{
-            type: 'text',
-            text: 'Configuration cancelled'
-          }]
+          content: [
+            {
+              type: 'text',
+              text: 'Configuration cancelled',
+            },
+          ],
         };
       }
     );
@@ -220,11 +221,11 @@ function ServerWithElicitation() {
       {
         description: 'A dynamically added tool',
         inputSchema: {
-          input: z.string()
-        }
+          input: z.string(),
+        },
       },
       async ({ input }) => ({
-        content: [{ type: 'text', text: `Processed: ${input}` }]
+        content: [{ type: 'text', text: `Processed: ${input}` }],
       })
     );
 
@@ -243,9 +244,9 @@ function ServerWithElicitation() {
       <button onClick={handleAddCustomTool} disabled={!isConnected}>
         Add Custom Tool
       </button>
-      
+
       {/* You can also access the raw server instance for advanced usage */}
-      <button 
+      <button
         onClick={() => {
           if (isConnected) {
             server.sendToolListChanged();

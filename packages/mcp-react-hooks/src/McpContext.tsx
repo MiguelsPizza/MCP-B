@@ -1,5 +1,5 @@
-import { createContext, ReactElement, ReactNode, useContext } from 'react';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { createContext, type ReactElement, type ReactNode, useContext } from 'react';
+import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 
 interface McpContextValue {

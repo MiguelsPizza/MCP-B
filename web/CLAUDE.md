@@ -8,7 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - `pnpm dev` - Start development server with Vite
 - `pnpm build` - Compile TypeScript and build the project for production
-- `pnpm lint` - Run ESLint to check for code quality issues
+- `pnpm lint` - Run Biome to check for code quality issues
+- `pnpm format` - Format code with Biome
+- `pnpm check` - Run both formatting and linting with Biome
 - `pnpm preview` - Build the project and preview the production build
 
 ### Database Operations

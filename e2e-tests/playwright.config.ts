@@ -1,11 +1,11 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: "e2e",
-  
+  testDir: 'e2e',
+
   // Timeout for each test
   timeout: 30 * 1000,
-  
+
   // Timeout for expect assertions
   expect: {
     timeout: 10 * 1000,
@@ -21,18 +21,15 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
 
   // Reporter to use
-  reporter: [
-    ['html'],
-    ['list'],
-  ],
+  reporter: [['html'], ['list']],
 
   use: {
     // Collect trace when retrying the failed test.
-    trace: "on-first-retry",
-    
+    trace: 'on-first-retry',
+
     // Take screenshot on failure
     screenshot: 'only-on-failure',
-    
+
     // Video recording
     video: 'retain-on-failure',
   },
@@ -40,9 +37,9 @@ export default defineConfig({
   // Configure projects for major browsers.
   projects: [
     {
-      name: "chromium",
-      use: { 
-        ...devices["Desktop Chrome"],
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
         viewport: { width: 1280, height: 720 },
       },
     },

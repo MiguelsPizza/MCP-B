@@ -10,17 +10,22 @@ export class McpEnabledPage {
 
   async waitForMcpServerReady() {
     // Wait for the MCP server to be initialized on the page
-    await this.page.waitForFunction(() => {
-      return window.postMessage && document.querySelector('[data-mcp-ready]');
-    }, { timeout: 10000 });
+    await this.page.waitForFunction(
+      () => {
+        return window.postMessage && document.querySelector('[data-mcp-ready]');
+      },
+      { timeout: 10000 }
+    );
   }
 
   async getTodos() {
     const todos = await this.page.locator('[data-testid="todo-item"]').all();
-    return Promise.all(todos.map(async todo => ({
-      text: await todo.locator('[data-testid="todo-text"]').textContent(),
-      completed: await todo.locator('input[type="checkbox"]').isChecked(),
-    })));
+    return Promise.all(
+      todos.map(async (todo) => ({
+        text: await todo.locator('[data-testid="todo-text"]').textContent(),
+        completed: await todo.locator('input[type="checkbox"]').isChecked(),
+      }))
+    );
   }
 
   async addTodo(text: string) {

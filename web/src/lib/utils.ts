@@ -90,12 +90,12 @@ export function extractDomain(url: string): string {
   try {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname;
-    
+
     // Special handling for localhost - include port for grouping
     if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]') {
       return `localhost:${urlObj.port || '80'}`;
     }
-    
+
     // For other domains, return just the hostname
     return hostname;
   } catch {

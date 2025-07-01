@@ -232,9 +232,10 @@ const JsonViewer = ({
         return 'undefined';
       case 'array':
         return `Array(${value.length})`;
-      case 'object':
+      case 'object': {
         const keys = Object.keys(value);
         return `{${keys.slice(0, 3).join(', ')}${keys.length > 3 ? '...' : ''}}`;
+      }
       default:
         return String(value);
     }

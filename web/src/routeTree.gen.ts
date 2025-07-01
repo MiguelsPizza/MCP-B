@@ -8,114 +8,114 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as DocsRouteImport } from './routes/docs'
-import { Route as BlogsRouteImport } from './routes/blogs'
-import { Route as AssistantRouteImport } from './routes/assistant'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as rootRouteImport } from './routes/__root';
+import { Route as PrivacyRouteImport } from './routes/privacy';
+import { Route as DocsRouteImport } from './routes/docs';
+import { Route as BlogsRouteImport } from './routes/blogs';
+import { Route as AssistantRouteImport } from './routes/assistant';
+import { Route as IndexRouteImport } from './routes/index';
 
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const DocsRoute = DocsRouteImport.update({
   id: '/docs',
   path: '/docs',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const BlogsRoute = BlogsRouteImport.update({
   id: '/blogs',
   path: '/blogs',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AssistantRoute = AssistantRouteImport.update({
   id: '/assistant',
   path: '/assistant',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/assistant': typeof AssistantRoute
-  '/blogs': typeof BlogsRoute
-  '/docs': typeof DocsRoute
-  '/privacy': typeof PrivacyRoute
+  '/': typeof IndexRoute;
+  '/assistant': typeof AssistantRoute;
+  '/blogs': typeof BlogsRoute;
+  '/docs': typeof DocsRoute;
+  '/privacy': typeof PrivacyRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/assistant': typeof AssistantRoute
-  '/blogs': typeof BlogsRoute
-  '/docs': typeof DocsRoute
-  '/privacy': typeof PrivacyRoute
+  '/': typeof IndexRoute;
+  '/assistant': typeof AssistantRoute;
+  '/blogs': typeof BlogsRoute;
+  '/docs': typeof DocsRoute;
+  '/privacy': typeof PrivacyRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/assistant': typeof AssistantRoute
-  '/blogs': typeof BlogsRoute
-  '/docs': typeof DocsRoute
-  '/privacy': typeof PrivacyRoute
+  __root__: typeof rootRouteImport;
+  '/': typeof IndexRoute;
+  '/assistant': typeof AssistantRoute;
+  '/blogs': typeof BlogsRoute;
+  '/docs': typeof DocsRoute;
+  '/privacy': typeof PrivacyRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assistant' | '/blogs' | '/docs' | '/privacy'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assistant' | '/blogs' | '/docs' | '/privacy'
-  id: '__root__' | '/' | '/assistant' | '/blogs' | '/docs' | '/privacy'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths: '/' | '/assistant' | '/blogs' | '/docs' | '/privacy';
+  fileRoutesByTo: FileRoutesByTo;
+  to: '/' | '/assistant' | '/blogs' | '/docs' | '/privacy';
+  id: '__root__' | '/' | '/assistant' | '/blogs' | '/docs' | '/privacy';
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AssistantRoute: typeof AssistantRoute
-  BlogsRoute: typeof BlogsRoute
-  DocsRoute: typeof DocsRoute
-  PrivacyRoute: typeof PrivacyRoute
+  IndexRoute: typeof IndexRoute;
+  AssistantRoute: typeof AssistantRoute;
+  BlogsRoute: typeof BlogsRoute;
+  DocsRoute: typeof DocsRoute;
+  PrivacyRoute: typeof PrivacyRoute;
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/privacy';
+      path: '/privacy';
+      fullPath: '/privacy';
+      preLoaderRoute: typeof PrivacyRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/docs': {
-      id: '/docs'
-      path: '/docs'
-      fullPath: '/docs'
-      preLoaderRoute: typeof DocsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/docs';
+      path: '/docs';
+      fullPath: '/docs';
+      preLoaderRoute: typeof DocsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/blogs': {
-      id: '/blogs'
-      path: '/blogs'
-      fullPath: '/blogs'
-      preLoaderRoute: typeof BlogsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/blogs';
+      path: '/blogs';
+      fullPath: '/blogs';
+      preLoaderRoute: typeof BlogsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/assistant': {
-      id: '/assistant'
-      path: '/assistant'
-      fullPath: '/assistant'
-      preLoaderRoute: typeof AssistantRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/assistant';
+      path: '/assistant';
+      fullPath: '/assistant';
+      preLoaderRoute: typeof AssistantRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
     '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+      id: '/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
@@ -125,7 +125,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogsRoute: BlogsRoute,
   DocsRoute: DocsRoute,
   PrivacyRoute: PrivacyRoute,
-}
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { WebSocketClientTransport } from '@modelcontextprotocol/sdk/client/websocket.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
+import type { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 
 // Get WebSocket URL from command line or environment
 const wsUrl = (process.argv[2] || process.env.WEBSOCKET_MCP_URL) ?? 'ws://localhost:8021';

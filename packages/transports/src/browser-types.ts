@@ -1,4 +1,4 @@
-import { type JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
+import type { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
 
 /**
  * Unique identifier for an event in the event store

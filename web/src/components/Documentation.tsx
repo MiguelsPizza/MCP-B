@@ -45,36 +45,41 @@ const CodeBlock = ({
 
   return (
     <div className="relative group">
-      <div className={cn(
-        "absolute z-10 transition-opacity",
-        isMobile ? "right-1 top-1 opacity-100" : "right-2 top-2 opacity-0 group-hover:opacity-100"
-      )}>
+      <div
+        className={cn(
+          'absolute z-10 transition-opacity',
+          isMobile ? 'right-1 top-1 opacity-100' : 'right-2 top-2 opacity-0 group-hover:opacity-100'
+        )}
+      >
         <Button
           onClick={handleCopy}
           size="sm"
           variant="ghost"
           className={cn(
-            "bg-zinc-800/80 hover:bg-zinc-700/80 text-zinc-300",
-            isMobile ? "h-7 px-1.5 text-xs" : "h-8 px-2 text-xs"
-          )}>
+            'bg-zinc-800/80 hover:bg-zinc-700/80 text-zinc-300',
+            isMobile ? 'h-7 px-1.5 text-xs' : 'h-8 px-2 text-xs'
+          )}
+        >
           {copied ? (
             <>
               <Check className="h-3 w-3 mr-1" />
-              {!isMobile && "Copied"}
+              {!isMobile && 'Copied'}
             </>
           ) : (
             <>
               <Copy className="h-3 w-3 mr-1" />
-              {!isMobile && "Copy"}
+              {!isMobile && 'Copy'}
             </>
           )}
         </Button>
       </div>
       <div className="overflow-hidden rounded-lg border border-zinc-800">
-        <div className={cn(
-          "flex items-center justify-between bg-zinc-900 text-xs text-zinc-400",
-          isMobile ? "px-3 py-1.5" : "px-4 py-2"
-        )}>
+        <div
+          className={cn(
+            'flex items-center justify-between bg-zinc-900 text-xs text-zinc-400',
+            isMobile ? 'px-3 py-1.5' : 'px-4 py-2'
+          )}
+        >
           <span className="font-mono truncate">{title || language}</span>
         </div>
         <SyntaxHighlighter
@@ -133,7 +138,7 @@ const NavItem = ({
 
 export const Documentation = ({ isMobile }: { isMobile?: boolean }) => {
   const [activeSection, setActiveSection] = useState('introduction');
-  
+
   // Debug log
   console.log('Documentation component - isMobile:', isMobile);
 
@@ -159,7 +164,7 @@ export const Documentation = ({ isMobile }: { isMobile?: boolean }) => {
   React.useEffect(() => {
     const observerOptions = {
       rootMargin: '-20% 0px -70% 0px',
-      threshold: 0
+      threshold: 0,
     };
 
     const observerCallback: IntersectionObserverCallback = (entries) => {
@@ -186,52 +191,52 @@ export const Documentation = ({ isMobile }: { isMobile?: boolean }) => {
   }, []);
 
   return (
-    <div className={cn("min-h-screen", isMobile ? "relative" : "flex relative")}>
+    <div className={cn('min-h-screen', isMobile ? 'relative' : 'flex relative')}>
       {/* Sidebar Navigation - Hidden on mobile */}
       {!isMobile && (
         <aside className="w-64 border-r bg-muted/30 p-6 sticky top-0 h-screen overflow-y-auto">
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Book className="h-5 w-5" />
-            Documentation
-          </h2>
-          <nav className="space-y-1">
-            {navigation.map((item) => (
-              <NavItem
-                key={item.id}
-                href={`#${item.id}`}
-                title={item.title}
-                active={activeSection === item.id}
-                onClick={() => scrollToSection(item.id)}
-              />
-            ))}
-          </nav>
-        </div>
-
-        <div className="mt-8 pt-8 border-t">
-          <h3 className="text-sm font-semibold mb-3">Resources</h3>
-          <div className="space-y-2">
-            <a
-              href="https://github.com/miguelspizza/MCP-B"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-            >
-              <Code className="h-4 w-4" />
-              GitHub Repository
-            </a>
-            <a
-              href="https://npmjs.com/package/@mcp-b/transports"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-            >
-              <Package className="h-4 w-4" />
-              NPM Package
-            </a>
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Book className="h-5 w-5" />
+              Documentation
+            </h2>
+            <nav className="space-y-1">
+              {navigation.map((item) => (
+                <NavItem
+                  key={item.id}
+                  href={`#${item.id}`}
+                  title={item.title}
+                  active={activeSection === item.id}
+                  onClick={() => scrollToSection(item.id)}
+                />
+              ))}
+            </nav>
           </div>
-        </div>
-      </aside>
+
+          <div className="mt-8 pt-8 border-t">
+            <h3 className="text-sm font-semibold mb-3">Resources</h3>
+            <div className="space-y-2">
+              <a
+                href="https://github.com/miguelspizza/MCP-B"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+              >
+                <Code className="h-4 w-4" />
+                GitHub Repository
+              </a>
+              <a
+                href="https://npmjs.com/package/@mcp-b/transports"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+              >
+                <Package className="h-4 w-4" />
+                NPM Package
+              </a>
+            </div>
+          </div>
+        </aside>
       )}
 
       {/* Mobile Navigation */}
@@ -265,19 +270,20 @@ export const Documentation = ({ isMobile }: { isMobile?: boolean }) => {
       )}
 
       {/* Main Content */}
-      <main className={cn(
-        "flex-1 mx-auto",
-        isMobile ? "px-4 py-8" : "max-w-4xl px-8 py-12"
-      )}>
+      <main className={cn('flex-1 mx-auto', isMobile ? 'px-4 py-8' : 'max-w-4xl px-8 py-12')}>
         {/* Header */}
         <header className="mb-12">
-          <div className={cn("mb-4", isMobile ? "" : "flex items-center gap-3")}>
-            <div className={cn("bg-primary/10 rounded-lg", isMobile ? "p-2 inline-block mb-3" : "p-3")}>
-              <Globe className={cn("text-primary", isMobile ? "h-6 w-6" : "h-8 w-8")} />
+          <div className={cn('mb-4', isMobile ? '' : 'flex items-center gap-3')}>
+            <div
+              className={cn('bg-primary/10 rounded-lg', isMobile ? 'p-2 inline-block mb-3' : 'p-3')}
+            >
+              <Globe className={cn('text-primary', isMobile ? 'h-6 w-6' : 'h-8 w-8')} />
             </div>
             <div>
-              <h1 className={cn("font-bold", isMobile ? "text-2xl" : "text-4xl")}>MCP-B Documentation</h1>
-              <p className={cn("text-muted-foreground mt-1", isMobile ? "text-base" : "text-xl")}>
+              <h1 className={cn('font-bold', isMobile ? 'text-2xl' : 'text-4xl')}>
+                MCP-B Documentation
+              </h1>
+              <p className={cn('text-muted-foreground mt-1', isMobile ? 'text-base' : 'text-xl')}>
                 Browser-based Model Context Protocol
               </p>
             </div>
@@ -303,7 +309,12 @@ export const Documentation = ({ isMobile }: { isMobile?: boolean }) => {
                 AI agents to interact with web applications using existing authentication and
                 structured data access instead of screen scraping.
               </p>
-              <div className={cn("gap-4 mt-6", isMobile ? "space-y-4" : "grid grid-cols-1 md:grid-cols-2")}>
+              <div
+                className={cn(
+                  'gap-4 mt-6',
+                  isMobile ? 'space-y-4' : 'grid grid-cols-1 md:grid-cols-2'
+                )}
+              >
                 <div className="flex gap-3">
                   <Zap className="h-5 w-5 text-yellow-500 mt-1" />
                   <div>
@@ -374,7 +385,7 @@ export const Documentation = ({ isMobile }: { isMobile?: boolean }) => {
           <h2 className="text-3xl font-bold mb-6">Quick Start</h2>
 
           <Tabs defaultValue="web" className="mb-8 w-full">
-            <TabsList className={cn("grid w-full grid-cols-2", isMobile && "h-auto p-1")}>
+            <TabsList className={cn('grid w-full grid-cols-2', isMobile && 'h-auto p-1')}>
               <TabsTrigger value="web">Web Developers</TabsTrigger>
               <TabsTrigger value="extension">Extension Users</TabsTrigger>
             </TabsList>
@@ -469,13 +480,13 @@ pnpm build`}
                 </CardHeader>
                 <CardContent>
                   <ol className="space-y-2 text-sm">
-                    <li className={isMobile ? "flex flex-col gap-1" : ""}>
+                    <li className={isMobile ? 'flex flex-col gap-1' : ''}>
                       <span>1. Open Chrome and navigate to</span>
                       <code className="px-1 py-0.5 bg-muted rounded">chrome://extensions</code>
                     </li>
                     <li>2. Enable "Developer mode"</li>
                     <li>3. Click "Load unpacked"</li>
-                    <li className={isMobile ? "flex flex-col gap-1" : ""}>
+                    <li className={isMobile ? 'flex flex-col gap-1' : ''}>
                       <span>4. Select the</span>
                       <code className="px-1 py-0.5 bg-muted rounded">extension/dist</code>
                       <span>folder</span>
@@ -503,8 +514,8 @@ pnpm build`}
           <Card className="mb-8">
             <CardContent className="pt-6">
               <div className="space-y-6">
-                <div className={cn("mb-8", isMobile ? "overflow-x-auto" : "text-center")}>
-                  <pre className={cn("text-left", isMobile ? "text-xs" : "inline-block text-sm")}>
+                <div className={cn('mb-8', isMobile ? 'overflow-x-auto' : 'text-center')}>
+                  <pre className={cn('text-left', isMobile ? 'text-xs' : 'inline-block text-sm')}>
                     {`┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
 │   Web Page      │     │ Content Script  │     │   Extension     │
 │                 │     │                 │     │                 │
@@ -794,7 +805,8 @@ console.log('Result from page:', result.content[0].text); // "42"`}
                 @mcp-b/mcp-react-hooks
               </CardTitle>
               <CardDescription>
-                React hooks and providers for MCP integration with support for client, server, and combined usage
+                React hooks and providers for MCP integration with support for client, server, and
+                combined usage
               </CardDescription>
             </CardHeader>
           </Card>
@@ -802,7 +814,11 @@ console.log('Result from page:', result.content[0].text); // "42"`}
           <div className="space-y-6">
             <div>
               <h3 className="text-xl font-semibold mb-3">Installation</h3>
-              <CodeBlock language="bash" code="npm install @mcp-b/mcp-react-hooks" isMobile={isMobile} />
+              <CodeBlock
+                language="bash"
+                code="npm install @mcp-b/mcp-react-hooks"
+                isMobile={isMobile}
+              />
             </div>
 
             <div>
@@ -1179,10 +1195,12 @@ server.tool(
                       <p className="text-xs font-mono mb-1">Parameters:</p>
                       <ul className="text-xs space-y-1">
                         <li>
-                          <code>options.targetOrigin</code> - The origin to send messages to (required for security)
+                          <code>options.targetOrigin</code> - The origin to send messages to
+                          (required for security)
                         </li>
                         <li>
-                          <code>options.channelId</code> - Optional channel ID (defaults to 'mcp-default')
+                          <code>options.channelId</code> - Optional channel ID (defaults to
+                          'mcp-default')
                         </li>
                       </ul>
                     </div>
@@ -1211,7 +1229,8 @@ server.tool(
                       <p className="text-xs font-mono mb-1">Parameters:</p>
                       <ul className="text-xs space-y-1">
                         <li>
-                          <code>options.portName</code> - The name of the port to connect to (e.g., 'mcp')
+                          <code>options.portName</code> - The name of the port to connect to (e.g.,
+                          'mcp')
                         </li>
                       </ul>
                     </div>
@@ -1229,7 +1248,8 @@ server.tool(
                   <div>
                     <h4 className="font-mono text-sm mb-2">useMcpClient()</h4>
                     <p className="text-sm text-muted-foreground mb-2">
-                      Hook for accessing MCP client data and status. Must be used within McpClientProvider.
+                      Hook for accessing MCP client data and status. Must be used within
+                      McpClientProvider.
                     </p>
                     <div className="bg-muted p-3 rounded-md">
                       <p className="text-xs font-mono mb-1">Returns:</p>
@@ -1265,7 +1285,8 @@ server.tool(
                   <div>
                     <h4 className="font-mono text-sm mb-2">useMcpServer()</h4>
                     <p className="text-sm text-muted-foreground mb-2">
-                      Hook for accessing MCP server functionality. Must be used within McpServerProvider.
+                      Hook for accessing MCP server functionality. Must be used within
+                      McpServerProvider.
                     </p>
                     <div className="bg-muted p-3 rounded-md">
                       <p className="text-xs font-mono mb-1">Returns:</p>
@@ -1298,23 +1319,37 @@ server.tool(
                       <div>
                         <p className="text-xs font-mono mb-1">McpClientProvider:</p>
                         <ul className="text-xs space-y-1">
-                          <li><code>client: Client</code> - MCP client instance</li>
-                          <li><code>transport: Transport</code> - Transport instance</li>
-                          <li><code>opts?: RequestOptions</code> - Connection options</li>
+                          <li>
+                            <code>client: Client</code> - MCP client instance
+                          </li>
+                          <li>
+                            <code>transport: Transport</code> - Transport instance
+                          </li>
+                          <li>
+                            <code>opts?: RequestOptions</code> - Connection options
+                          </li>
                         </ul>
                       </div>
                       <div>
                         <p className="text-xs font-mono mb-1">McpServerProvider:</p>
                         <ul className="text-xs space-y-1">
-                          <li><code>server: McpServer</code> - MCP server instance</li>
-                          <li><code>transport: Transport</code> - Transport instance</li>
+                          <li>
+                            <code>server: McpServer</code> - MCP server instance
+                          </li>
+                          <li>
+                            <code>transport: Transport</code> - Transport instance
+                          </li>
                         </ul>
                       </div>
                       <div>
                         <p className="text-xs font-mono mb-1">McpMemoryProvider:</p>
                         <ul className="text-xs space-y-1">
-                          <li><code>server: McpServer</code> - MCP server instance</li>
-                          <li><code>client: Client</code> - MCP client instance</li>
+                          <li>
+                            <code>server: McpServer</code> - MCP server instance
+                          </li>
+                          <li>
+                            <code>client: Client</code> - MCP client instance
+                          </li>
                         </ul>
                       </div>
                     </div>
@@ -1327,7 +1362,7 @@ server.tool(
 
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t">
-          <div className={cn(isMobile ? "space-y-4" : "flex items-center justify-between")}>
+          <div className={cn(isMobile ? 'space-y-4' : 'flex items-center justify-between')}>
             <p className="text-sm text-muted-foreground">
               MCP-B is not affiliated with Anthropic or the official Model Context Protocol project.
             </p>

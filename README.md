@@ -1,187 +1,247 @@
-# MCP-B: Browser-based Model Context Protocol
+# MCP-B
 
-Bringing the power of the Model Context Protocol (MCP) to the browser, where work actually happens.
+Browser-based Model Context Protocol (MCP) implementation that enables AI assistants to interact with web applications through standardized MCP tools.
+
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/daohopfhkdelnpemnhlekblhnikhdhfa?style=flat-square&label=Chrome%20Extension)](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa)
+[![npm version](https://img.shields.io/npm/v/@mcp-b/transports?style=flat-square)](https://www.npmjs.com/package/@mcp-b/transports)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/miguelspizza/MCP-B/ci.yml?style=flat-square)](https://github.com/miguelspizza/MCP-B/actions)
+[![GitHub stars](https://img.shields.io/github/stars/miguelspizza/MCP-B?style=flat-square)](https://github.com/miguelspizza/MCP-B/stargazers)
+
+[Quick Start](#quick-start) • [Demo](#demo) • [Installation](#installation) • [Documentation](https://mcp-b.com) • [Contributing](#contributing)
+
+## What is MCP-B?
+
+MCP-B runs Model Context Protocol servers directly inside web pages, solving a critical gap where most white-collar work happens in browsers, yet MCP's standard solution bypasses browsers entirely. Instead of building complex OAuth flows or managing API keys, MCP-B leverages the browser's existing authentication and security model.
 
 ## The Problem
 
-The Model Context Protocol has become the de facto standard for allowing LLMs to interact with the external world. But there's a critical gap: **most white-collar work happens in the browser**, yet MCP's solution has been to bypass browsers entirely and connect directly to APIs.
+Current MCP implementations require developers to:
 
-This creates two major issues:
+- Run servers locally with environment variables for API keys
+- Implement complex OAuth 2.1 flows for remote servers
+- Rebuild authentication layers that already exist in web applications
+- Manage separate infrastructure for AI tool integration
 
-1. **Authentication complexity** - MCP is essentially reinventing auth systems that browsers have already solved
-2. **Poor agent experience** - Browser automation tools force LLMs to parse visual content and irrelevant HTML, degrading performance
+For users, this means configuration files, API key management, and technical setup that creates insurmountable barriers for non-developers.
 
-## The Solution: MCP-B
+## The Solution
 
-MCP-B solves this by running MCP servers **directly inside web pages**, allowing AI agents to:
+MCP-B embeds MCP servers directly into web applications, allowing AI assistants to:
 
 - Use existing browser authentication (cookies, sessions, OAuth)
 - Access structured data through MCP tools instead of screen scraping
 - Orchestrate workflows across multiple web applications
-- Maintain security by operating within the browser's existing permission model
+- Maintain security within the browser's existing permission model
 
-## How It Works
+Unlike browser automation tools that rely on screenshots and DOM manipulation, MCP-B provides AI agents with precise, structured access to web application functionality through standardized JSON-RPC interfaces.
 
-MCP-B introduces two new transport layers that enable MCP communication in browser environments:
+## Architecture Overview
 
-### 🌐 Tab Transports
+![Current MCP Architecture](./web/src/assets/local-mcp.svg)
+_Traditional approach: MCP servers run locally, requiring API keys and configuration_
 
-Run an MCP server directly on any webpage, exposing its functionality through standardized tools:
+![MCP-B Architecture](./web/src/assets/full-spec-mcp-b.svg)
+_MCP-B approach: Servers run in the browser, using existing authentication_
 
-```typescript
-// In your web app
-import { TabServerTransport } from '@mcp-b/transports';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
+## Key Features
 
-const server = new McpServer({
-  name: 'TodoAppServer',
-  version: '1.0.0',
-});
-
-// Expose your app's functionality as MCP tools
-server.tool('createTodo', { text: z.string() }, async ({ text }) => {
-  const todo = await createTodo(text);
-  return { content: [{ type: 'text', text: `Created: ${todo.id}` }] };
-});
-
-// Connect to make it discoverable
-const transport = new TabServerTransport();
-await server.connect(transport);
-```
-
-### 🔌 Extension Transports
-
-A browser extension that automatically discovers and connects to MCP servers on any page:
-
-```typescript
-// In your extension
-import { ExtensionClientTransport } from '@mcp-b/transports';
-import { Client } from '@modelcontextprotocol/sdk/client';
-
-const transport = new ExtensionClientTransport({
-  clientInstanceId: 'ai-assistant',
-});
-
-const client = new Client({
-  name: 'BrowserAssistant',
-  version: '1.0.0',
-});
-
-await client.connect(transport);
-// Now your AI can interact with any page's MCP tools!
-```
-
-## Real-World Example
-
-Imagine John, who works at a machine shop and receives an order for custom valves. His workflow involves:
-
-1. **Email** - Send PO to accounting
-2. **Internal IMS** - Check inventory for parts
-3. **McMaster-Carr** - Order missing components
-4. **Job Scheduler** - Register the work order
-5. **Shipping Calculator** - Estimate delivery
-6. **CRM** - Update customer with timeline
-
-With MCP-B, each of these web apps exposes MCP tools. An AI assistant in the browser sidebar can:
-
-- Navigate between all six applications
-- Use existing authentication (no API keys needed)
-- Execute the entire workflow through structured commands
-- Maintain context across different domains
-
-## Architecture
-
-```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│   Web Page      │     │ Content Script  │     │   Extension     │
-│                 │     │                 │     │                 │
-│ MCP Server      │<--->│     Relay      │<--->│  MCP Client    │
-│ (Tab Transport) │     │                 │     │  + LLM Chat    │
-└─────────────────┘     └─────────────────┘     └─────────────────┘
-```
-
-## Packages
-
-This monorepo includes:
-
-| Package                                                | Description                             |
-| ------------------------------------------------------ | --------------------------------------- |
-| [`@mcp-b/transports`](./packages/MCP-B)                | Core browser transport implementations  |
-| [`@mcp-b/mcp-react-hooks`](./packages/mcp-react-hooks) | React hooks for MCP integration         |
-| [`extension`](./extension)                             | Chrome extension with AI chat interface |
-| [`web`](./web)                                         | Demo todo app with MCP server           |
+- **Zero-configuration authentication** - Uses existing browser sessions and cookies
+- **Precise tool interfaces** - Structured JSON-RPC instead of DOM manipulation
+- **Real-time synchronization** - Direct integration with web application state
+- **Framework agnostic** - Works with any JavaScript framework or vanilla JS
+- **Minimal implementation** - Typically requires less than 50 lines of code
+- **Browser security model** - Respects same-origin policy and existing permissions
 
 ## Quick Start
 
-### For Web Developers
-
-Add MCP to your web app in minutes:
+Add MCP capabilities to your web application:
 
 ```bash
 npm install @mcp-b/transports @modelcontextprotocol/sdk
 ```
 
-Then expose your app's functionality through MCP tools. See the [transports documentation](./packages/MCP-B/README.md) for detailed examples.
+```typescript
+import { TabServerTransport } from '@mcp-b/transports';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
 
-### For Extension Users
+const server = new McpServer({
+  name: 'invoice-system',
+  version: '1.0.0',
+});
 
-1. Clone the repository
-2. Install dependencies: `pnpm install`
-3. Build everything: `pnpm build`
-4. Load the extension from `extension/dist`
-5. Visit any MCP-B enabled site and watch the AI assistant connect automatically!
+server.tool(
+  'createInvoice',
+  'Create a new invoice',
+  {
+    customerEmail: z.string().email(),
+    items: z.array(
+      z.object({
+        description: z.string(),
+        amount: z.number(),
+      })
+    ),
+  },
+  async ({ customerEmail, items }) => {
+    // Use your existing authenticated API
+    const response = await fetch('/api/invoices', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customerEmail, items }),
+    });
 
-### Development
+    return {
+      content: [
+        {
+          type: 'text',
+          text: JSON.stringify(await response.json()),
+        },
+      ],
+    };
+  }
+);
 
-```bash
-# Run all packages in development mode
-pnpm dev
-
-# Run specific packages
-pnpm --filter web dev        # Web app only
-pnpm --filter extension dev  # Extension only
-
-# Type checking and linting
-pnpm typecheck
-pnpm lint
+const transport = new TabServerTransport();
+await server.connect(transport);
 ```
 
-## Why This Matters
+## Demo
 
-MCP-B represents a fundamental shift in how AI agents interact with web applications:
+Try MCP-B with our live demo:
 
-- **Security**: Leverage existing browser auth instead of managing API keys
-- **Performance**: Structured data access instead of visual parsing
-- **Compatibility**: Works with any web framework or application
-- **User Control**: Agents operate within user permissions, not as service accounts
+1. Install the [Chrome extension](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa)
+2. Visit our [demo application](https://mcp-b.com)
+3. Open the extension and interact with the page through AI
 
-## Project Status
+## Installation
 
-MCP-B is actively being developed. Current focus areas:
+### For Users
 
-- ✅ Core transport implementations
-- ✅ Chrome extension with chat interface
-- ✅ Demo todo application
-- 🚧 Firefox support
-- 🚧 Desktop app bridge (connect to Claude Desktop, Cline, etc.)
-- 📋 Additional example implementations
+Install the Chrome extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa). No API keys or configuration required - if you're logged into a website, the AI assistant can interact with it through your existing session.
+
+### For Developers
+
+```bash
+# Core transport layer
+npm install @mcp-b/transports
+
+# React hooks (optional)
+npm install @mcp-b/mcp-react-hooks
+
+# Extension tools (optional)
+npm install @mcp-b/extension-tools
+```
+
+### Native Messaging Host (Roadmap)
+
+A native messaging host is planned to replace the WebSocket bridge, providing more reliable connectivity between browser extensions and desktop MCP clients like Claude Desktop and Cursor.
+
+## Examples
+
+### React Integration
+
+```tsx
+import { McpServerProvider, useMcpServer } from '@mcp-b/mcp-react-hooks';
+
+function TodoApp() {
+  const { registerTool } = useMcpServer();
+  const [todos, setTodos] = useState([]);
+
+  registerTool('addTodo', { text: z.string() }, async ({ text }) => {
+    const newTodo = { id: Date.now(), text, done: false };
+    setTodos((prev) => [...prev, newTodo]);
+    return {
+      content: [{ type: 'text', text: `Added: ${text}` }],
+    };
+  });
+
+  return <div>{/* Your existing component */}</div>;
+}
+```
+
+### Cross-Application Workflows
+
+![Multi-site workflow](./web/src/assets/multi-site-workflow.svg)
+
+MCP-B enables AI assistants to orchestrate workflows across multiple web applications, each maintaining its own authentication and access controls. The AI operates with exactly the permissions of the logged-in user.
+
+## Architecture
+
+The system consists of three main components:
+
+**Tab MCP Servers** run inside web pages, exposing tools that interact with authenticated APIs using the browser's credential management.
+
+**The MCP-B Extension** acts as a bridge between tab servers and AI assistants, aggregating tools from all open tabs and routing requests appropriately.
+
+**Transport Layers** handle secure communication between components using browser message passing APIs.
+
+## Repository Structure
+
+```
+mcp-b/
+├── packages/
+│   ├── transports/          # Browser-specific MCP transports
+│   ├── mcp-react-hooks/     # React integration
+│   └── extension-tools/     # Chrome API tools
+├── extension/               # Chrome extension
+├── web/                     # Demo application and documentation
+└── local-server/           # WebSocket bridge (deprecated)
+```
+
+## Development
+
+```bash
+# Clone and install
+git clone https://github.com/miguelspizza/MCP-B.git
+cd MCP-B
+pnpm install
+
+# Start development
+pnpm dev                        # Start all packages
+pnpm --filter extension dev     # Extension only
+pnpm --filter web dev          # Web app only
+```
+
+The monorepo uses Turborepo for task orchestration and PNPM for package management. The extension auto-reloads on changes using WXT.
 
 ## Contributing
 
-We're looking for contributors to help build out this vision! Areas where we need help:
+Contributions are welcome. Priority areas include:
 
-- Building MCP servers for popular web apps
 - Firefox extension support
-- Desktop application bridges
-- Security auditing
-- Documentation and examples
+- MCP server implementations for popular web applications
+- Documentation improvements
+- UI/UX enhancements for the extension
 
-Please check out our [contribution guide](./CONTRIBUTING.md) or reach out at alexmnahas@gmail.com
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+
+## Security Considerations
+
+MCP-B operates entirely within the browser's security sandbox:
+
+- Extensions only access tabs the user has open
+- Web pages cannot directly access extension APIs
+- All communication respects the browser's same-origin policy
+- Tool execution happens in page context with user permissions
+
+## Roadmap
+
+- [x] Chrome extension
+- [x] NPM packages
+- [ ] Firefox extension
+- [ ] Native messaging host (replacing WebSocket bridge)
+- [ ] Safari extension
+- [ ] Enhanced developer tools
 
 ## License
 
-MIT - See [LICENSE](./LICENSE) for details
+MIT License - see [LICENSE](./LICENSE) for details.
+
+## Credits
+
+Created by [@miguelspizza](https://github.com/miguelspizza). Special thanks to Anthropic for creating MCP.
 
 ---
 
-_MCP-B is not affiliated with Anthropic or the official Model Context Protocol project._
+[Website](https://mcp-b.com) • [GitHub](https://github.com/miguelspizza/MCP-B) • [Email](mailto:alexmnahas@gmail.com)

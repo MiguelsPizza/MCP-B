@@ -46,10 +46,10 @@ function RouteComponent() {
 
         {/* Mobile & Desktop Toggle Button */}
         <div className="fixed bottom-6 right-6 z-50 md:top-6 md:bottom-auto">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={toggleTodos} 
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={toggleTodos}
             className="shadow-lg hover:shadow-xl transition-shadow"
           >
             {showTodos ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}

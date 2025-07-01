@@ -29,9 +29,13 @@ export const PageHeader = ({
             </Link>
             <div className="hidden sm:block h-6 w-px bg-border flex-shrink-0" />
             <div className="min-w-0 flex-1">
-              <h1 className={`text-base sm:text-lg font-semibold truncate ${titleClassName || ''}`}>{title}</h1>
+              <h1 className={`text-base sm:text-lg font-semibold truncate ${titleClassName || ''}`}>
+                {title}
+              </h1>
               {description && (
-                <p className={`text-xs sm:text-sm text-muted-foreground truncate ${descriptionClassName || ''}`}>
+                <p
+                  className={`text-xs sm:text-sm text-muted-foreground truncate ${descriptionClassName || ''}`}
+                >
                   {description}
                 </p>
               )}

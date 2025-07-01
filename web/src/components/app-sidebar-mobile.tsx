@@ -72,6 +72,7 @@ export function AppSidebarMobile({ activeView, setActiveView }: AppSidebarMobile
           href="https://github.com/miguelspizza/mcp-b"
           target="_blank"
           className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+          rel="noopener"
         >
           <div className="flex aspect-square size-10 items-center justify-center rounded-lg bg-muted text-foreground">
             <Github className="size-5" />

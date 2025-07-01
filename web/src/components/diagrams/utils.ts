@@ -58,9 +58,16 @@ export const edgeDefaults = {
   },
 };
 
-export const createHandle = (type: 'source' | 'target', position: Position, nodeWidth: number, nodeHeight: number) => {
-  const x = position === Position.Left ? 0 : position === Position.Right ? nodeWidth : nodeWidth / 2;
-  const y = position === Position.Top ? 0 : position === Position.Bottom ? nodeHeight : nodeHeight / 2;
+export const createHandle = (
+  type: 'source' | 'target',
+  position: Position,
+  nodeWidth: number,
+  nodeHeight: number
+) => {
+  const x =
+    position === Position.Left ? 0 : position === Position.Right ? nodeWidth : nodeWidth / 2;
+  const y =
+    position === Position.Top ? 0 : position === Position.Bottom ? nodeHeight : nodeHeight / 2;
   return { type, position, x, y };
 };
 
@@ -80,7 +87,7 @@ export const createNode = (
   width,
   height,
   style,
-  handles: handlePositions.map((pos) => 
+  handles: handlePositions.map((pos) =>
     createHandle(
       pos === Position.Top || pos === Position.Left ? 'target' : 'source',
       pos,

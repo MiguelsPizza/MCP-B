@@ -10,10 +10,10 @@
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "not_found_handling": "single-page-application",
-    "directory": "public",
+    "directory": "public"
   },
   "observability": {
-    "enabled": true,
+    "enabled": true
   },
   /**
    * Smart Placement
@@ -49,7 +49,7 @@
     {
       "binding": "DB",
       "database_name": "prod-d1-tutorial",
-      "database_id": "4fcd26a7-99bc-4dc0-9c65-bafd4f786bc7",
-    },
-  ],
+      "database_id": "4fcd26a7-99bc-4dc0-9c65-bafd4f786bc7"
+    }
+  ]
 }

@@ -33,16 +33,16 @@ export const test = base.extend<{
   extensionPage: async ({ context, extensionId }, use) => {
     // Create a new tab to test with
     const page = await context.newPage();
-    
+
     // Open the extension sidebar by clicking the extension icon
     // First, navigate to a page (Chrome requires a page to be open)
     await page.goto('https://example.com');
-    
+
     // Click on the extension icon in the toolbar
     // Note: This is tricky with Playwright, so we'll open the sidepanel directly
     // In a real user flow, they would click the extension icon
     await page.goto(`chrome-extension://${extensionId}/sidepanel.html`);
-    
+
     await use(page);
   },
 });

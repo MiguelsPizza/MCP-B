@@ -47,7 +47,10 @@
     "publish:dry": "pnpm publish --access public --no-git-checks --dry-run",
     "version:patch": "pnpm version patch --no-git-tag-version",
     "version:minor": "pnpm version minor --no-git-tag-version",
-    "version:major": "pnpm version major --no-git-tag-version"
+    "version:major": "pnpm version major --no-git-tag-version",
+    "lint": "biome lint --write .",
+    "format": "biome format --write .",
+    "check": "biome check --write ."
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.2",

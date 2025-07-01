@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { ChildProcess, spawn } from 'child_process';
+import { type ChildProcess, spawn } from 'child_process';
 import { createConnection } from 'net';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -238,7 +238,7 @@ program
         process.exit(1);
       });
 
-        const shutdown = async () => {
+      const shutdown = async () => {
         console.log('\nShutting down...');
         for (const child of childProcesses) {
           if (!child.killed) {

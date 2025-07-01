@@ -128,7 +128,10 @@ export default function Todos({ route }: { route: '/assistant' | '/blogs' }) {
                   transition-all duration-200 hover:bg-card/80 hover:border-border
                   hover:shadow-sm animate-in fade-in-50 slide-in-from-bottom-1
                 `}
-                style={{ animationDelay: `${Math.min(index * 50, 500)}ms`, animationFillMode: 'both' }}
+                style={{
+                  animationDelay: `${Math.min(index * 50, 500)}ms`,
+                  animationFillMode: 'both',
+                }}
               >
                 <div className="mt-0.5 flex-shrink-0">
                   {todo.completed ? (

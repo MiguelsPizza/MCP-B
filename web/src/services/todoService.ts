@@ -1,4 +1,3 @@
-
 import { hc } from 'hono/client';
 import type { AppType } from '../../worker';
 import type { ErrorResponse, Todo } from '../../worker/db/schema';

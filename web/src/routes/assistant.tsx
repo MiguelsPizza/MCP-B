@@ -20,7 +20,6 @@ import {
   SidebarTransport,
 } from '../services/MCP';
 
-
 const Assistant = () => {
   const runtime = useChatRuntime({
     api: 'api/chat',
@@ -70,15 +69,24 @@ const Assistant = () => {
               </McpClientProvider>
             </TabsContent>
             <TabsList className="h-14 w-full rounded-none border-t bg-background/95 backdrop-blur p-1 flex justify-between">
-              <TabsTrigger value="chat" className="flex-1 flex flex-col gap-0.5 h-full py-2 rounded-lg data-[state=active]:bg-primary/10">
+              <TabsTrigger
+                value="chat"
+                className="flex-1 flex flex-col gap-0.5 h-full py-2 rounded-lg data-[state=active]:bg-primary/10"
+              >
                 <MessageSquare className="h-5 w-5" />
                 <span className="text-[11px] font-medium">Chat</span>
               </TabsTrigger>
-              <TabsTrigger value="tasks" className="flex-1 flex flex-col gap-0.5 h-full py-2 rounded-lg data-[state=active]:bg-primary/10 mx-1">
+              <TabsTrigger
+                value="tasks"
+                className="flex-1 flex flex-col gap-0.5 h-full py-2 rounded-lg data-[state=active]:bg-primary/10 mx-1"
+              >
                 <ListTodo className="h-5 w-5" />
                 <span className="text-[11px] font-medium">Tasks</span>
               </TabsTrigger>
-              <TabsTrigger value="sidebar" className="flex-1 flex flex-col gap-0.5 h-full py-2 rounded-lg data-[state=active]:bg-primary/10">
+              <TabsTrigger
+                value="sidebar"
+                className="flex-1 flex flex-col gap-0.5 h-full py-2 rounded-lg data-[state=active]:bg-primary/10"
+              >
                 <Server className="h-5 w-5" />
                 <span className="text-[11px] font-medium">Menu</span>
               </TabsTrigger>
@@ -110,7 +118,11 @@ const Assistant = () => {
           <SidebarInset className="transition-all duration-300">
             <div className="flex flex-col lg:flex-row h-[100dvh] lg:h-[calc(100vh-20px)]">
               <div className="flex-1 overflow-hidden relative order-2 lg:order-1">
-                <McpClientProvider client={AssistantClient} transport={AssistantTransport} opts={{}}>
+                <McpClientProvider
+                  client={AssistantClient}
+                  transport={AssistantTransport}
+                  opts={{}}
+                >
                   <Thread />
                 </McpClientProvider>
               </div>

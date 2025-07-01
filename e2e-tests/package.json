@@ -8,12 +8,15 @@
     "pretest": "cd ../extension && pnpm build",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
-    "test:debug": "playwright test --debug", 
+    "test:debug": "playwright test --debug",
     "test:headed": "playwright test --headed",
     "test:basic": "playwright test extension-basic.spec.ts",
     "test:mcp": "playwright test mcp-integration.spec.ts",
     "test:report": "playwright show-report",
-    "postinstall": "playwright install chromium"
+    "postinstall": "playwright install chromium",
+    "lint": "biome lint --write .",
+    "format": "biome format --write .",
+    "check": "biome check --write ."
   },
   "devDependencies": {
     "@playwright/test": "^1.40.1",
