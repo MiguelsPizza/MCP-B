@@ -44,7 +44,7 @@ export function useAssistantMCP(mcpTools: McpTool[], client: Client): void {
     return () => {
       unregister();
     };
-  }, [client, runtime, toolNames, mcpTools?.length ?? ]);
+  }, [client, runtime, toolNames, mcpTools?.length ?? 0]);
 
   return;
 }
