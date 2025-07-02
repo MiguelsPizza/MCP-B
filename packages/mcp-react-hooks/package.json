@@ -60,14 +60,14 @@
   },
   "dependencies": {
     "@mcp-b/transports": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.13.2"
+    "@modelcontextprotocol/sdk": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:",
     "@types/node": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:",
-    "@types/chrome": "^0.0.326"
+    "@types/chrome": "catalog:"
   },
   "publishConfig": {
     "access": "public",

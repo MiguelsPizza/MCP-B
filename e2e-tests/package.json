@@ -19,9 +19,9 @@
     "check": "biome check --write ."
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.1",
-    "playwright": "^1.40.1",
-    "@types/node": "^24.0.1",
-    "typescript": "^5.8.2"
+    "@playwright/test": "catalog:",
+    "playwright": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
   }
 }

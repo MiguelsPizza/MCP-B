@@ -44,12 +44,12 @@
     "zod": "^3.0.0"
   },
   "devDependencies": {
-    "@hookform/resolvers": "^3.10.0",
-    "@modelcontextprotocol/sdk": "^1.1.0",
-    "@types/react": "^19.0.6",
-    "react": "^19.0.0",
-    "react-hook-form": "^7.54.2",
-    "typescript": "~5.8.3",
-    "zod": "^3.24.1"
+    "@hookform/resolvers": "catalog:",
+    "@modelcontextprotocol/sdk": "catalog:",
+    "@types/react": "catalog:",
+    "react": "catalog:",
+    "react-hook-form": "catalog:",
+    "typescript": "catalog:",
+    "zod": "catalog:"
   }
 }

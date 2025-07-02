@@ -38,17 +38,16 @@
     "@biomejs/biome": "2.0.6",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
-    "@typescript/native-preview": "7.0.0-dev.20250531.1",
     "husky": "^9.1.7",
     "jiti": "^2.4.2",
     "lint-staged": "^16.1.2",
     "tsup": "catalog:",
-    "tsx": "4.19.2",
+    "tsx": "catalog:",
     "typescript": "catalog:"
   },
   "dependencies": {
     "@changesets/cli": "^2.27.12",
-    "dotenv": "^16.4.5",
+    "dotenv": "catalog:",
     "pnpm": "^10.11.0",
     "tslib": "^2.0.0",
     "turbo": "^2.3.3"
