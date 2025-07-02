@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
 import type { Collection } from '@tanstack/react-db';
 import { useOptimisticMutation } from '@tanstack/react-db';
+import { useCallback } from 'react';
 import { toast } from 'sonner';
 import { v7 as uuidv7 } from 'uuid';
 import type { CreateTodoInput, Todo, UpdateTodoInput } from '../../worker/db/schema';

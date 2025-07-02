@@ -3,6 +3,7 @@ import { useChatRuntime } from '@assistant-ui/react-ai-sdk';
 import { McpClientProvider } from '@mcp-b/mcp-react-hooks';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
+import { ListTodo, MessageSquare, Server } from 'lucide-react';
 import { AppSidebar } from '../components/app-sidebar';
 import { AppSidebarMobile } from '../components/app-sidebar-mobile';
 import { Thread } from '../components/assistant-ui/thread';
@@ -10,9 +11,8 @@ import { PageHeader } from '../components/PageHeader';
 import Todos from '../components/Todos';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '../components/ui/sidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { MessageSquare, ListTodo, Server } from 'lucide-react';
-import { indexSearchSchema } from '../paramSchemas';
 import { useIsMobile } from '../hooks/use-mobile';
+import { indexSearchSchema } from '../paramSchemas';
 import {
   AssistantClient,
   AssistantTransport,
@@ -22,7 +22,7 @@ import {
 
 const Assistant = () => {
   const runtime = useChatRuntime({
-    api: 'api/chat',
+    api: import.meta.env.VITE_API_URL || '/api/chat',
   });
 
   const navigate = Route.useNavigate();

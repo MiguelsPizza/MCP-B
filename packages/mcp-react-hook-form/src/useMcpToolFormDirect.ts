@@ -1,8 +1,8 @@
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
-import type { z, ZodObject, ZodRawShape } from 'zod';
-import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { registerFormAsMcpTool, type RegisterFormOptions } from './registerFormAsMcpTool.js';
+import type { ZodObject, ZodRawShape, z } from 'zod';
+import { type RegisterFormOptions, registerFormAsMcpTool } from './registerFormAsMcpTool.js';
 
 /**
  * Hook that registers an existing React Hook Form as an MCP tool.

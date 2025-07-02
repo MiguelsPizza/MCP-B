@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
 import { useMcpClient } from '@mcp-b/mcp-react-hooks';
 import { ArrowRight, Check, Copy, ShoppingCart } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { toast } from 'sonner';

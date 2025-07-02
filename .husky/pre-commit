@@ -1,0 +1,1 @@
+echo "we need to run 'pnpm exec lint-staged' when we clean up the codebase"

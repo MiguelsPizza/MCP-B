@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
-import type { z, ZodObject, ZodRawShape } from 'zod';
+import type { ZodObject, ZodRawShape, z } from 'zod';
 import { useMcpServer } from './context.js';
-import { registerFormAsMcpTool, type RegisterFormOptions } from './registerFormAsMcpTool.js';
+import { type RegisterFormOptions, registerFormAsMcpTool } from './registerFormAsMcpTool.js';
 
 export interface UseMcpToolFormOptions extends RegisterFormOptions {
   // Additional hook-specific options can go here

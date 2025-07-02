@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
 import { McpServerProvider, useMcpServer } from '@mcp-b/mcp-react-hooks';
 import { TabServerTransport } from '@mcp-b/transports';
+import { useEffect } from 'react';
 import { z } from 'zod';
 
 // Example showing all new server features

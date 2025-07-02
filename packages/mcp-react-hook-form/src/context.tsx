@@ -1,5 +1,5 @@
-import { createContext, useContext, type ReactNode } from 'react';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { createContext, type ReactNode, useContext } from 'react';
 
 export interface MpcServerContextValue {
   server: McpServer;

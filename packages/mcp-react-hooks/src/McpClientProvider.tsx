@@ -1,13 +1,3 @@
-import {
-  createContext,
-  type ReactElement,
-  type ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import type { RequestOptions } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
@@ -20,6 +10,16 @@ import {
   ResourceListChangedNotificationSchema,
   ToolListChangedNotificationSchema,
 } from '@modelcontextprotocol/sdk/types.js';
+import {
+  createContext,
+  type ReactElement,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 // type ConnectionState = 'disconnected' | 'connecting' | 'initializing' | 'connected' | 'error';
 
@@ -50,7 +50,7 @@ export interface McpClientProviderProps {
   /**
    * Options for the client to connect to.
    */
-  opts: RequestOptions;
+  opts?: RequestOptions;
 }
 
 /**
@@ -81,7 +81,7 @@ export function McpClientProvider({
   children,
   client,
   transport,
-  opts,
+  opts = {},
 }: McpClientProviderProps): ReactElement {
   // State management
   const [resources, setResources] = useState<Resource[]>([]);

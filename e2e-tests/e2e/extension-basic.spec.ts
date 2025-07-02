@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures';
+import { expect, test } from './fixtures';
 import { SidepanelPage } from './pages/sidepanel';
 
 test.describe('Extension Basic Tests', () => {

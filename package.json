@@ -16,7 +16,7 @@
     "check:ci": "biome ci .",
     "lint:turbo": "turbo run lint",
     "format:turbo": "turbo run format",
-    "test": "turbo run test",
+    "test": "turbo run test --continue",
     "test:e2e": "turbo run test --filter=@mcp-b/e2e-tests",
     "clean": "git clean -xdf .cache .turbo node_modules",
     "typecheck": "turbo run typecheck",
@@ -27,7 +27,8 @@
     "version:minor": "turbo run version:minor --filter='./packages/*'",
     "version:major": "turbo run version:major --filter='./packages/*'",
     "build:packages": "turbo run build --filter='./packages/*'",
-    "publish:wizard": "./scripts/publish-packages.sh"
+    "publish:wizard": "./scripts/publish-packages.sh",
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=22.12",
@@ -35,8 +36,12 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@typescript/native-preview": "7.0.0-dev.20250531.1",
+    "husky": "^9.1.7",
     "jiti": "^2.4.2",
+    "lint-staged": "^16.1.2",
     "tsup": "catalog:",
     "tsx": "4.19.2",
     "typescript": "catalog:"

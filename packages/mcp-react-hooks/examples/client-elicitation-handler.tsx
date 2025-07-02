@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
 import { McpClientProvider, useMcpClient } from '@mcp-b/mcp-react-hooks';
 import { TabClientTransport } from '@mcp-b/transports';
 import { ElicitRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { useEffect, useState } from 'react';
 
 // Example showing how to handle elicitation requests on the client side
 function ClientWithElicitationHandler() {

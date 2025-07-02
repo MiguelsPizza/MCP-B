@@ -1,5 +1,3 @@
-import type { FC } from 'react';
-import { useEffect, useState } from 'react';
 import {
   ActionBarPrimitive,
   BranchPickerPrimitive,
@@ -20,6 +18,8 @@ import {
   RefreshCwIcon,
   SendHorizontalIcon,
 } from 'lucide-react';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 import { MarkdownText } from '../../components/assistant-ui/markdown-text';
 import { TooltipIconButton } from '../../components/assistant-ui/tooltip-icon-button';
 import { Button } from '../../components/ui/button';

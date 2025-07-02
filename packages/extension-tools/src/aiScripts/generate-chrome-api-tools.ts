@@ -1,7 +1,7 @@
+import Anthropic from '@anthropic-ai/sdk';
 import fs from 'fs/promises';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import Anthropic from '@anthropic-ai/sdk';
 import 'dotenv/config';
 import { chromium } from 'playwright'; // <-- Add this import at the top of your file
 import { CHROME_API_REGISTRY, ChromeApi } from '../chromeApiRegistry';

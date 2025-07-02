@@ -1,0 +1,9 @@
+{
+  "*.{js,jsx,ts,tsx,mjs,cjs}": [
+    "pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
+  ],
+  "*.{json,md,yml,yaml}": [
+    "pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
+  ],
+  "package.json": ["pnpm exec biome check --write --no-errors-on-unmatched"]
+}

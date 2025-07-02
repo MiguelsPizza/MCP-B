@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { Tool as McpTool } from '@modelcontextprotocol/sdk/types.js';
 import {
   AlertTriangle,
@@ -10,6 +9,7 @@ import {
   Terminal,
   Zap,
 } from 'lucide-react';
+import { useState } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '../../components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 

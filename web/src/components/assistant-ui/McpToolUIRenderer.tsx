@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { useAssistantToolUI } from '@assistant-ui/react';
 import { useMcpClient } from '@mcp-b/mcp-react-hooks';
 import type { Tool as McpTool } from '@modelcontextprotocol/sdk/types.js';
+import { useEffect } from 'react';
 import { ToolInteractiveForm } from './ToolInteractiveForm';
 import { ToolErrorUI, ToolRunningUI, ToolSuccessUI } from './ToolUIs';
 

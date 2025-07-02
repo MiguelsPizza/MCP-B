@@ -1,5 +1,5 @@
+import { type BrowserContext, test as base, chromium, type Page } from '@playwright/test';
 import path from 'path';
-import { test as base, chromium, type BrowserContext, type Page } from '@playwright/test';
 
 // Path to the built extension
 const pathToExtension = path.resolve('../extension/.output/chrome-mv3');

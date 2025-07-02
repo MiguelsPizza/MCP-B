@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import {
+  type DEFAULT_SORT_PARAMS,
   getSortParamsFromStorage,
   resetSortParams as resetSortParamsInStorage,
-  updateSortParams as updateSortParamsInStorage,
-  type DEFAULT_SORT_PARAMS,
   type SortParams,
+  updateSortParams as updateSortParamsInStorage,
 } from '../services/todoService';
 
 /**

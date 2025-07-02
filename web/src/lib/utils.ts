@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { clsx, type ClassValue } from 'clsx';
+import { type ClassValue, clsx } from 'clsx';
 // src/lib/mcp/utils.ts
 import type { JSONSchema7 } from 'json-schema';
 import { twMerge } from 'tailwind-merge';

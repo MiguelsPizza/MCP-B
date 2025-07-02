@@ -1,5 +1,5 @@
+import type { Edge, Node } from '@xyflow/react';
 import { Position } from '@xyflow/react';
-import type { Node, Edge } from '@xyflow/react';
 
 export const nodeDefaults = {
   type: 'default',

@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { Github, MessagesSquare, Server } from 'lucide-react';
+import * as React from 'react';
 import { Button } from '../components/ui/button';
 import { ThreadList } from './assistant-ui/thread-list';
 import McpServer from './McpServer';
@@ -17,7 +17,7 @@ export function AppSidebarMobile({ activeView, setActiveView }: AppSidebarMobile
         <a
           href={
             import.meta.env.DEV
-              ? 'http://localhost:5173/'
+              ? 'http://localhost:5173'
               : `${import.meta.env.VITE_APP_URL || window.location.origin}/`
           }
           className="flex items-center gap-3"

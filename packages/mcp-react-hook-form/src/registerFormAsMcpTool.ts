@@ -1,6 +1,6 @@
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { UseFormReturn } from 'react-hook-form';
 import type { ZodObject, ZodRawShape } from 'zod';
-import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 export interface RegisterFormOptions {
   title?: string;

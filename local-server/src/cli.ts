@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import { type ChildProcess, spawn } from 'child_process';
+import { Command } from 'commander';
 import { createConnection } from 'net';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { Command } from 'commander';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

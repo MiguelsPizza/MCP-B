@@ -1,5 +1,5 @@
+import { Github, ListTodo, MessagesSquare, Server } from 'lucide-react';
 import type * as React from 'react';
-import { Github, MessagesSquare, Server, ListTodo } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import {
   Sidebar,
@@ -30,7 +30,7 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
               <a
                 href={
                   import.meta.env.DEV
-                    ? 'http://localhost:5173/'
+                    ? 'http://localhost:5173'
                     : `${import.meta.env.VITE_APP_URL || window.location.origin}/`
                 }
                 className="flex items-center gap-2"

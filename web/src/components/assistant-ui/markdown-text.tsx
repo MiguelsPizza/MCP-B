@@ -1,12 +1,12 @@
 import '@assistant-ui/react-markdown/styles/dot.css';
-import { memo, useState, type FC } from 'react';
 import {
+  type CodeHeaderProps,
   MarkdownTextPrimitive,
   unstable_memoizeMarkdownComponents as memoizeMarkdownComponents,
   useIsMarkdownCodeBlock,
-  type CodeHeaderProps,
 } from '@assistant-ui/react-markdown';
 import { CheckIcon, CopyIcon } from 'lucide-react';
+import { type FC, memo, useState } from 'react';
 import remarkGfm from 'remark-gfm';
 import { TooltipIconButton } from '@/components/assistant-ui/tooltip-icon-button';
 import { cn } from '@/lib/utils';

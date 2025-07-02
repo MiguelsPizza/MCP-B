@@ -1,4 +1,3 @@
-import { useEffect, useMemo } from 'react';
 import { tool, useAssistantRuntime } from '@assistant-ui/react';
 import { useMcpClient } from '@mcp-b/mcp-react-hooks';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -7,6 +6,7 @@ import type {
   Resource,
   ServerCapabilities,
 } from '@modelcontextprotocol/sdk/types.js';
+import { useEffect, useMemo } from 'react';
 import { mcpToolToJSONSchema } from '../lib/utils';
 
 export function useAssistantMCP(mcpTools: McpTool[], client: Client): void {
@@ -44,7 +44,7 @@ export function useAssistantMCP(mcpTools: McpTool[], client: Client): void {
     return () => {
       unregister();
     };
-  }, [client, runtime, toolNames]);
+  }, [client, runtime, toolNames, mcpTools?.length ?? ]);
 
   return;
 }

@@ -24,7 +24,7 @@ export const prodCorsConfig: CorsOptions = {
       'https://app.yourdomain.com',
       'https://localhost:3000', // For local development
     ];
-    
+
     // Check if the origin is allowed
     if (!origin || allowedOrigins.includes(origin)) {
       return origin || allowedOrigins[0];
