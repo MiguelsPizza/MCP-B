@@ -521,4 +521,4 @@ MIT
 
 - [Model Context Protocol](https://modelcontextprotocol.io)
 - [Chrome Extension APIs](https://developer.chrome.com/docs/extensions/reference/)
-- [MCP-B Project](https://github.com/MiguelsPizza/MCP-B)
+- [MCP-B Project](https://github.com/MiguelsPizza/WebMCP)

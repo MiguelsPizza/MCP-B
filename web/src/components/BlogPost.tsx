@@ -494,7 +494,7 @@ await server.connect(transport);`}
         <p className="mt-8 leading-loose text-lg">
           For implementation details, examples, and to contribute to the project, visit my{' '}
           <a
-            href="https://github.com/MiguelsPizza/mcp-b"
+            href="https://github.com/MiguelsPizza/WebMCP"
             className="text-blue-600 dark:text-blue-400 underline"
           >
             GitHub repository

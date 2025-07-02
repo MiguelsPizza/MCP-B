@@ -114,7 +114,7 @@ export function AppSidebar({ activeView, setActiveView, ...props }: AppSidebarPr
           <SidebarMenuItem>
             <SidebarMenuButton size="lg">
               <a
-                href="https://github.com/miguelspizza/mcp-b"
+                href="https://github.com/MiguelsPizza/WebMCP"
                 target="_blank"
                 className="flex items-center gap-2"
                 rel="noopener"

@@ -6,12 +6,12 @@
   "author": "Alex Nahas",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/miguelspizza/mcp-b.git",
-    "directory": "packages/mcp-b"
+    "url": "git+https://github.com/MiguelsPizza/WebMCP.git",
+    "directory": "packages/transports"
   },
-  "homepage": "https://github.com/miguelspizza/mcp-b#readme",
+  "homepage": "https://github.com/MiguelsPizza/WebMCP#readme",
   "bugs": {
-    "url": "https://github.com/miguelspizza/mcp-b/issues"
+    "url": "https://github.com/MiguelsPizza/WebMCP/issues"
   },
   "keywords": [
     "mcp",
@@ -74,6 +74,6 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://npm.pkg.github.com"
   }
 }

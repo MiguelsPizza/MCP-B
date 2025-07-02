@@ -1088,7 +1088,7 @@ await server.connect(transport);`}
                     </Button>
                     <Button size="lg" variant="outline" className="w-full group gap-2" asChild>
                       <a
-                        href="https://github.com/MiguelsPizza/mcp-b"
+                        href="https://github.com/MiguelsPizza/WebMCP"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -1222,7 +1222,7 @@ await server.connect(transport);`}
                   asChild
                 >
                   <a
-                    href="https://github.com/MiguelsPizza/mcp-b"
+                    href="https://github.com/MiguelsPizza/WebMCP"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

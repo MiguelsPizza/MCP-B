@@ -217,7 +217,7 @@ export const Documentation = ({ isMobile }: { isMobile?: boolean }) => {
             <h3 className="text-sm font-semibold mb-3">Resources</h3>
             <div className="space-y-2">
               <a
-                href="https://github.com/miguelspizza/MCP-B"
+                href="https://github.com/MiguelsPizza/WebMCP"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
@@ -466,7 +466,7 @@ await server.connect(transport);`}
                   <CodeBlock
                     language="bash"
                     isMobile={isMobile}
-                    code={`git clone https://github.com/miguelspizza/MCP-B.git
+                    code={`git clone https://github.com/MiguelsPizza/WebMCP.git
 cd MCP-B
 pnpm install
 pnpm build`}
@@ -1368,7 +1368,7 @@ server.tool(
             </p>
             <div className="flex gap-4">
               <a
-                href="https://github.com/miguelspizza/MCP-B"
+                href="https://github.com/MiguelsPizza/WebMCP"
                 className="text-sm text-muted-foreground hover:text-foreground"
               >
                 GitHub

@@ -69,7 +69,7 @@ export function AppSidebarMobile({ activeView, setActiveView }: AppSidebarMobile
       {/* Footer */}
       <div className="p-4 border-t">
         <a
-          href="https://github.com/miguelspizza/mcp-b"
+          href="https://github.com/MiguelsPizza/WebMCP"
           target="_blank"
           className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
           rel="noopener"
