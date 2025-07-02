@@ -1,9 +1,8 @@
-import { useNavigate, useSearch } from '@tanstack/react-router';
-import { Route as AssistantRoute } from '../routes/Assistant';
+import { Route as AssistantRoute } from '../routes/assistant';
 import { Route as BlogsRoute } from '../routes/blogs';
 
-type AssistantRoute = typeof AssistantRoute;
-type BlogsRoute = typeof BlogsRoute;
+type AssistantRouteType = typeof AssistantRoute;
+type BlogsRouteType = typeof BlogsRoute;
 
 /**
  * Custom hook for managing todo sort parameters using TanStack Router
@@ -24,8 +23,10 @@ type BlogsRoute = typeof BlogsRoute;
  * - search: Search text to filter todos
  */
 export const useTodoSortParamsRouter = (route: '/assistant' | '/blogs') => {
-  let navigate: ReturnType<AssistantRoute['useNavigate']> | ReturnType<BlogsRoute['useNavigate']>;
-  let search: ReturnType<AssistantRoute['useSearch']> | ReturnType<BlogsRoute['useSearch']>;
+  let navigate:
+    | ReturnType<AssistantRouteType['useNavigate']>
+    | ReturnType<BlogsRouteType['useNavigate']>;
+  let search: ReturnType<AssistantRouteType['useSearch']> | ReturnType<BlogsRouteType['useSearch']>;
 
   if (route === '/assistant') {
     navigate = AssistantRoute.useNavigate();
