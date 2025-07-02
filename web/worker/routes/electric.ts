@@ -65,10 +65,7 @@ const electric = new Hono<{ Bindings: Env }>()
       headers.delete('content-encoding');
       headers.delete('content-length');
 
-      // Add CORS headers if needed
-      headers.set('Access-Control-Allow-Origin', '*');
-      headers.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-      headers.set('Access-Control-Allow-Headers', 'Content-Type');
+      // CORS headers are now handled globally by the middleware
 
       return new Response(response.body, {
         status: response.status,
@@ -85,24 +82,6 @@ const electric = new Hono<{ Bindings: Env }>()
         500
       );
     }
-  })
-
-  /**
-   * OPTIONS /v1/shape
-   * Handle preflight requests for CORS
-   */
-  .options(
-    '/v1/shape',
-    () =>
-      new Response(null, {
-        status: 204,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type',
-          'Access-Control-Max-Age': '86400',
-        },
-      })
-  );
+  });
 
 export default electric;

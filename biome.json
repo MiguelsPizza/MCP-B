@@ -18,6 +18,8 @@
       "**/*.tsbuildinfo",
       "**/*.gen.ts",
       "**/routeTree.gen.ts",
+      "web/src/routeTree.gen.ts",
+      "extension/entrypoints/sidepanel/routeTree.gen.ts",
       "**/*.d.ts",
       "extension/.wxt/",
       "extension/.output/",

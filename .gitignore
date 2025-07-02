@@ -41,3 +41,5 @@ e2e-tests/test-results
 e2e-tests/playwright-report
 extension/.oldZips
 mcp-chrome
+web/src/routeTree.gen.ts
+web/src/routeTree.gen.ts
