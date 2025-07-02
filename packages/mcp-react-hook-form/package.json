@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/mcp-react-hook-form",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "React Hook Form integration for MCP tools - transform forms into AI-callable tools",
   "type": "module",
   "main": "./dist/index.js",
@@ -22,13 +22,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome lint --write .",
     "format": "biome format --write .",
-    "check": "biome check --write .",
-    "prepublishOnly": "pnpm run build",
-    "publish:npm": "pnpm publish --access public --no-git-checks",
-    "publish:dry": "pnpm publish --access public --no-git-checks --dry-run",
-    "version:patch": "pnpm version patch --no-git-tag-version",
-    "version:minor": "pnpm version minor --no-git-tag-version",
-    "version:major": "pnpm version major --no-git-tag-version"
+    "check": "biome check --write ."
   },
   "keywords": [
     "mcp",
@@ -69,6 +63,6 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/"
   }
 }

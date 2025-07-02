@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/transports",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Transports for the in browser transport protocols",
   "license": "MIT",
   "author": "Alex Nahas",
@@ -38,7 +38,7 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo",
     "prepublishOnly": "pnpm run build",
-    "publish:npm": "pnpm publish --access public --no-git-checks",
+    "publish:npm": "npm publish --access public --no-git-checks",
     "publish:dry": "pnpm publish --access public --no-git-checks --dry-run",
     "version:patch": "pnpm version patch --no-git-tag-version",
     "version:minor": "pnpm version minor --no-git-tag-version",
@@ -74,6 +74,6 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/"
   }
 }

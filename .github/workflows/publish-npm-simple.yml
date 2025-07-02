@@ -1,0 +1,160 @@
+name: Publish Changed Packages to npm
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/**/*.ts'
+      - 'packages/**/*.tsx'
+      - 'packages/**/*.js'
+      - 'packages/**/*.json'
+      - '!packages/**/dist/**'
+      - '!packages/**/*.test.*'
+      - '!packages/**/*.spec.*'
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Comma-separated list of packages to publish (e.g., transports,mcp-react-hooks)'
+        required: false
+        default: ''
+
+jobs:
+  detect-changes:
+    name: Detect changed packages
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.detect.outputs.packages }}
+      any_changed: ${{ steps.detect.outputs.any_changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed packages
+        id: detect
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ -n "${{ github.event.inputs.packages }}" ]; then
+            # Manual trigger with specific packages
+            IFS=',' read -ra PACKAGES <<< "${{ github.event.inputs.packages }}"
+            CHANGED_PACKAGES=""
+            for pkg in "${PACKAGES[@]}"; do
+              pkg=$(echo $pkg | xargs) # trim whitespace
+              if [ -d "packages/$pkg" ]; then
+                CHANGED_PACKAGES="${CHANGED_PACKAGES}${pkg} "
+              fi
+            done
+          else
+            # Automatic detection based on git diff
+            CHANGED_PACKAGES=""
+            
+            # Get list of changed files
+            if [ "${{ github.event_name }}" == "push" ]; then
+              CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- packages/)
+            else
+              CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- packages/)
+            fi
+            
+            # Extract unique package names from changed files
+            for file in $CHANGED_FILES; do
+              if [[ $file == packages/* ]]; then
+                pkg=$(echo $file | cut -d'/' -f2)
+                if [[ ! " $CHANGED_PACKAGES " =~ " $pkg " ]]; then
+                  CHANGED_PACKAGES="${CHANGED_PACKAGES}${pkg} "
+                fi
+              fi
+            done
+          fi
+          
+          # Output results
+          if [ -n "$CHANGED_PACKAGES" ]; then
+            echo "Changed packages: $CHANGED_PACKAGES"
+            echo "packages=$CHANGED_PACKAGES" >> $GITHUB_OUTPUT
+            echo "any_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "No packages changed"
+            echo "packages=" >> $GITHUB_OUTPUT
+            echo "any_changed=false" >> $GITHUB_OUTPUT
+          fi
+
+  publish:
+    name: Publish packages
+    needs: detect-changes
+    if: needs.detect-changes.outputs.any_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build:packages
+
+      - name: Publish changed packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -e
+          PACKAGES="${{ needs.detect-changes.outputs.packages }}"
+          echo "Publishing packages: $PACKAGES"
+          
+          for pkg in $PACKAGES; do
+            echo "Processing package: $pkg"
+            cd "packages/$pkg"
+            
+            # Get current version from npm
+            PACKAGE_NAME=$(node -p "require('./package.json').name")
+            LOCAL_VERSION=$(node -p "require('./package.json').version")
+            
+            echo "Package: $PACKAGE_NAME, Local version: $LOCAL_VERSION"
+            
+            # Check if version exists on npm
+            NPM_VERSION=$(npm view "$PACKAGE_NAME" version 2>/dev/null || echo "0.0.0")
+            
+            if [ "$LOCAL_VERSION" != "$NPM_VERSION" ]; then
+              echo "Publishing $PACKAGE_NAME@$LOCAL_VERSION (npm has $NPM_VERSION)"
+              npm publish --access public
+              echo "✅ Published $PACKAGE_NAME@$LOCAL_VERSION"
+            else
+              echo "⏭️  Skipping $PACKAGE_NAME@$LOCAL_VERSION (already published)"
+            fi
+            
+            cd ../..
+          done
+
+      - name: Create summary
+        if: always()
+        run: |
+          echo "## 📦 Package Publication Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Changed packages:** ${{ needs.detect-changes.outputs.packages }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check [npm](https://www.npmjs.com/org/mcp-b) for published versions." >> $GITHUB_STEP_SUMMARY

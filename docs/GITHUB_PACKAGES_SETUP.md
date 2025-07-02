@@ -9,6 +9,11 @@ This guide explains how to publish and install packages from GitHub Packages for
    - `read:packages` - To install packages
    - `delete:packages` - To delete packages (optional)
 
+2. GitHub Organization Setup (for organization owners):
+   - Go to https://github.com/organizations/MiguelsPizza/settings/packages
+   - Ensure GitHub Packages is enabled for your organization
+   - Check package creation permissions
+
 ## Setting up Authentication
 
 ### 1. Create a Personal Access Token
@@ -45,27 +50,47 @@ npm login --scope=@miguelspizza --auth-type=legacy --registry=https://npm.pkg.gi
 
 ### Manual Publishing
 
-1. Build all packages:
+1. Set up authentication:
+   ```bash
+   export GITHUB_TOKEN=your_github_token_here
+   ```
+
+2. Build all packages:
    ```bash
    pnpm build:packages
    ```
 
-2. Bump versions (choose one):
+3. Bump versions (choose one):
    ```bash
    pnpm version:patch  # 0.1.0 -> 0.1.1
    pnpm version:minor  # 0.1.0 -> 0.2.0
    pnpm version:major  # 0.1.0 -> 1.0.0
    ```
 
-3. Dry run to verify:
+4. Dry run to verify:
    ```bash
    pnpm publish:dry
    ```
 
-4. Publish to GitHub Packages:
+5. Publish to GitHub Packages:
    ```bash
    GITHUB_TOKEN=$GITHUB_TOKEN pnpm publish:packages
    ```
+
+### Authentication Helper Script
+
+Run the authentication setup script:
+```bash
+./scripts/setup-github-packages-auth.sh
+```
+
+### Publishing Helper Script
+
+For easier publishing with proper authentication:
+```bash
+export GITHUB_TOKEN=your_github_token_here
+./scripts/publish-to-github-packages.sh
+```
 
 ### Automated Publishing via GitHub Actions
 
