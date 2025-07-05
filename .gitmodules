@@ -1,0 +1,3 @@
+[submodule "extension"]
+	path = extension
+	url = https://github.com/MiguelsPizza/WebMCP-extension.git
