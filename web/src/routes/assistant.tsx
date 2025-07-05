@@ -45,7 +45,7 @@ const Assistant = () => {
     return (
       <div className="h-[100dvh] relative bg-background flex flex-col">
         <AssistantRuntimeProvider runtime={runtime}>
-          <Tabs defaultValue="chat" className="flex-1 flex flex-col h-full">
+          <Tabs defaultValue="tasks" className="flex-1 flex flex-col h-full">
             <TabsContent value="chat" className="flex-1 m-0 p-0 overflow-hidden">
               <McpClientProvider client={AssistantClient} transport={AssistantTransport} opts={{}}>
                 <Thread />

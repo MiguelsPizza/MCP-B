@@ -72,8 +72,8 @@ import { Tool } from '@modelcontextprotocol/sdk/types.js';
  * function App() {
  *   return (
  *     <McpServerProvider
- *       serverConfig={{ name: 'MyWebAppServer', version: '1.0.0' }}
  *       transport={transport}
+ *       server={server}
  *     >
  *       <MyServerUI />
  *     </McpServerProvider>

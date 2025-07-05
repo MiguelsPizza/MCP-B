@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/transports",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Transports for the in browser transport protocols",
   "license": "MIT",
   "author": "Alex Nahas",
@@ -48,27 +48,19 @@
     "check": "biome check --write ."
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "catalog:",
-    "@types/cheerio": "^1.0.0",
-    "cheerio": "catalog:",
-    "zod": "catalog:"
+    "zod": "^3.25.74"
   },
   "peerDependencies": {
-    "@anthropic-ai/sdk": "catalog:",
-    "ws": "^8.0.0"
+    "@modelcontextprotocol/sdk": "^1.15.0"
   },
   "peerDependenciesMeta": {
-    "ws": {
-      "optional": true
-    },
-    "@anthropic-ai/sdk": {
-      "optional": true
+    "@modelcontextprotocol/sdk": {
+      "optional": false
     }
   },
   "devDependencies": {
     "@types/chrome": "catalog:",
     "@types/node": "catalog:",
-    "@types/ws": "^8.5.0",
     "tsup": "catalog:",
     "typescript": "catalog:"
   },

@@ -32,7 +32,7 @@ const generateServer = (): McpServer => {
     'createTodo',
     'Creates a new todo item for the current user',
     {
-      todoText: z.string().describe('The content of the todo item.') as any,
+      todoText: z.string().describe('The content of the todo item.'),
     },
     async (args) => {
       if (!userId) {
@@ -66,9 +66,9 @@ const generateServer = (): McpServer => {
     'updateTodo',
     "Updates an existing todo item's text or completion status",
     {
-      id: z.string().uuid().describe('The ID of the todo to update.') as any,
-      text: z.string().min(1).max(1000).optional().describe('The new text for the todo.') as any,
-      completed: z.boolean().optional().describe('The new completion status.') as any,
+      id: z.string().uuid().describe('The ID of the todo to update.'),
+      text: z.string().min(1).max(1000).optional().describe('The new text for the todo.'),
+      completed: z.boolean().optional().describe('The new completion status.'),
     },
     async (args) => {
       if (!userId) {
@@ -109,7 +109,7 @@ const generateServer = (): McpServer => {
     'deleteTodo',
     'Permanently deletes a todo item by its ID',
     {
-      id: z.string().uuid().describe('The ID of the todo to delete.') as any,
+      id: z.string().uuid().describe('The ID of the todo to delete.'),
     },
     async (args) => {
       if (!userId) {
@@ -166,13 +166,13 @@ const generateServer = (): McpServer => {
         .boolean()
         .optional()
         .default(false)
-        .describe('Filter todos by completion status') as any,
+        .describe('Filter todos by completion status'),
       sortBy: z
         .enum(['text', 'completed', 'created_at', 'updated_at'])
         .optional()
         .default('text')
-        .describe('Field to sort by') as any,
-      sortOrder: z.enum(['asc', 'desc']).optional().default('asc').describe('Sort order') as any,
+        .describe('Field to sort by'),
+      sortOrder: z.enum(['asc', 'desc']).optional().default('asc').describe('Sort order'),
       limit: z
         .number()
         .int()
@@ -180,15 +180,9 @@ const generateServer = (): McpServer => {
         .max(100)
         .optional()
         .default(50)
-        .describe('Maximum number of todos to return') as any,
-      offset: z
-        .number()
-        .int()
-        .min(0)
-        .optional()
-        .default(0)
-        .describe('Number of todos to skip') as any,
-      search: z.string().optional().default('').describe('Search text within todo text') as any,
+        .describe('Maximum number of todos to return'),
+      offset: z.number().int().min(0).optional().default(0).describe('Number of todos to skip'),
+      search: z.string().optional().default('').describe('Search text within todo text'),
     },
     async (args) => {
       if (!userId) {
@@ -205,7 +199,7 @@ const generateServer = (): McpServer => {
           search: args.search,
         };
 
-        const todos = (await todoApi.getForUser(userId, queryParams)) as Todo[];
+        const todos = await todoApi.getForUser(userId, queryParams);
 
         return {
           content: [
@@ -230,7 +224,7 @@ const generateServer = (): McpServer => {
     'getTodo',
     'Retrieves a specific todo item by its ID',
     {
-      id: z.string().uuid().describe('The ID of the todo to retrieve.') as any,
+      id: z.string().uuid().describe('The ID of the todo to retrieve.'),
     },
     async (args) => {
       try {
@@ -254,19 +248,19 @@ const generateServer = (): McpServer => {
   return server;
 };
 
-export const initializeMcpServer = async () => {
-  try {
-    const server = generateServer();
-    const transport = new TabServerTransport({
-      allowedOrigins: ['*'],
-    });
-    await server.connect(transport);
-    console.log(server);
-    console.log('MCP Server connected successfully');
-  } catch (error) {
-    console.error('Failed to connect MCP Server:', error);
-  }
-};
+// export const initializeMcpServer = async () => {
+//   try {
+//     const server = generateServer();
+//     const transport = new TabServerTransport({
+//       allowedOrigins: ['*'],
+//     });
+//     await server.connect(transport);
+//     console.log(server);
+//     console.log('MCP Server connected successfully');
+//   } catch (error) {
+//     console.error('Failed to connect MCP Server:', error);
+//   }
+// };
 
 const initializeInMemoryServer = () => {
   const server = generateServer();

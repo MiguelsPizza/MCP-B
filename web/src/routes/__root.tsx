@@ -1,6 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { McpToolsProvider } from '@/hooks/McpToolsProvider';
 import { Toaster } from '../components/ui/sonner';
 import { queryClient } from '../lib/utils';
 
@@ -30,11 +30,13 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="w-full h-screen">
-        <Outlet />
-        <Toaster />
-      </div>
-      {/* {import.meta.env.DEV && <TanStackRouterDevtools position="bottom-right" />} */}
+      <McpToolsProvider>
+        <div className="w-full h-screen">
+          <Outlet />
+          <Toaster />
+        </div>
+        {/* {import.meta.env.DEV && <TanStackRouterDevtools position="bottom-right" />} */}
+      </McpToolsProvider>
     </QueryClientProvider>
   );
 }
@@ -52,6 +54,7 @@ function RootErrorComponent({ error }: { error: Error }) {
           <pre className="mt-2 overflow-auto rounded bg-muted p-2 text-xs">{error.stack}</pre>
         </details>
         <button
+          type="button"
           onClick={() => window.location.reload()}
           className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >

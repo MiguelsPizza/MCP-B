@@ -53,11 +53,11 @@
     "check": "biome check --write ."
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "catalog:",
-    "playwright": "catalog:",
-    "zod": "catalog:"
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "zod": "^3.25.74"
   },
   "devDependencies": {
+    "playwright": "catalog:",
     "@anthropic-ai/sdk": "catalog:",
     "@types/chrome": "catalog:",
     "@types/node": "catalog:",

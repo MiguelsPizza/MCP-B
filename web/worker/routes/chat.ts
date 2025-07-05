@@ -38,7 +38,7 @@ const chat = new Hono<{ Bindings: Env }>()
     });
     // Stream text generation with tool calling support
     const result = streamText({
-      model: openai('gpt-4o'),
+      model: openai('gpt-4o', { parallelToolCalls: false }),
       messages,
       toolCallStreaming: true,
       system,

@@ -12,6 +12,8 @@ Browser-based Model Context Protocol (MCP) implementation that enables AI assist
 
 ## What is MCP-B?
 
+![](./FullArch.png)
+
 MCP-B runs Model Context Protocol servers directly inside web pages, solving a critical gap where most white-collar work happens in browsers, yet MCP's standard solution bypasses browsers entirely. Instead of building complex OAuth flows or managing API keys, MCP-B leverages the browser's existing authentication and security model.
 
 ## The Problem

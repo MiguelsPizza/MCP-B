@@ -60,6 +60,17 @@ export class TabServerTransport implements Transport {
 
     window.addEventListener('message', this._messageHandler);
     this._started = true;
+
+    // Broadcast server ready to all allowed origins
+    window.postMessage(
+      {
+        channel: this._channelId,
+        type: 'mcp',
+        direction: 'server-to-client',
+        payload: 'mcp-server-ready',
+      },
+      '*'
+    );
   }
 
   async send(message: JSONRPCMessage): Promise<void> {

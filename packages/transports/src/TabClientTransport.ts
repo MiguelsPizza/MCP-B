@@ -1,6 +1,17 @@
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { type JSONRPCMessage, JSONRPCMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 
+// Type declaration for Promise.withResolvers() if not available in current TypeScript version
+// declare global {
+//   interface PromiseConstructor {
+//     withResolvers<T>(): {
+//       promise: Promise<T>;
+//       resolve: (value: T | PromiseLike<T>) => void;
+//       reject: (reason?: any) => void;
+//     };
+//   }
+// }
+
 export interface TabClientTransportOptions {
   targetOrigin: string; // Required for security
   channelId?: string; // Optional channel name
@@ -11,6 +22,9 @@ export class TabClientTransport implements Transport {
   private _targetOrigin: string;
   private _channelId: string;
   private _messageHandler?: (event: MessageEvent) => void;
+  public readonly serverReadyPromise: Promise<void>;
+  private _serverReadyResolve: () => void;
+  private _serverReadyReject: (reason: any) => void;
 
   onclose?: () => void;
   onerror?: (error: Error) => void;
@@ -22,6 +36,12 @@ export class TabClientTransport implements Transport {
     }
     this._targetOrigin = options.targetOrigin;
     this._channelId = options.channelId || 'mcp-default';
+
+    // Create the server ready promise in constructor so it's available immediately
+    const { promise, resolve, reject } = Promise.withResolvers<void>();
+    this.serverReadyPromise = promise;
+    this._serverReadyResolve = resolve;
+    this._serverReadyReject = reject;
   }
 
   async start(): Promise<void> {
@@ -42,6 +62,12 @@ export class TabClientTransport implements Transport {
 
       // Only process server-to-client messages to avoid processing own messages
       if (event.data?.direction !== 'server-to-client') {
+        return;
+      }
+
+      // Handle server ready signal
+      if (event.data.payload === 'mcp-server-ready') {
+        this._serverReadyResolve();
         return;
       }
 
@@ -77,6 +103,10 @@ export class TabClientTransport implements Transport {
     if (this._messageHandler) {
       window.removeEventListener('message', this._messageHandler);
     }
+
+    // Reject the server ready promise if it hasn't been resolved yet
+    this._serverReadyReject(new Error('Transport closed before server ready'));
+
     this._started = false;
     this.onclose?.();
   }

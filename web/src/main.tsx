@@ -4,10 +4,12 @@ import { createRoot } from 'react-dom/client';
 import './globals.css';
 import './index.css';
 import { router } from './lib/router';
-import { initializeMcpServer } from './services/MCP.ts';
+import { server, transport } from './TabServer';
 
 // Initialize MCP server
-initializeMcpServer();
+// initializeMcpServer();
+
+server.connect(transport);
 
 // Create root and render app
 createRoot(document.getElementById('root')!).render(

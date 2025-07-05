@@ -4,14 +4,8 @@ import {
   AlertCircle,
   CheckCircle,
   ChevronDown,
-  ChevronRight,
-  FileText,
   Package,
-  Play,
   Server,
-  Terminal,
-  Wifi,
-  WifiOff,
   Wrench,
   XCircle,
 } from 'lucide-react';
@@ -22,7 +16,7 @@ import { z } from 'zod';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Card } from '../components/ui/card';
 import { Checkbox } from '../components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../components/ui/collapsible';
 import {
