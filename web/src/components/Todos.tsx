@@ -1,10 +1,8 @@
 import { useLiveQuery } from '@tanstack/react-db';
 import { AlertCircle, CheckCircle2, Circle, ListTodo } from 'lucide-react';
 import { useTodoSortParamsRouter } from '../hooks/useTodoSortParamsRouter';
-import { userId } from '../lib/utils';
 import { userTodoCollection } from '../services/collections';
 import { Alert, AlertDescription } from './ui/alert';
-import { Checkbox } from './ui/checkbox';
 import { Skeleton } from './ui/skeleton';
 
 export default function Todos({ route }: { route: '/assistant' | '/blogs' }) {

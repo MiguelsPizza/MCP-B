@@ -4,7 +4,9 @@ import {
   AlertCircle,
   CheckCircle,
   ChevronDown,
+  FileTextIcon,
   Package,
+  Play,
   Server,
   Wrench,
   XCircle,
@@ -338,8 +340,8 @@ export default function McpServer() {
       let displayData = result;
 
       // Handle MCP tool result format
-      if (result?.content?.[0]?.text) {
-        const text = result.content[0].text;
+      if ((result as any)?.content?.[0]?.text) {
+        const text = (result as any).content[0].text;
         try {
           // Try to parse the text content as JSON
           displayData = JSON.parse(text);
@@ -560,7 +562,7 @@ export default function McpServer() {
               <CollapsibleTrigger className="w-full">
                 <div className="px-3 py-2.5 flex items-center justify-between hover:bg-muted/30 transition-colors">
                   <div className="flex items-center gap-2">
-                    <FileText className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
+                    <FileTextIcon className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
                     <span className="font-medium text-xs">Resources</span>
                     <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
                       {resources.length}

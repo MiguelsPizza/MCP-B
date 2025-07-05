@@ -1,4 +1,3 @@
-import { TabClientTransport, TabServerTransport } from '@mcp-b/transports';
 import { PromptApiTools } from '@mcp-b/web-tools';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
@@ -6,14 +5,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import type { Todo } from '../../worker/db/schema.ts';
 import { userId } from '../lib/utils.ts';
-import {
-  getErrorMessage,
-  getSortParamsFromStorage,
-  isApiError,
-  resetSortParams,
-  todoApi,
-  updateSortParams,
-} from './todoService.ts';
+import { getErrorMessage, isApiError, todoApi } from './todoService.ts';
 
 const generateServer = (): McpServer => {
   const server = new McpServer(
@@ -199,7 +191,7 @@ const generateServer = (): McpServer => {
           search: args.search,
         };
 
-        const todos = await todoApi.getForUser(userId, queryParams);
+        const todos = (await todoApi.getForUser(userId, queryParams as any)) as Todo[];
 
         return {
           content: [
@@ -283,4 +275,4 @@ const BlogPostClient = new Client({ name: 'BlogPost', version: '1.0.0' });
 export const { clientTransport: BlogPostTransport, serverTransport: BlogPostServerTransport } =
   initializeInMemoryServer();
 
-export { SidebarClient, AssistantClient, BlogPostClient };
+export { AssistantClient, BlogPostClient, SidebarClient };

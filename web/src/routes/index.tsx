@@ -1,14 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { zodValidator } from '@tanstack/zod-adapter';
 import {
   ArrowRight,
   Award,
   BookOpen,
-  Boxes,
-  Building2,
   Check,
   CheckCircle,
-  ChevronRight,
   Chrome,
   Code2,
   Copy,
@@ -17,17 +13,11 @@ import {
   FileCode,
   GitBranch,
   Globe,
-  Layers,
   Lock,
-  MessageSquare,
-  Monitor,
   Network,
   PlayCircle,
-  Rocket,
-  Server,
   Shield,
   Sparkles,
-  Terminal,
   Users,
   Workflow,
   Zap,
@@ -37,9 +27,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
-import { Separator } from '../components/ui/separator';
-import { indexSearchSchema } from '../paramSchemas';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
 export const Route = createFileRoute('/')({
   component: IndexRoute,
@@ -628,9 +616,9 @@ function IndexRoute() {
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-const server = new McpServer({ 
+const server = new McpServer({
   name: 'invoice-system',
-  version: '1.0.0' 
+  version: '1.0.0'
 });
 
 server.tool('createInvoice', 'Create a new invoice', {
@@ -646,7 +634,7 @@ server.tool('createInvoice', 'Create a new invoice', {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ customerEmail, items })
   });
-  
+
   if (!response.ok) {
     throw new Error(\`Failed to create invoice: \${response.statusText}\`);
   }

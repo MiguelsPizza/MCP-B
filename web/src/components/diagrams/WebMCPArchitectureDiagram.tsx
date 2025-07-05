@@ -594,6 +594,7 @@ export function WebMCPArchitectureDiagram() {
             lines={['TabBrowserTransport']}
             fontSize={11}
             fill="#1565c0"
+            // @ts-expect-error -- fontStyle is not a valid prop
             fontStyle="italic"
           />
         </Box>
@@ -605,6 +606,7 @@ export function WebMCPArchitectureDiagram() {
             lines={['ExtensionTransport']}
             fontSize={11}
             fill="#4527a0"
+            // @ts-expect-error -- fontStyle is not a valid prop
             fontStyle="italic"
           />
         </Box>
@@ -616,6 +618,7 @@ export function WebMCPArchitectureDiagram() {
             lines={['Native App Messaging']}
             fontSize={11}
             fill="#2e7d32"
+            // @ts-expect-error -- fontStyle is not a valid prop
             fontStyle="italic"
           />
         </Box>
@@ -627,6 +630,7 @@ export function WebMCPArchitectureDiagram() {
           lines={['window.postMessage']}
           fontSize={10}
           fill="#6b7280"
+          // @ts-expect-error -- fontStyle is not a valid prop
           fontStyle="italic"
         />
         <MultilineText
@@ -635,6 +639,7 @@ export function WebMCPArchitectureDiagram() {
           lines={['chrome.runtime.Port']}
           fontSize={10}
           fill="#6b7280"
+          // @ts-expect-error -- fontStyle is not a valid prop
           fontStyle="italic"
         />
       </svg>

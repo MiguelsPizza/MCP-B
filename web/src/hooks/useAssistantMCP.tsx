@@ -1,11 +1,6 @@
 import { tool, useAssistantRuntime } from '@assistant-ui/react';
-import { useMcpClient } from '@mcp-b/mcp-react-hooks';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import type {
-  Tool as McpTool,
-  Resource,
-  ServerCapabilities,
-} from '@modelcontextprotocol/sdk/types.js';
+import type { Tool as McpTool } from '@modelcontextprotocol/sdk/types.js';
 import { useEffect, useMemo } from 'react';
 import { mcpToolToJSONSchema } from '../lib/utils';
 

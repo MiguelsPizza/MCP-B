@@ -19,7 +19,7 @@ import {
   SendHorizontalIcon,
 } from 'lucide-react';
 import type { FC } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { MarkdownText } from '../../components/assistant-ui/markdown-text';
 import { TooltipIconButton } from '../../components/assistant-ui/tooltip-icon-button';
 import { Button } from '../../components/ui/button';
@@ -34,7 +34,7 @@ import { McpToolUIRenderer } from './McpToolUIRenderer';
 import { ToolFallback } from './tool-fallback';
 
 export const Thread: FC = () => {
-  const { client, tools, isLoading, error, isConnected, capabilities, resources } = useMcpClient();
+  const { client, tools } = useMcpClient();
 
   useAssistantMCP(tools, client);
 

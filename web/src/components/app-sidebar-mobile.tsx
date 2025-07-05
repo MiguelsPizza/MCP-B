@@ -1,5 +1,4 @@
 import { Github, MessagesSquare, Server } from 'lucide-react';
-import * as React from 'react';
 import { Button } from '../components/ui/button';
 import { ThreadList } from './assistant-ui/thread-list';
 import McpServer from './McpServer';

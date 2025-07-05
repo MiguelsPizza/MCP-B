@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   Book,
   Box,
   Check,
@@ -10,7 +9,6 @@ import {
   Globe,
   Package,
   Puzzle,
-  Rocket,
   Terminal,
   Zap,
 } from 'lucide-react';
@@ -703,16 +701,16 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 // Set up the extension hub
 class McpHub {
   private server: McpServer;
-  
+
   constructor() {
     this.server = new McpServer({
       name: 'Extension-Hub',
       version: '1.0.0'
     });
-    
+
     this.setupConnections();
   }
-  
+
   private setupConnections() {
     chrome.runtime.onConnect.addListener((port) => {
       if (port.name === 'mcp') {
@@ -845,21 +843,21 @@ function App() {
 
 function ClientTools() {
   const { client, tools, isConnected, isLoading, error } = useMcpClient();
-  
+
   const callTool = async (toolName: string, args: any) => {
     if (!client) return;
-    
+
     const result = await client.callTool({
       name: toolName,
       arguments: args
     });
-    
+
     console.log('Tool result:', result);
   };
-  
+
   if (isLoading) return <div>Connecting...</div>;
   if (error) return <div>Error: {error.message}</div>;
-  
+
   return (
     <div>
       <h3>Available Tools: {tools.length}</h3>
@@ -887,8 +885,8 @@ import { TabServerTransport } from '@mcp-b/transports';
 import { z } from 'zod';
 
 // Create server and transport instances
-const server = new McpServer({ 
-  name: 'MyWebAppServer', 
+const server = new McpServer({
+  name: 'MyWebAppServer',
   version: '1.0.0',
   options: { instructions: 'A helpful web application server.' }
 });
@@ -904,10 +902,10 @@ function App() {
 
 function ServerTools() {
   const { server, isConnected, registerTool, elicitInput } = useMcpServer();
-  
+
   useEffect(() => {
     if (!isConnected) return;
-    
+
     // Register a simple tool
     const unregisterGreet = registerTool(
       'greet',
@@ -921,11 +919,11 @@ function ServerTools() {
         content: [{ type: 'text', text: \`Hello, \${name}!\` }]
       })
     );
-    
+
     // Cleanup on unmount
     return () => unregisterGreet();
   }, [isConnected, registerTool]);
-  
+
   return <div>Server connected: {isConnected ? 'Yes' : 'No'}</div>;
 }`}
               />
@@ -955,7 +953,7 @@ function App() {
 function MyApp() {
   const { registerTool } = useMcpServer();
   const { client, tools } = useMcpClient();
-  
+
   // Register tools on the server
   useEffect(() => {
     const unregister = registerTool(
@@ -971,10 +969,10 @@ function MyApp() {
         content: [{ type: 'text', text: \`Result: \${a + b}\` }]
       })
     );
-    
+
     return () => unregister();
   }, [registerTool]);
-  
+
   // Call tools with the client
   const testAddition = async () => {
     const result = await client.callTool({
@@ -983,7 +981,7 @@ function MyApp() {
     });
     console.log(result);
   };
-  
+
   return (
     <div>
       <p>Tools: {tools.length}</p>
@@ -1006,10 +1004,10 @@ import { useMcpClient } from '@mcp-b/mcp-react-hooks';
 
 export function useAssistantMCP(mcpTools: McpTool[], client: Client): void {
   const runtime = useAssistantRuntime();
-  
+
   useEffect(() => {
     if (!client || mcpTools.length === 0) return;
-    
+
     // Convert MCP tools to assistant-ui tools
     const assistantTools = mcpTools.map((mcpTool) => ({
       name: mcpTool.name,
@@ -1022,18 +1020,18 @@ export function useAssistantMCP(mcpTools: McpTool[], client: Client): void {
             name: mcpTool.name,
             arguments: args,
           });
-          
+
           // Extract text content from MCP response
           const textContent = result.content
             .filter(c => c.type === 'text')
             .map(c => c.text)
             .join('\\n');
-            
+
           return { content: textContent };
         },
       }),
     }));
-    
+
     // Register with assistant runtime
     const unregister = runtime.registerModelContextProvider({
       getModelContext: () => ({
@@ -1043,7 +1041,7 @@ export function useAssistantMCP(mcpTools: McpTool[], client: Client): void {
         ),
       }),
     });
-    
+
     return () => unregister();
   }, [client, mcpTools, runtime]);
 }
@@ -1051,10 +1049,10 @@ export function useAssistantMCP(mcpTools: McpTool[], client: Client): void {
 // Usage in your chat component
 function ChatWithMCP() {
   const { client, tools } = useMcpClient();
-  
+
   // Bridge MCP tools to assistant-ui
   useAssistantMCP(tools, client);
-  
+
   return <Thread />; // Your assistant-ui Thread component
 }`}
               />
@@ -1090,11 +1088,11 @@ server.tool('completeTodo', { id: z.string() }, async ({ id }) => {
 
 server.tool('listTodos', {}, async () => {
   const todos = await db.todos.findAll();
-  return { 
-    content: [{ 
-      type: 'text', 
-      text: JSON.stringify(todos, null, 2) 
-    }] 
+  return {
+    content: [{
+      type: 'text',
+      text: JSON.stringify(todos, null, 2)
+    }]
   };
 });`}
                 />

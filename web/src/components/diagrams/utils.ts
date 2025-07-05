@@ -1,4 +1,4 @@
-import type { Edge, Node } from '@xyflow/react';
+import type { Node } from '@xyflow/react';
 import { Position } from '@xyflow/react';
 
 export const nodeDefaults = {

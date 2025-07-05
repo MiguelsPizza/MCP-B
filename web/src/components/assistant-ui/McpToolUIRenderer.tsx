@@ -1,14 +1,11 @@
 import { useAssistantToolUI } from '@assistant-ui/react';
-import { useMcpClient } from '@mcp-b/mcp-react-hooks';
 import type { Tool as McpTool } from '@modelcontextprotocol/sdk/types.js';
-import { useEffect } from 'react';
-import { ToolInteractiveForm } from './ToolInteractiveForm';
 import { ToolErrorUI, ToolRunningUI, ToolSuccessUI } from './ToolUIs';
 
 const FancyToolRenderer = ({ tool }: { tool: McpTool }) => {
   useAssistantToolUI({
     toolName: tool.name,
-    render: ({ args, status, result, addResult, toolCallId }) => {
+    render: ({ args, status, result }) => {
       if (status.type === 'running' || status.type === 'requires-action') {
         return <ToolRunningUI tool={tool} args={args} />;
       }

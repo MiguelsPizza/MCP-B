@@ -1,9 +1,8 @@
 import { useMcpClient } from '@mcp-b/mcp-react-hooks';
 import { ArrowRight, Check, Copy, ShoppingCart } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { toast } from 'sonner';
 import FullSpecMcpB from '../assets/full-spec-mcp-b.svg?react';
 import LocalMcp from '../assets/local-mcp.svg?react';
 import MultiSiteWorkflow from '../assets/multi-site-workflow.svg?react';
@@ -72,23 +71,23 @@ const CodeBlock = ({ code, language }: { code: string; language: string }) => {
 };
 
 const BlogPost = () => {
-  const { client, isConnected } = useMcpClient();
-  const [demoState, setDemoState] = useState({
-    authFlowDemo: false,
-  });
+  const { isConnected } = useMcpClient();
+  // const [, setDemoState] = useState({
+  //   authFlowDemo: false,
+  // });
 
-  const runDemo = async (demoName: string) => {
-    if (!client || !isConnected) {
-      toast.error('mcp-b extension not detected. Install it to try the demos!');
-      return;
-    }
+  // const runDemo = async (demoName: string) => {
+  //   if (!client || !isConnected) {
+  //     toast.error('mcp-b extension not detected. Install it to try the demos!');
+  //     return;
+  //   }
 
-    if (demoName === 'authFlow') {
-      // Placeholder for auth flow comparison demo
-      setDemoState((prev) => ({ ...prev, authFlowDemo: true }));
-      toast.success('Authentication flow demo completed!');
-    }
-  };
+  //   if (demoName === 'authFlow') {
+  //     // Placeholder for auth flow comparison demo
+  //     setDemoState((prev) => ({ ...prev, authFlowDemo: true }));
+  //     toast.success('Authentication flow demo completed!');
+  //   }
+  // };
 
   return (
     <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16 pb-20 sm:pb-24 lg:pb-32">
@@ -276,9 +275,9 @@ const BlogPost = () => {
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-const server = new McpServer({ 
+const server = new McpServer({
   name: 'invoice-system',
-  version: '1.0.0' 
+  version: '1.0.0'
 });
 
 server.tool('createInvoice', 'Create a new invoice', {
@@ -294,7 +293,7 @@ server.tool('createInvoice', 'Create a new invoice', {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ customerEmail, items })
   });
-  
+
   if (!response.ok) {
     throw new Error(\`Failed to create invoice: \${response.statusText}\`);
   }

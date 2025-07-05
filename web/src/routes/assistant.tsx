@@ -1,13 +1,12 @@
 import { AssistantRuntimeProvider } from '@assistant-ui/react';
 import { useChatRuntime } from '@assistant-ui/react-ai-sdk';
 import { McpClientProvider } from '@mcp-b/mcp-react-hooks';
-import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { ListTodo, MessageSquare, Server } from 'lucide-react';
 import { AppSidebar } from '../components/app-sidebar';
 import { AppSidebarMobile } from '../components/app-sidebar-mobile';
 import { Thread } from '../components/assistant-ui/thread';
-import { PageHeader } from '../components/PageHeader';
 import Todos from '../components/Todos';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '../components/ui/sidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
