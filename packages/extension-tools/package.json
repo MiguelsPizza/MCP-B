@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/extension-tools",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "Chrome Extension API tools for Model Context Protocol (MCP) - provides MCP-compatible wrappers for browser extension APIs",
   "license": "MIT",
   "author": "Alex Nahas",

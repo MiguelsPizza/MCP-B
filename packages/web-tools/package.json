@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/web-tools",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "description": "Browser API tools for Model Context Protocol (MCP) - provides MCP-compatible wrappers for browser APIs",
   "license": "MIT",
   "author": "Alex Nahas",
