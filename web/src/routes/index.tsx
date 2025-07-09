@@ -22,12 +22,13 @@ import {
   Workflow,
   Zap,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import MP4 from "../assets/Landing page video.mp4"
 
 export const Route = createFileRoute('/')({
   component: IndexRoute,
@@ -88,6 +89,99 @@ const CodeBlock = ({ code, language }: { code: string; language: string }) => {
           {code}
         </SyntaxHighlighter>
       </div>
+    </div>
+  );
+};
+
+// Lazy Video Component with Intersection Observer
+const LazyVideo = ({ src, poster, className }: { src: string; poster: string; className: string }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isInView, setIsInView] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsInView(true);
+            observer.disconnect();
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '50px',
+      }
+    );
+
+    if (videoRef.current) {
+      observer.observe(videoRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    // Set loading to false if video is already in view and loaded
+    if (isInView && videoRef.current?.readyState === 4) {
+      setIsLoading(false);
+    }
+  }, [isInView]);
+
+  const handleLoadedData = () => {
+    setIsLoading(false);
+  };
+
+  const handleCanPlay = () => {
+    setIsLoading(false);
+  };
+
+  const handleError = () => {
+    setHasError(true);
+    setIsLoading(false);
+  };
+
+  if (hasError) {
+    return (
+      <div className={`${className} flex items-center justify-center bg-muted/20`}>
+        <div className="text-center p-8">
+          <PlayCircle className="h-12 w-12 text-muted-foreground mb-2 mx-auto" />
+          <p className="text-sm text-muted-foreground">Unable to load video</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full h-full">
+      {isLoading && isInView && (
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/20 animate-pulse z-10">
+          <div className="text-center">
+            <div className="inline-flex p-4 rounded-full bg-muted/30 mb-2">
+              <PlayCircle className="h-8 w-8 text-muted-foreground animate-pulse" />
+            </div>
+            <p className="text-xs text-muted-foreground">Loading video...</p>
+          </div>
+        </div>
+      )}
+      <video
+        ref={videoRef}
+        autoPlay={isInView}
+        muted
+        loop
+        playsInline
+        className={`${className} ${isLoading && isInView ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+        poster={poster}
+        preload={isInView ? 'auto' : 'none'}
+        onLoadedData={handleLoadedData}
+        onCanPlay={handleCanPlay}
+        onError={handleError}
+      >
+        {isInView && <source src={src} type="video/mp4" />}
+        Your browser does not support the video tag.
+      </video>
     </div>
   );
 };
@@ -221,34 +315,103 @@ function IndexRoute() {
 
       {/* Demo Video Section */}
       <section className="px-4 py-20 relative overflow-hidden border-t">
-        <div className="container mx-auto max-w-4xl relative">
-          <div className="mb-8 text-center">
+        <div className="container mx-auto max-w-5xl relative">
+          <div className="mb-12 text-center">
+            <Badge className="mb-4 bg-gradient-to-r from-primary/10 to-blue-600/10 border-primary/20 backdrop-blur-sm">
+              <PlayCircle className="mr-1 h-3 w-3 text-primary animate-pulse" />
+              Live Demo
+            </Badge>
             <h2 className="animate-fadeInUp mb-4 text-3xl font-bold sm:text-4xl bg-gradient-to-r from-foreground via-primary/80 to-foreground bg-clip-text text-transparent">
               See MCP-B in Action
             </h2>
             <p
-              className="animate-fadeInUp text-lg text-muted-foreground"
+              className="animate-fadeInUp text-lg text-muted-foreground max-w-2xl mx-auto"
               style={{ animationDelay: '100ms' }}
             >
-              Watch how AI assistants work across multiple websites with zero configuration
+              Watch how the MCP-B AI assistant seamlessly interacts with an MCP-B enabled website — no API keys, no OAuth, just pure productivity.
             </p>
           </div>
 
           <div className="animate-fadeInUp" style={{ animationDelay: '200ms' }}>
-            <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group">
-              <div className="aspect-video relative bg-gradient-to-br from-muted/30 to-muted/50 flex items-center justify-center overflow-hidden">
-                {/* Video Placeholder */}
-                <div className="text-center relative z-10">
-                  <div className="inline-flex p-4 rounded-full bg-gradient-to-br from-primary/20 to-blue-600/20 mb-4 group-hover:scale-110 transition-transform">
-                    <PlayCircle className="h-16 w-16 text-primary animate-pulse" />
+            <Card className="overflow-hidden border-2 border-primary/20 bg-gradient-to-br from-background/95 to-background/80 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 group shadow-2xl">
+              <div className="aspect-video relative bg-gradient-to-br from-muted/30 to-muted/50 overflow-hidden">
+                {/* Animated gradient background */}
+                <div className="absolute inset-0 opacity-30">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-blue-600/20 animate-gradient-shift" />
+                </div>
+                
+                {/* Gradient overlay for depth */}
+                <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent z-10 pointer-events-none" />
+                
+                {/* Video with performance optimizations */}
+                <LazyVideo
+                  src={MP4}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23020817;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%231e293b;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23020817;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23g)'/%3E%3C/svg%3E"
+                />
+                
+                {/* Corner badges */}
+                <div className="absolute top-4 left-4 z-20">
+                  <Badge className="bg-background/80 backdrop-blur-sm border-primary/20 text-primary">
+                    <PlayCircle className="h-3 w-3 mr-1" />
+                    Demo
+                  </Badge>
+                </div>
+              </div>
+              
+              {/* Video caption bar */}
+              <div className="p-4 bg-gradient-to-r from-muted/50 to-muted/30 backdrop-blur-sm border-t border-primary/10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-sm font-medium text-muted-foreground">Live Recording</span>
+                    </div>
+                    <Badge variant="secondary" className="text-xs">
+                      2 min demo
+                    </Badge>
                   </div>
-                  <p className="text-lg font-medium text-foreground/80">Demo Video Coming Soon</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Real-world workflows across multiple sites
-                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Sparkles className="h-3 w-3" />
+                      <span>Real-time AI automation</span>
+                    </div>
+                    <button
+                      className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+                      onClick={() => window.open(MP4, '_blank')}
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      <span>Open in new tab</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </Card>
+          </div>
+
+          {/* Key highlights below video */}
+          <div className="mt-8 grid gap-4 sm:grid-cols-3 max-w-3xl mx-auto">
+            <div className="text-center group">
+              <div className="inline-flex p-3 rounded-lg bg-gradient-to-br from-primary/10 to-blue-600/10 mb-2 group-hover:scale-110 transition-transform">
+                <Zap className="h-5 w-5 text-primary" />
+              </div>
+              <p className="text-sm font-medium">Instant Execution</p>
+              <p className="text-xs text-muted-foreground mt-1">Tasks complete in milliseconds</p>
+            </div>
+            <div className="text-center group">
+              <div className="inline-flex p-3 rounded-lg bg-gradient-to-br from-primary/10 to-blue-600/10 mb-2 group-hover:scale-110 transition-transform">
+                <Shield className="h-5 w-5 text-primary" />
+              </div>
+              <p className="text-sm font-medium">Secure by Default</p>
+              <p className="text-xs text-muted-foreground mt-1">Uses existing browser auth</p>
+            </div>
+            <div className="text-center group">
+              <div className="inline-flex p-3 rounded-lg bg-gradient-to-br from-primary/10 to-blue-600/10 mb-2 group-hover:scale-110 transition-transform">
+                <Code2 className="h-5 w-5 text-primary" />
+              </div>
+              <p className="text-sm font-medium">Zero Config</p>
+              <p className="text-xs text-muted-foreground mt-1">Works out of the box</p>
+            </div>
           </div>
         </div>
       </section>

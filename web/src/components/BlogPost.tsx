@@ -2,7 +2,7 @@ import { ArrowRight, Check, Copy, ExternalLink, Store } from 'lucide-react';
 import { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import GIF from '../assets/GIfdemo.gif';
+import GIF from '../assets/smaller.gif';
 import MultiSiteWorkflow from '../assets/multi-site-workflow.svg?react';
 import GIF2 from '../assets/Dynamic Tool Caching.gif';
 import FullArch from '../assets/FullArch.png';
