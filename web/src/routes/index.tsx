@@ -127,16 +127,15 @@ function IndexRoute() {
               className="animate-fadeInUp mb-4 max-w-3xl text-lg text-muted-foreground sm:text-xl"
               style={{ animationDelay: '200ms' }}
             >
-              MCP is great, but we're putting our servers in the wrong place. MCP-B runs servers
-              directly inside web pages, solving the authentication problem once and for all.
+              Today's AI automation is like using a robot to read your screen and click buttons.
+              MCP-B gives AI direct access to your website's functions instead.
             </p>
 
             <p
               className="animate-fadeInUp mb-12 max-w-2xl text-base text-muted-foreground"
               style={{ animationDelay: '250ms' }}
             >
-              Web browsers have spent decades solving authentication. Every web app already has it
-              built in. Why not use it? No OAuth flows, no API keys, no complex setups.
+              Add 50 lines of code and AI assistants work 1000x faster with zero configuration.
             </p>
 
             {/* Primary CTA buttons */}
@@ -269,8 +268,8 @@ function IndexRoute() {
               className="animate-fadeInUp text-lg text-muted-foreground max-w-3xl mx-auto"
               style={{ animationDelay: '100ms' }}
             >
-              Today's MCP servers run locally with API keys or in the cloud with complex OAuth. We
-              put them where authentication already lives — in the browser.
+              While other solutions take 10-20 seconds per action and cost $4-5 per task, MCP-B delivers 
+              instant results with zero configuration. The future of browser automation is here.
             </p>
           </div>
 
@@ -351,25 +350,25 @@ function IndexRoute() {
             {/* Problems Solved */}
             <div className="grid gap-8 lg:grid-cols-2">
               <Card
-                className="animate-fadeInUp border-destructive/20 bg-gradient-to-br from-destructive/5 via-background/95 to-background/80 backdrop-blur-sm hover:border-destructive/30 transition-all duration-300"
+                className="animate-fadeInUp border-primary/20 bg-gradient-to-br from-primary/5 via-background/95 to-background/80 backdrop-blur-sm hover:border-primary/30 transition-all duration-300"
                 style={{ animationDelay: '200ms' }}
               >
                 <div className="p-6">
                   <h3 className="mb-4 text-xl font-semibold flex items-center gap-2">
-                    <Lock className="h-5 w-5 text-destructive" />
-                    Solves MCP's Authentication Problem
+                    <Zap className="h-5 w-5 text-primary" />
+                    10,000x Performance Improvement
                   </h3>
                   <div className="space-y-3 text-muted-foreground">
-                    <p>Remote MCP's OAuth 2.1 requires:</p>
+                    <p>Traditional browser automation performance:</p>
                     <ul className="space-y-2 text-sm ml-4">
-                      <li>• Discovery endpoints & dynamic registration</li>
-                      <li>• PKCE for code interception prevention</li>
-                      <li>• Token refresh logic & audience validation</li>
-                      <li>• Complete auth layer reimplementation</li>
+                      <li>• 10-20 seconds per task</li>
+                      <li>• $4-5 in API costs per simple action</li>
+                      <li>• Multiple model calls for UI parsing</li>
+                      <li>• Brittle, unreliable execution</li>
                     </ul>
                     <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-primary/10 to-blue-600/10 border border-primary/20">
                       <p className="text-sm font-medium text-primary">
-                        MCP-B just calls your existing APIs — the browser handles everything.
+                        MCP-B executes the same tasks in milliseconds with direct API calls.
                       </p>
                     </div>
                   </div>
@@ -377,25 +376,25 @@ function IndexRoute() {
               </Card>
 
               <Card
-                className="animate-fadeInUp border-orange-600/20 bg-gradient-to-br from-orange-600/5 via-background/95 to-background/80 backdrop-blur-sm hover:border-orange-600/30 transition-all duration-300"
+                className="animate-fadeInUp border-blue-600/20 bg-gradient-to-br from-blue-600/5 via-background/95 to-background/80 backdrop-blur-sm hover:border-blue-600/30 transition-all duration-300"
                 style={{ animationDelay: '300ms' }}
               >
                 <div className="p-6">
                   <h3 className="mb-4 text-xl font-semibold flex items-center gap-2">
-                    <Eye className="h-5 w-5 text-orange-600" />
-                    Fixes Browser Automation's Brittleness
+                    <Lock className="h-5 w-5 text-blue-600" />
+                    Authentication That Actually Works
                   </h3>
                   <div className="space-y-3 text-muted-foreground">
-                    <p>Traditional browser automation:</p>
+                    <p>Why MCP-B solves auth elegantly:</p>
                     <ul className="space-y-2 text-sm ml-4">
-                      <li>• Relies on visual parsing & screenshots</li>
-                      <li>• Breaks with UI changes</li>
-                      <li>• Slow and error-prone</li>
-                      <li>• Complex selector maintenance</li>
+                      <li>• Uses your existing browser sessions</li>
+                      <li>• No OAuth 2.1 implementation needed</li>
+                      <li>• No API keys to manage or distribute</li>
+                      <li>• Respects existing permission models</li>
                     </ul>
                     <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-primary/10 to-blue-600/10 border border-primary/20">
                       <p className="text-sm font-medium text-primary">
-                        MCP-B provides direct API access — no screen scraping required.
+                        Your existing APIs work out of the box — the browser handles everything.
                       </p>
                     </div>
                   </div>
@@ -569,8 +568,8 @@ function IndexRoute() {
               className="animate-fadeInUp text-lg text-muted-foreground max-w-2xl mx-auto"
               style={{ animationDelay: '100ms' }}
             >
-              No OAuth flows, no API keys, no complex configuration. Just write a few lines of code
-              and your website becomes AI-ready.
+              No OAuth flows, no API keys, no complex configuration. Just ~50 lines of code
+              and your website becomes AI-ready in minutes, not days.
             </p>
           </div>
 
@@ -1268,9 +1267,14 @@ await server.connect(transport);`}
 
 const features = [
   {
-    icon: Lock,
-    title: 'Authentication Solved',
-    description: 'Uses existing browser sessions. No OAuth 2.1 complexity, no API keys to manage.',
+    icon: Zap,
+    title: 'Lightning Fast Performance',
+    description: 'Direct API calls in milliseconds vs 10-20 seconds for screen scraping automation.',
+  },
+  {
+    icon: FileCode,
+    title: 'Zero Configuration',
+    description: 'Add ~50 lines of code to your website. No OAuth flows, no API keys, no complex setup.',
   },
   {
     icon: Workflow,
@@ -1279,24 +1283,19 @@ const features = [
       "AI seamlessly works across multiple sites using each site's existing permissions.",
   },
   {
+    icon: Network,
+    title: 'Extensible Platform',
+    description: 'Acts as an MCP hub that other AI extensions can connect to and extend.',
+  },
+  {
     icon: Shield,
-    title: 'Enterprise Control',
+    title: 'Secure by Design',
     description:
       'MCP server is part of your app, running your code, respecting your access controls.',
   },
   {
-    icon: FileCode,
-    title: 'API-First Design',
-    description: 'Direct access to structured data. No screen scraping, no brittle selectors.',
-  },
-  {
-    icon: Zap,
-    title: 'Instant Deployment',
-    description: 'Add to existing web apps with ~50 lines of code. No infrastructure changes.',
-  },
-  {
-    icon: Network,
-    title: 'Extensible Platform',
-    description: 'Acts as an MCP hub that other AI extensions can connect to and extend.',
+    icon: Lock,
+    title: 'Authentication Just Works',
+    description: 'Uses existing browser sessions. No OAuth 2.1 complexity, no API keys to manage.',
   },
 ];

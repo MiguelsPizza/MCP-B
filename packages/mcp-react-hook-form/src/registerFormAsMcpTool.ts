@@ -92,7 +92,7 @@ export function registerFormAsMcpTool<TSchema extends ZodObject<ZodRawShape>>(
   };
 
   // Register the tool
-  const tool = mcpServer.tool(toolName, schema.shape, toolHandler);
+  const tool = mcpServer.tool(toolName as any, schema.shape as any, toolHandler as any);
 
   // Add metadata if provided
   if (options?.title || options?.description) {

@@ -4,9 +4,12 @@ import { McpClientProvider } from '@mcp-b/mcp-react-hooks';
 import { createFileRoute } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { ListTodo, MessageSquare, Server } from 'lucide-react';
+import { useState } from 'react';
 import { AppSidebar } from '../components/app-sidebar';
 import { AppSidebarMobile } from '../components/app-sidebar-mobile';
 import { Thread } from '../components/assistant-ui/thread';
+import { CacheToggle } from '../components/CacheToggle';
+import { PageHeader } from '../components/PageHeader';
 import Todos from '../components/Todos';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '../components/ui/sidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -43,6 +46,7 @@ const Assistant = () => {
   if (isMobile) {
     return (
       <div className="h-[100dvh] relative bg-background flex flex-col">
+        <CacheToggle onToggle={() => {}} />
         <AssistantRuntimeProvider runtime={runtime}>
           <Tabs defaultValue="tasks" className="flex-1 flex flex-col h-full">
             <TabsContent value="chat" className="flex-1 m-0 p-0 overflow-hidden">
@@ -99,6 +103,7 @@ const Assistant = () => {
   // Desktop layout (unchanged)
   return (
     <div className="min-h-screen relative bg-background">
+      <CacheToggle onToggle={() => {}} />
       <div className="absolute top-10 sm:top-20 left-5 sm:left-10 h-36 sm:h-72 w-36 sm:w-72 bg-gradient-to-br from-chart-1/30 to-chart-2/30 rounded-full blur-3xl animate-float-slow" />
       <div className="absolute bottom-10 sm:bottom-20 right-5 sm:right-10 h-48 sm:h-96 w-48 sm:w-96 bg-gradient-to-br from-chart-3/20 to-chart-4/20 rounded-full blur-3xl animate-float-delayed" />
 

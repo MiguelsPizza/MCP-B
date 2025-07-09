@@ -282,7 +282,10 @@ export class TabsApiTools extends BaseApiTools {
       async ({ tabId, url, active, pinned, muted }) => {
         try {
           if (tabId === undefined) {
-            const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            const [activeTab] = await chrome.tabs.query({
+              active: true,
+              currentWindow: true,
+            });
             if (!activeTab || !activeTab.id) {
               return this.formatError(new Error('No active tab found'));
             }
@@ -372,7 +375,10 @@ export class TabsApiTools extends BaseApiTools {
       async ({ tabId, direction }) => {
         try {
           if (tabId === undefined) {
-            const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            const [activeTab] = await chrome.tabs.query({
+              active: true,
+              currentWindow: true,
+            });
             if (!activeTab || !activeTab.id) {
               return this.formatError(new Error('No active tab found'));
             }
@@ -406,7 +412,10 @@ export class TabsApiTools extends BaseApiTools {
       async ({ tabId, bypassCache }) => {
         try {
           if (tabId === undefined) {
-            const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            const [activeTab] = await chrome.tabs.query({
+              active: true,
+              currentWindow: true,
+            });
             if (!activeTab || !activeTab.id) {
               return this.formatError(new Error('No active tab found'));
             }
@@ -429,7 +438,7 @@ export class TabsApiTools extends BaseApiTools {
       'extension_tool_capture_visible_tab',
       {
         description:
-          'Take a screenshot of the visible area of the currently active tab in a window',
+          'Take a screenshot of the visible area of the currently active tab in a window. Once the screenshot is captured',
         inputSchema: {
           windowId: z.number().optional().describe('Window ID (defaults to current window)'),
         },
@@ -440,6 +449,7 @@ export class TabsApiTools extends BaseApiTools {
             ? await chrome.tabs.captureVisibleTab(windowId, {})
             : await chrome.tabs.captureVisibleTab();
 
+          chrome.tabs.create({ url: dataUrl });
           return this.formatSuccess(
             `Screenshot captured (data URL length: ${dataUrl.length} characters)`
           );
@@ -462,7 +472,9 @@ export class TabsApiTools extends BaseApiTools {
       async ({ tabId }) => {
         try {
           const language = await chrome.tabs.detectLanguage(tabId!);
-          return this.formatSuccess(`Tab language detected: ${language}`, { language });
+          return this.formatSuccess(`Tab language detected: ${language}`, {
+            language,
+          });
         } catch (error) {
           return this.formatError(error);
         }
@@ -552,7 +564,9 @@ export class TabsApiTools extends BaseApiTools {
       async ({ tabId }) => {
         try {
           const zoomFactor = await chrome.tabs.getZoom(tabId!);
-          return this.formatSuccess(`Zoom factor: ${zoomFactor}`, { zoomFactor });
+          return this.formatSuccess(`Zoom factor: ${zoomFactor}`, {
+            zoomFactor,
+          });
         } catch (error) {
           return this.formatError(error);
         }
@@ -716,7 +730,9 @@ export class TabsApiTools extends BaseApiTools {
           }
 
           const window = await chrome.tabs.highlight(highlightInfo);
-          return this.formatSuccess(`Highlighted ${tabs.length} tab(s)`, { window });
+          return this.formatSuccess(`Highlighted ${tabs.length} tab(s)`, {
+            window,
+          });
         } catch (error) {
           return this.formatError(error);
         }

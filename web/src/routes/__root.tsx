@@ -1,5 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import { McpToolsProvider } from '@/hooks/McpToolsProvider';
 import { Toaster } from '../components/ui/sonner';
 import { queryClient } from '../lib/utils';
@@ -27,10 +28,35 @@ export const Route = createRootRoute({
   ),
 });
 
+const CACHE_STORAGE_KEY = 'mcp-tools-cache-enabled';
+
 function RootComponent() {
+  const [cacheEnabled, setCacheEnabled] = useState(() => {
+    const stored = localStorage.getItem(CACHE_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : false;
+  });
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const stored = localStorage.getItem(CACHE_STORAGE_KEY);
+      setCacheEnabled(stored ? JSON.parse(stored) : false);
+    };
+
+    // Listen for localStorage changes from other tabs/windows
+    window.addEventListener('storage', handleStorageChange);
+
+    // Also listen for custom events from same tab
+    window.addEventListener('cache-toggle-change', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('cache-toggle-change', handleStorageChange);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
-      <McpToolsProvider>
+      <McpToolsProvider cache={cacheEnabled}>
         <div className="w-full h-screen">
           <Outlet />
           <Toaster />

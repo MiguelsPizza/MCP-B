@@ -35,7 +35,6 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo",
     "prepublishOnly": "pnpm run build",

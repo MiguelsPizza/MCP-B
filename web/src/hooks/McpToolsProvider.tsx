@@ -1,14 +1,20 @@
-import { getErrorMessage, isApiError, todoApi } from '@/services/todoService';
 import type { RegisteredTool } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import type { Todo } from 'worker/db/schema';
 import { z } from 'zod';
+import { getErrorMessage, isApiError, todoApi } from '@/services/todoService';
 import { userId } from '../lib/utils';
 import { server } from '../TabServer';
 // Component to handle MCP tool registration
-export function McpToolsProvider({ children }: { children: React.ReactNode }) {
+export function McpToolsProvider({
+  children,
+  cache = false,
+}: {
+  children: React.ReactNode;
+  cache?: boolean;
+}) {
   const navigate = useNavigate({ from: '/assistant' });
   const registeredToolsRef = useRef<Map<string, RegisteredTool>>(new Map());
 
@@ -23,11 +29,22 @@ export function McpToolsProvider({ children }: { children: React.ReactNode }) {
 
     // Create Todo Tool
     try {
-      const createTodoTool = server.tool(
+      const createTodoTool = server.registerTool(
         'createTodo',
-        'Creates a new todo item for the current user',
         {
-          todoText: z.string().describe('The content of the todo item.'),
+          title: 'Create Todo',
+          description: 'Creates a new todo item for the current user',
+          inputSchema: {
+            todoText: z.string().describe('The content of the todo item.') as any,
+          },
+          annotations: {
+            title: 'Create Todo',
+            readOnlyHint: false,
+            destructiveHint: false,
+            idempotentHint: false,
+            openWorldHint: false,
+            cache,
+          },
         },
         async (args) => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
@@ -78,13 +95,24 @@ export function McpToolsProvider({ children }: { children: React.ReactNode }) {
 
     // Update Todo Tool
     try {
-      const updateTodoTool = server.tool(
+      const updateTodoTool = server.registerTool(
         'updateTodo',
-        "Updates an existing todo item's text or completion status",
         {
-          id: z.string().uuid().describe('The ID of the todo to update.'),
-          text: z.string().min(1).max(1000).optional().describe('The new text for the todo.'),
-          completed: z.boolean().optional().describe('The new completion status.'),
+          title: 'Update Todo',
+          description: "Updates an existing todo item's text or completion status",
+          inputSchema: {
+            id: z.string().uuid().describe('The ID of the todo to update.'),
+            text: z.string().min(1).max(1000).optional().describe('The new text for the todo.'),
+            completed: z.boolean().optional().describe('The new completion status.'),
+          },
+          annotations: {
+            title: 'Update Todo',
+            readOnlyHint: false,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: false,
+            cache: cache,
+          },
         },
         async (args) => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
@@ -147,11 +175,23 @@ export function McpToolsProvider({ children }: { children: React.ReactNode }) {
 
     // Delete Todo Tool
     try {
-      const deleteTodoTool = server.tool(
+      const deleteTodoTool = server.registerTool(
         'deleteTodo',
-        'Permanently deletes a todo item by its ID',
         {
-          id: z.string().uuid().describe('The ID of the todo to delete.'),
+          title: 'Delete Todo',
+          description: 'Permanently deletes a todo item by its ID',
+          inputSchema: {
+            id: z.string().uuid().describe('The ID of the todo to delete.'),
+          },
+          annotations: {
+            title: 'Delete Todo',
+            readOnlyHint: false,
+            destructiveHint: true,
+            idempotentHint: true,
+            openWorldHint: false,
+            cache: cache,
+          },
+          // ...(cache && { _meta: { cache: true } }),
         },
         async (args) => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
@@ -190,10 +230,21 @@ export function McpToolsProvider({ children }: { children: React.ReactNode }) {
 
     // Delete All Todos Tool
     try {
-      const deleteAllTodosTool = server.tool(
+      const deleteAllTodosTool = server.registerTool(
         'deleteAllTodos',
-        'Permanently deletes all todo items for the current user',
-        {},
+        {
+          title: 'Delete All Todos',
+          description: 'Permanently deletes all todo items for the current user',
+          inputSchema: {},
+          annotations: {
+            title: 'Delete All Todos',
+            readOnlyHint: false,
+            destructiveHint: true,
+            idempotentHint: true,
+            openWorldHint: false,
+            cache: cache,
+          },
+        },
         async () => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
 
@@ -238,31 +289,49 @@ export function McpToolsProvider({ children }: { children: React.ReactNode }) {
 
     // Get Todos Tool
     try {
-      const getTodosTool = server.tool(
+      const getTodosTool = server.registerTool(
         'getTodos',
-        'Retrieves a list of todos for the current user with filtering, sorting, and pagination options',
         {
-          completed: z
-            .boolean()
-            .optional()
-            .default(false)
-            .describe('Filter todos by completion status'),
-          sortBy: z
-            .enum(['text', 'completed', 'created_at', 'updated_at'])
-            .optional()
-            .default('text')
-            .describe('Field to sort by'),
-          sortOrder: z.enum(['asc', 'desc']).optional().default('asc').describe('Sort order'),
-          limit: z
-            .number()
-            .int()
-            .positive()
-            .max(100)
-            .optional()
-            .default(50)
-            .describe('Maximum number of todos to return'),
-          offset: z.number().int().min(0).optional().default(0).describe('Number of todos to skip'),
-          search: z.string().optional().default('').describe('Search text within todo text'),
+          title: 'Get Todos',
+          description:
+            'Retrieves a list of todos for the current user with filtering, sorting, and pagination options',
+          inputSchema: {
+            completed: z
+              .boolean()
+              .optional()
+              .default(false)
+              .describe('Filter todos by completion status'),
+            sortBy: z
+              .enum(['text', 'completed', 'created_at', 'updated_at'])
+              .optional()
+              .default('text')
+              .describe('Field to sort by'),
+            sortOrder: z.enum(['asc', 'desc']).optional().default('asc').describe('Sort order'),
+            limit: z
+              .number()
+              .int()
+              .positive()
+              .max(100)
+              .optional()
+              .default(50)
+              .describe('Maximum number of todos to return'),
+            offset: z
+              .number()
+              .int()
+              .min(0)
+              .optional()
+              .default(0)
+              .describe('Number of todos to skip'),
+            search: z.string().optional().default('').describe('Search text within todo text'),
+          },
+          annotations: {
+            title: 'Get Todos',
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: false,
+            cache: cache,
+          },
         },
         async (args) => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
@@ -315,11 +384,22 @@ export function McpToolsProvider({ children }: { children: React.ReactNode }) {
 
     // Get Single Todo Tool
     try {
-      const getTodoTool = server.tool(
+      const getTodoTool = server.registerTool(
         'getTodo',
-        'Retrieves a specific todo item by its ID',
         {
-          id: z.string().uuid().describe('The ID of the todo to retrieve.'),
+          title: 'Get Todo',
+          description: 'Retrieves a specific todo item by its ID',
+          inputSchema: {
+            id: z.string().uuid().describe('The ID of the todo to retrieve.'),
+          },
+          annotations: {
+            title: 'Get Todo',
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: false,
+            cache: cache,
+          },
         },
         async (args) => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
@@ -360,7 +440,7 @@ export function McpToolsProvider({ children }: { children: React.ReactNode }) {
       });
       registeredToolsRef.current.clear();
     };
-  }, [navigate]);
+  }, [navigate, cache]);
 
   return <>{children}</>;
 }
