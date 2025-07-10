@@ -32,8 +32,7 @@ extension/chrome
 web/.tanstack
 .claude
 
-# Exclude extension from initial release
-# extension/
+# Extension is now open source and included in repo
 extension/.tanstack
 local-server/node_modules
 local-server/dist

@@ -453,7 +453,7 @@ server.tool('comparePrices', 'Search for product prices across retailers', {
           realize that if you give a model 100 tools and ask it to do something where only one of
           them would be the right one to use, it's unlikely for things to go well. That's not
           surprising. If I asked you to build a table and gave you a Home Depot you probably would
-          have a harder time than if I gave you a saw, a hammer and some nails.
+          have a harder time than if I gave you a saw, a hammer, wood, and some nails.
         </p>
 
         <p className="leading-relaxed sm:leading-loose text-sm sm:text-lg mb-3 sm:mb-6">
