@@ -116,6 +116,10 @@ Try MCP-B with our live demo:
 2. Visit our [demo application](https://mcp-b.ai)
 3. Open the extension and interact with the page through AI
 
+## Other Examples
+
+- [MCP-B with Vue Example](https://github.com/bestian/vue-MCP-B-demo) Thanks to [bestian](https://github.com/bestian)!
+
 ## Installation
 
 ### For Users
