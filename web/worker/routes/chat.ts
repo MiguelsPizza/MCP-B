@@ -1,9 +1,9 @@
 import { createOpenAI } from '@ai-sdk/openai';
 import { frontendTools } from '@assistant-ui/react-ai-sdk';
+import { zValidator } from '@hono/zod-validator';
 import { streamText } from 'ai';
 import { Hono } from 'hono';
 import { z } from 'zod';
-import { zValidator } from '../zValidator';
 
 /**
  * Request body schema for chat endpoint

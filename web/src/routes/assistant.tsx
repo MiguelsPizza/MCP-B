@@ -4,12 +4,10 @@ import { McpClientProvider } from '@mcp-b/mcp-react-hooks';
 import { createFileRoute } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { ListTodo, MessageSquare, Server } from 'lucide-react';
-import { useState } from 'react';
 import { AppSidebar } from '../components/app-sidebar';
 import { AppSidebarMobile } from '../components/app-sidebar-mobile';
 import { Thread } from '../components/assistant-ui/thread';
 import { CacheToggle } from '../components/CacheToggle';
-import { PageHeader } from '../components/PageHeader';
 import Todos from '../components/Todos';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '../components/ui/sidebar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -24,7 +22,7 @@ import {
 
 const Assistant = () => {
   const runtime = useChatRuntime({
-    api: import.meta.env.VITE_API_URL || '/api/chat',
+    api: '/api/chat',
   });
 
   const navigate = Route.useNavigate();

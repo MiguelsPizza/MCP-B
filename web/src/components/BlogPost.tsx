@@ -714,12 +714,6 @@ server.registerTool("pageSpecific", {
           model access to that, there's not much damage they can do.
         </p>
 
-        <p className="leading-relaxed sm:leading-loose text-sm sm:text-lg mb-3 sm:mb-6">
-          It's also worth mentioning that OAuth2.1 is basically incompatible with internal Auth at
-          Amazon (where I work). I won't go to much into this, but the implications of this reach
-          beyond Amazon internal.
-        </p>
-
         <h2 className="text-xl sm:text-3xl font-bold mt-8 sm:mt-14 lg:mt-16 mb-4 sm:mb-8">
           Security & Trust Model
         </h2>
@@ -859,25 +853,6 @@ await server.connect(new TabServerTransport({ allowedOrigins: ['*'] }));`}
         </h2>
 
         <p className="leading-relaxed sm:leading-loose text-sm sm:text-lg mb-3 sm:mb-6">
-          <a
-            href="https://www.dwarkesh.com/p/timelines-june-2025"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 dark:text-blue-400 underline hover:opacity-80 break-words"
-          >
-            Dwarkesh Patel recently wrote
-          </a>{' '}
-          what we're all thinking about computer use:
-        </p>
-        <blockquote>
-          <p>"It works great until it doesn't work at all. Then it's worse than useless."</p>
-        </blockquote>
-        <p>
-          He benchmarked it - 44 seconds and $4-5 to do a simple search. That's not a tool, that's a
-          very expensive party trick.
-        </p>
-
-        <p className="leading-relaxed sm:leading-loose text-sm sm:text-lg mb-3 sm:mb-6">
           There are several players trying to solve browser automation for AI:
         </p>
         <ul className="list-disc pl-4 sm:pl-6 space-y-2 mb-4 sm:mb-6">
@@ -925,12 +900,6 @@ await server.connect(new TabServerTransport({ allowedOrigins: ['*'] }));`}
           had, not the models we actually have.
         </p>
 
-        <p className="leading-relaxed sm:leading-loose text-sm sm:text-lg mb-3 sm:mb-6 break-words hyphens-auto">
-          Dwarkesh nails it:
-        </p>
-        <blockquote>
-          <p>"Computers have APIs. Computers call APIs. That's what computers do."</p>
-        </blockquote>
         <p>So why are we teaching them to cosplay as humans clicking buttons?</p>
         <p className="leading-relaxed sm:leading-loose text-sm sm:text-lg mb-3 sm:mb-6 break-words hyphens-auto">
           Think about what these approaches are really asking:
@@ -947,16 +916,6 @@ await server.connect(new TabServerTransport({ allowedOrigins: ['*'] }));`}
         <p className="leading-relaxed sm:leading-loose text-sm sm:text-lg mb-3 sm:mb-6 break-words hyphens-auto">
           One of these is not like the others.
         </p>
-
-        <p className="leading-relaxed sm:leading-loose text-sm sm:text-lg mb-3 sm:mb-6 break-words hyphens-auto">
-          Look at the latency difference Dwarkesh measured:
-        </p>
-
-        <ul className="list-disc pl-4 sm:pl-6 space-y-2 mb-4 sm:mb-6 min-w-0 overflow-hidden">
-          <li>Computer use: 10-20 seconds per action (44 seconds for a simple task)</li>
-          <li>Playwright MCP: 1-2 seconds per action</li>
-          <li>MCP-B: Milliseconds (it's just a function call)</li>
-        </ul>
 
         <p className="leading-relaxed sm:leading-loose text-sm sm:text-lg mb-3 sm:mb-6 break-words hyphens-auto">
           But speed isn't even the main advantage. The real win is determinism. When you call{' '}

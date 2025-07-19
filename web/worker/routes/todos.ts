@@ -1,3 +1,4 @@
+import { zValidator } from '@hono/zod-validator';
 import { and, asc, desc, eq, like } from 'drizzle-orm';
 import { Hono } from 'hono';
 import postgres from 'postgres';
@@ -5,7 +6,6 @@ import * as schema from '../db/schema';
 import { createTodoSchema, todoQuerySchema, updateTodoSchema } from '../db/schema';
 import { createDatabase, ensureUserExists } from '../lib/database';
 import { handleDatabaseError, NotFoundError } from '../lib/error-handler';
-import { zValidator } from '../zValidator';
 
 /**
  * Todos route handler

@@ -29,7 +29,7 @@ export function useAssistantMCP(mcpTools: McpTool[], client: Client, threadId: s
       fallback: {},
     });
 
-  console.log('storedPreferences', storedPreferences);
+  // console.log('storedPreferences', storedPreferences);
 
   // Filter tools based on thread preferences
   const filteredTools = useMemo(() => {

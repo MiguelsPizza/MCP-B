@@ -8,6 +8,7 @@ export default defineBackground({
     const hub = new McpHub('Extension');
 
     const nativeHub = new McpHub('Native', serverTransport);
+
     nativeHub.connectToBridge();
 
     initNativeHostListener(clientTransport);

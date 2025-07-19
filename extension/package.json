@@ -1,5 +1,5 @@
 {
-  "name": "@mcp-b/mcp-b-extension",
+  "name": "@mcp-b/extension",
   "description": "AI-powered browser assistant with Model Context Protocol integration for enhanced web interactions",
   "private": true,
   "version": "0.0.3",
@@ -58,6 +58,7 @@
     "@trpc/tanstack-react-query": "^11.0.0",
     "@wxt-dev/module-react": "^1.1.2",
     "@wxt-dev/storage": "^1.1.1",
+    "@mcp-b/protocol": "workspace:*",
     "ai": "catalog:",
     "arktype": "^2.1.11",
     "babel-plugin-react-compiler": "19.0.0-beta-3229e95-20250315",

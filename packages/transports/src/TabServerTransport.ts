@@ -31,7 +31,6 @@ export class TabServerTransport implements Transport {
     }
 
     this._messageHandler = (event: MessageEvent) => {
-      console.log({ event });
       // Security: validate origin
       if (!this._allowedOrigins.includes(event.origin) && !this._allowedOrigins.includes('*')) {
         return;

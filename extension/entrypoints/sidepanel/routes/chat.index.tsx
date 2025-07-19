@@ -20,21 +20,24 @@ import { ThreadList } from '@/entrypoints/sidepanel/components/assistant-ui/thre
 import { ToolSelector } from '@/entrypoints/sidepanel/components/tool-selector';
 import { Button } from '@/entrypoints/sidepanel/components/ui/button';
 import { client, transport } from '../lib/client';
+import { config } from '../lib/config';
 
 const Chat = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
   const runtime = useChatRuntime({
-    api: import.meta.env.VITE_API_URL || 'https://my-react-app.alexmnahas.workers.dev/api/chat',
-    maxSteps: 5,
+    api: config.api.fullChatUrl,
+    maxSteps: config.features.maxChatSteps,
     onError: (error) => {
-      console.error('[Chat] Error:', error);
+      if (config.features.enableDebugLogging) {
+        console.error('[Chat] Error:', error);
+      }
       throw error;
     },
   });
 
   return (
-    <McpClientProvider client={client} transport={transport}>
+    <McpClientProvider client={client} transport={transport} opts={{}}>
       <AssistantRuntimeProvider runtime={runtime}>
         {isToolSelectorOpen ? (
           // Tool selector view
