@@ -2,7 +2,7 @@
   "name": "@mcp-b/extension",
   "description": "AI-powered browser assistant with Model Context Protocol integration for enhanced web interactions",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "UNLICENSED",
   "type": "module",
   "engines": {
