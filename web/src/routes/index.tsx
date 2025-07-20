@@ -28,7 +28,7 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import MP4 from "../assets/Landing page video.mp4"
+import MP4 from '../assets/Landing page video.mp4';
 
 export const Route = createFileRoute('/')({
   component: IndexRoute,
@@ -94,7 +94,15 @@ const CodeBlock = ({ code, language }: { code: string; language: string }) => {
 };
 
 // Lazy Video Component with Intersection Observer
-const LazyVideo = ({ src, poster, className }: { src: string; poster: string; className: string }) => {
+const LazyVideo = ({
+  src,
+  poster,
+  className,
+}: {
+  src: string;
+  poster: string;
+  className: string;
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isInView, setIsInView] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -328,7 +336,8 @@ function IndexRoute() {
               className="animate-fadeInUp text-lg text-muted-foreground max-w-2xl mx-auto"
               style={{ animationDelay: '100ms' }}
             >
-              Watch how the MCP-B AI assistant seamlessly interacts with an MCP-B enabled website — no API keys, no OAuth, just pure productivity.
+              Watch how the MCP-B AI assistant seamlessly interacts with an MCP-B enabled website —
+              no API keys, no OAuth, just pure productivity.
             </p>
           </div>
 
@@ -339,17 +348,17 @@ function IndexRoute() {
                 <div className="absolute inset-0 opacity-30">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-blue-600/20 animate-gradient-shift" />
                 </div>
-                
+
                 {/* Gradient overlay for depth */}
                 <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent z-10 pointer-events-none" />
-                
+
                 {/* Video with performance optimizations */}
                 <LazyVideo
                   src={MP4}
                   className="absolute inset-0 w-full h-full object-cover"
                   poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23020817;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%231e293b;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23020817;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1920' height='1080' fill='url(%23g)'/%3E%3C/svg%3E"
                 />
-                
+
                 {/* Corner badges */}
                 <div className="absolute top-4 left-4 z-20">
                   <Badge className="bg-background/80 backdrop-blur-sm border-primary/20 text-primary">
@@ -358,14 +367,16 @@ function IndexRoute() {
                   </Badge>
                 </div>
               </div>
-              
+
               {/* Video caption bar */}
               <div className="p-4 bg-gradient-to-r from-muted/50 to-muted/30 backdrop-blur-sm border-t border-primary/10">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5">
                       <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-sm font-medium text-muted-foreground">Live Recording</span>
+                      <span className="text-sm font-medium text-muted-foreground">
+                        Live Recording
+                      </span>
                     </div>
                     <Badge variant="secondary" className="text-xs">
                       2 min demo
@@ -431,8 +442,9 @@ function IndexRoute() {
               className="animate-fadeInUp text-lg text-muted-foreground max-w-3xl mx-auto"
               style={{ animationDelay: '100ms' }}
             >
-              While other solutions take 10-20 seconds per action and cost $4-5 per task, MCP-B delivers 
-              instant results with zero configuration. The future of browser automation is here.
+              While other solutions take 10-20 seconds per action and cost $4-5 per task, MCP-B
+              delivers instant results with zero configuration. The future of browser automation is
+              here.
             </p>
           </div>
 
@@ -731,8 +743,8 @@ function IndexRoute() {
               className="animate-fadeInUp text-lg text-muted-foreground max-w-2xl mx-auto"
               style={{ animationDelay: '100ms' }}
             >
-              No OAuth flows, no API keys, no complex configuration. Just ~50 lines of code
-              and your website becomes AI-ready in minutes, not days.
+              No OAuth flows, no API keys, no complex configuration. Just ~50 lines of code and your
+              website becomes AI-ready in minutes, not days.
             </p>
           </div>
 
@@ -1432,12 +1444,14 @@ const features = [
   {
     icon: Zap,
     title: 'Lightning Fast Performance',
-    description: 'Direct API calls in milliseconds vs 10-20 seconds for screen scraping automation.',
+    description:
+      'Direct API calls in milliseconds vs 10-20 seconds for screen scraping automation.',
   },
   {
     icon: FileCode,
     title: 'Zero Configuration',
-    description: 'Add ~50 lines of code to your website. No OAuth flows, no API keys, no complex setup.',
+    description:
+      'Add ~50 lines of code to your website. No OAuth flows, no API keys, no complex setup.',
   },
   {
     icon: Workflow,

@@ -52,12 +52,12 @@ function loadConfig(): Config {
 
     // Handle full chat URL override or construct from parts
     const chatUrlOverride = getEnvVar('VITE_CHAT_API_URL');
-    rawConfig.api.fullChatUrl = chatUrlOverride || 
-      `${rawConfig.api.baseUrl}${rawConfig.api.chatEndpoint}`;
+    rawConfig.api.fullChatUrl =
+      chatUrlOverride || `${rawConfig.api.baseUrl}${rawConfig.api.chatEndpoint}`;
 
     // Validate configuration
     const validatedConfig = ConfigSchema.parse(rawConfig);
-    
+
     // Log configuration in development mode if debug logging is enabled
     if (import.meta.env?.DEV && validatedConfig.features.enableDebugLogging) {
       console.log('[Config] Loaded configuration:', {
@@ -73,16 +73,16 @@ function loadConfig(): Config {
     return validatedConfig;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errorMessages = error.errors.map(err => 
-        `${err.path.join('.')}: ${err.message}`
-      ).join('\n');
-      
+      const errorMessages = error.errors
+        .map((err) => `${err.path.join('.')}: ${err.message}`)
+        .join('\n');
+
       throw new Error(
         `Invalid extension configuration:\n${errorMessages}\n\n` +
-        `Please check your environment variables in .env file.`
+          `Please check your environment variables in .env file.`
       );
     }
-    
+
     throw new Error(
       `Failed to load extension configuration: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
@@ -98,4 +98,4 @@ export const config: Config = loadConfig();
 /**
  * Re-export the Config type for use in other files
  */
-export type { Config as ExtensionConfig }; 
+export type { Config as ExtensionConfig };

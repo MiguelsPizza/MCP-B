@@ -1,13 +1,14 @@
 // McpHub.ts (further simplified with tabId-based naming)
 
-import { ExtensionServerTransport } from '@mcp-b/transports';
+import { ExtensionServerTransport, NATIVE_HOST, NativeServerTransport } from '@mcp-b/transports';
 import type { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { sanitizeToolName } from '@/entrypoints/sidepanel/components/McpServer/utils';
 import { RequestManager } from '../lib/utils'; // Assume this handles request IDs.
 import { ExtensionToolsService } from './ExtensionToolsService';
+import { connectNativeHost, initNativeHostListener } from './NativeHostManager';
 
 interface TabData {
   tools: Tool[];
@@ -24,8 +25,6 @@ export default class McpHub {
   private activeTabId: number | null = null;
   private requestManager = new RequestManager();
   private registeredTools = new Map<string, ReturnType<typeof this.server.registerTool>>();
-  private type: 'Extension' | 'Native';
-  private bridgeServerTransport?: InMemoryTransport;
   private pendingReopens = new Map<
     number,
     {
@@ -36,10 +35,8 @@ export default class McpHub {
     }
   >(); // For awaiting reopen registration.
 
-  constructor(type: 'Extension' | 'Native', transport?: InMemoryTransport) {
-    this.server = new McpServer({ name: 'Extension-Hub', version: '1.0.0' });
-    this.bridgeServerTransport = transport;
-    this.type = type;
+  constructor(server: McpServer) {
+    this.server = server;
     this.registerStaticTools();
     this.setupConnections();
     this.trackActiveTab();
@@ -73,15 +70,8 @@ export default class McpHub {
     chrome.runtime.onConnect.addListener((port) => {
       if (port.name === 'mcp-content-script-proxy') {
         this.handleContentScriptConnection(port);
-      } else if (port.name === 'mcp' && this.type === 'Extension') {
-        console.log('[MCP Hub] UI client connected');
-        const transport = new ExtensionServerTransport(port);
-        this.server.connect(transport);
       }
     });
-    if (this.type === 'Native' && this.bridgeServerTransport) {
-      this.server.connect(this.bridgeServerTransport);
-    }
   }
 
   private handleContentScriptConnection(port: chrome.runtime.Port) {
@@ -181,14 +171,6 @@ export default class McpHub {
         this.registeredTools.delete(toolName);
       }
     }
-  }
-
-  async connectToBridge() {
-    if (!this.bridgeServerTransport) {
-      throw new Error('Bridge server transport not found');
-    }
-    await this.server.connect(this.bridgeServerTransport);
-    console.log('[MCP Hub] Successfully connected to bridge');
   }
 
   private unregisterTab(domain: string, dataId: string) {

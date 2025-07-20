@@ -1,333 +1,204 @@
-# CLAUDE.md
+# MCP-B: Browser-Native MCP for Websites
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/daohopfhkdelnpemnhlekblhnikhdhfa?style=flat-square&label=Chrome%20Extension)](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa)
+[![npm version](https://img.shields.io/npm/v/@mcp-b/transports?style=flat-square)](https://www.npmjs.com/package/@mcp-b/transports)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/MiguelsPizza/WebMCP/ci.yml?style=flat-square)](https://github.com/MiguelsPizza/WebMCP/actions)
+[![GitHub stars](https://img.shields.io/github/stars/MiguelsPizza/WebMCP?style=flat-square)](https://github.com/MiguelsPizza/WebMCP/stargazers)
 
-## Common Commands
+[🚀 Quick Start](#quick-start) • [✨ Live Demo](#live-demo) • [📚 Documentation](https://mcp-b.ai) • [🤝 Contributing](#contributing)
 
-### Monorepo Development
+> MCP-B lets your website become an MCP server, exposing functionality as tools that AI agents can call directly—using the browser's existing authentication and security model.
 
-- `pnpm dev` - Start all packages in development mode concurrently
-- `pnpm build` - Build all packages using Turbo
-- `pnpm typecheck` - Run TypeScript checks across all packages
+## Live Demo
 
-### Package-Specific Commands
+See MCP-B in action right away:
 
-- **Web App**: `cd web && pnpm dev` (Vite development server)
-- **Extension**: `cd extension && pnpm dev` (WXT development)
+- **[Vanilla TypeScript Demo](./examples/vanilla-ts/)**: A simple todo app where MCP tools allow AI to manage tasks (e.g., add, update, delete todos). Run it locally: `cd examples/vanilla-ts && pnpm dev`. Visit the site, install the extension, and use the extension's chat or inspector to call tools like `getTodos` or `createTodo`.
+- **[React E-commerce Demo](./examples/react-shop/)**: Demonstrates exposing shopping cart operations as MCP tools (e.g., `addToCart`, `getCurrentCart`). Run locally: `cd examples/react-shop && pnpm dev`. Tools update the UI in real-time, showing how AI can interact with your app's state.
 
-### Database Operations (Web Package)
+These demos highlight how MCP-B integrates into websites without needing complex setups. Install the [MCP-B Chrome Extension](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa) to interact with the tools via the extension's chat interface or tool inspector.
 
-- `cd web && pnpm db:generate` - Generate Drizzle migrations
-- `cd web && pnpm db:migrate` - Run database migrations
-- `cd web && pnpm db:push` - Push schema changes to database
+## What is MCP-B?
 
-### Package Publishing
+MCP-B extends the Model Context Protocol (MCP) with browser-specific transports, allowing your website to act as an MCP server. Websites expose existing functionality (e.g., APIs, forms, or state) as structured tools that AI agents can call directly—no screen scraping, screenshots, or fragile automation required.
 
-- `pnpm build:packages` - Build all npm packages
-- `pnpm version:patch` - Bump patch version for all packages
-- `pnpm version:minor` - Bump minor version for all packages
-- `pnpm version:major` - Bump major version for all packages
-- `pnpm publish:dry` - Dry run to see what would be published
-- `pnpm publish:packages` - Publish all packages to npm
-- `pnpm publish:wizard` - Interactive publishing wizard
+Key components:
 
-### Deployment
+- **Tab Transports**: Use `postMessage` for communication between your website's MCP server and clients in the same tab.
+- **Extension Transports**: Use Chrome's runtime messaging for communication with browser extensions.
 
-- **Web App**: `cd web && pnpm deploy` (Cloudflare Workers)
-- **Extension**: `cd extension && pnpm build && pnpm zip`
+This setup enables AI to interact with your site deterministically, respecting user authentication (e.g., session cookies) and scoping tools to specific pages or user states.
 
-## Project Architecture
+## Why MCP-B?
 
-**mcp-b** is a monorepo implementing a **Browser-based Model Context Protocol (MCP) system** that enables AI assistants to interact with browser applications through standardized MCP tools. It solves the critical gap where most white-collar work happens in browsers, yet MCP's standard solution bypasses browsers entirely.
+Browser automation today relies on AI parsing visuals or DOMs to "click" elements, leading to slow, brittle workflows. MCP-B shifts to direct function calls:
 
-### Core Innovation
+| Traditional Automation                       | MCP-B                                           |
+| -------------------------------------------- | ----------------------------------------------- |
+| Slow round-trips for screenshots/DOM parsing | Fast, direct tool execution                     |
+| Breaks on UI changes                         | Stable APIs tied to your app logic              |
+| Black-box operations                         | Transparent, auditable calls with UI feedback   |
+| Limited to visible elements                  | Full access to app state and authenticated APIs |
 
-MCP-B runs MCP servers **directly inside web pages**, allowing AI agents to:
+For developers: Add MCP-B to make your site AI-ready. Users with the extension get seamless automation without extra configuration.
 
-- Use existing browser authentication (cookies, sessions, OAuth)
-- Access structured data through MCP tools instead of screen scraping
-- Orchestrate workflows across multiple web applications
-- Maintain security within the browser's existing permission model
+## Quick Start
 
-### Monorepo Structure
+Get MCP-B running on your website in minutes. This guide focuses on adding an MCP server to expose tools, using the examples as a blueprint.
 
-This is a **Turborepo** monorepo using **PNPM workspaces** with four main applications:
+### Prerequisites
 
-1. **Extension** (`/extension/`) - WXT-based browser extension with AI chat interface
-2. **Web** (`/web/`) - Demo todo app with MCP server integration
-3. **Packages** (`/packages/`) - Shared libraries and transports
+- Node.js 18+ and npm/pnpm.
+- A website with JavaScript (vanilla, React, etc.).
+- [MCP-B Chrome Extension](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa) installed for testing.
 
-### Core Technologies
-
-- **Build System**: Turborepo for task orchestration and caching
-- **Package Manager**: PNPM 10+ with workspaces
-- **Runtime**: Node.js 22+ with ESM modules
-- **Language**: TypeScript 5.8+ with strict type safety
-- **Code Quality**: ESLint + Prettier with auto-formatting on save
-
-### Extension Package (`/extension/`)
-
-**Technology Stack:**
-
-- **Framework**: WXT (Web Extension Toolkit) for cross-browser development
-- **UI**: React 19 + TanStack Router
-- **Styling**: TailwindCSS 4 + Radix UI components
-- **AI Integration**: Assistant-UI React components with AI SDK
-
-**Key Features:**
-
-- Side panel chat interface for AI interactions
-- Content scripts and background workers
-- Page bridge communication via `pageBridge.ts`
-- MCP client integration for browser-based AI tools
-
-### Web Package (`/web/`)
-
-**Technology Stack:**
-
-- **Frontend**: Vite + React 19 + TanStack Query
-- **Backend**: Hono framework on Cloudflare Workers
-- **Database**: Drizzle ORM with PostgreSQL/Cloudflare D1
-- **Real-time**: Electric SQL for data synchronization
-- **AI**: AI SDK with OpenAI and Google providers
-
-**Key Components:**
-
-- Chat interface with AI assistant (`/src/Assistant.tsx`)
-- Todo management with real-time sync (`/src/Todos.tsx`)
-- MCP server implementation (`/src/services/MCP.ts`)
-- Worker API routes (`/worker/routes/`)
-
-### Shared Packages (`/packages/`)
-
-**@mcp-b/transports:**
-
-- Custom MCP transport implementations for browser environments
-- `TabClientTransport` and `TabServerTransport` for in-page communication
-- `ExtensionClientTransport` for extension-to-page communication
-- Browser-specific message channel handling
-
-**@mcp-b/mcp-react-hooks:**
-
-- React hooks for MCP client integration
-- Works with `@assistant-ui/react` for AI chat interfaces
-- Automatic tool discovery and execution
-
-**@mcp-b/extension-tools:**
-
-- Chrome Extension API tools exposed via MCP
-- AI-powered code generation helpers
-
-### Local Server (`/local-server/`)
-
-**WebSocket Bridge:**
-
-- Enables MCP clients to connect to browser extensions
-- Solves the limitation that browser extensions cannot host WebSocket servers
-- Routes messages between multiple clients and extensions
-- Includes STDIO-to-WebSocket proxy for MCP Inspector compatibility
-
-### MCP Integration Architecture
-
-**Server Side** (`/web/src/services/MCP.ts`):
-
-- Exposes todo management tools to AI assistants
-- Tools: `createTodo`, `updateTodo`, `deleteTodo`, `getTodos`, etc.
-- Sort criteria management: `setSortCriteria`, `getSortCriteria`
-
-**Client Side** (Extension + Web):
-
-- MCP clients connect via custom browser transports
-- AI assistant executes todo operations through standardized MCP tools
-- Real-time synchronization with Electric SQL
-
-### Database Schema
-
-**Users Table:**
-
-- UUID primary key, username (unique), timestamps
-
-**Todos Table:**
-
-- UUID primary key, text content, completion status, user_id (FK), timestamps
-
-### Development Workflow
-
-1. **Concurrent Development**: Use `pnpm dev` to run all packages simultaneously
-2. **Type Safety**: Full-stack TypeScript with shared types across packages
-3. **Hot Reload**: Vite for web, WXT for extension development
-4. **Validation**: Zod schemas for API validation throughout
-
-### API Structure
-
-**Web Worker Routes** (`/web/worker/routes/`):
-
-- `/api/todos` - CRUD operations with filtering/sorting
-- `/api/users` - User management with auto-creation
-- `/api/chat` - AI chat endpoints
-- Electric SQL proxy routes for real-time sync
-
-### Key Files
-
-- `/turbo.json` - Turborepo configuration and task dependencies
-- `/web/src/services/MCP.ts` - MCP server and tool definitions
-- `/web/worker/db/schema.ts` - Database schema and types
-- `/extension/entrypoints/pageBridge.ts` - Browser communication bridge
-- `/extension/entrypoints/background/mcpHub.ts` - Central MCP hub for extension
-- `/web/src/hooks/useAssistantMCP.tsx` - MCP client React integration
-- `/local-server/src/bridge-server.ts` - WebSocket bridge implementation
-- `/packages/transports/src/` - Browser transport implementations
-
-## WebSocket Bridge Setup
-
-### Starting the Bridge
+### Step 1: Install Dependencies
 
 ```bash
-cd local-server
-pnpm bridge  # Starts on port 8021
+npm install @mcp-b/transports @modelcontextprotocol/sdk zod
 ```
 
-### Connecting MCP Clients
+### Step 2: Add an MCP Server to Your Website
 
-**MCP Inspector:**
+Create a single MCP server instance and connect it via Tab Transport. Expose tools that wrap your existing logic.
 
-```bash
-cd local-server
-pnpm inspect:bridge
-# Or manually:
-npx @modelcontextprotocol/inspector tsx src/index.ts ws://localhost:8021
-```
-
-**Claude Desktop (`claude_desktop_config.json`):**
-
-```json
-{
-  "mcpServers": {
-    "browser-extension": {
-      "command": "npx",
-      "args": ["@mcp-b/websocket-bridge", "stdio"]
-    }
-  }
-}
-```
-
-**Cursor (`.cursor/mcp.json`):**
-
-```json
-{
-  "mcpServers": {
-    "browser-extension": {
-      "type": "websocket",
-      "url": "ws://localhost:8021"
-    }
-  }
-}
-```
-
-### Extension Configuration
-
-In `extension/entrypoints/background/index.ts`, set:
+Example (vanilla JS/TypeScript):
 
 ```typescript
-new McpHub('ws'); // Enable WebSocket mode
+import { TabServerTransport } from "@mcp-b/transports";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { z } from "zod";
+
+// Create the server (one per site)
+const server = new McpServer({
+  name: "my-website",
+  version: "1.0.0",
+});
+
+// Expose a tool (wrap your app's logic)
+server.tool("getPageInfo", "Get current page info", {}, async () => {
+  return {
+    content: [
+      {
+        type: "text",
+        text: JSON.stringify({
+          title: document.title,
+          url: window.location.href,
+        }),
+      },
+    ],
+  };
+});
+
+// Connect the transport
+await server.connect(new TabServerTransport({ allowedOrigins: ["*"] })); // Adjust origins for security
 ```
 
-## Database Setup
+- **What this does**: The server listens for clients (e.g., the extension injects one). Tools like `getPageInfo` become callable by AI.
+- **Tips**: Use Zod for input schemas. Add visual feedback (e.g., notifications) so users see AI actions.
 
-### Development Database
+### Step 3: Test It
 
-1. Create `.dev.vars` file in `/web/` with:
+1. Run your site (e.g., via a dev server).
+2. Visit the page in Chrome with the MCP-B extension installed.
+3. Open the extension popup:
+   - Go to the "Tools" tab to see your exposed tools.
+   - Use the chat interface to ask AI to call them (e.g., "Get the page info").
+   - Or manually invoke via the inspector.
 
-   ```
-   DATABASE_URL=your-postgres-connection-string
-   ```
+### Step 4: Explore Examples
 
-2. Run migrations:
-   ```bash
-   cd web
-   pnpm db:migrate
-   ```
+The `./examples/` folder provides ready-to-run starters:
 
-### Production (Cloudflare D1)
+- **vanilla-ts**: Basic todo app. Tools: `createTodo`, `getTodos`, etc. Demonstrates dynamic tool registration and UI updates.
 
-- Database binding: `DB`
-- Database name: `prod-d1-tutorial`
-- Configure in `wrangler.jsonc`
+  - Run: `cd examples/vanilla-ts && pnpm dev`.
+  - What it does: AI can manage todos, with tools scoped to the page state.
 
-## Extension Architecture
+- **react-shop**: E-commerce cart demo. Tools: `addToCart`, `getCurrentCart`.
+  - Run: `cd examples/react-shop && pnpm dev`.
+  - What it does: Integrates with React state; tools fetch/update cart data using existing APIs.
 
-### Hub-and-Spoke Model
+Copy patterns from these to your site. Focus on wrapping client-side functions—e.g., use `fetch` with `credentials: 'same-origin'` for authenticated calls.
 
-1. **Content Scripts**: Discover MCP servers on web pages
-2. **Background Hub**: Aggregates tools from all tabs
-3. **Tool Namespacing**: Prefixes tools with `tab{id}_` to avoid conflicts
-4. **Domain Organization**: Groups tools by domain with deduplication
-5. **Dynamic Updates**: Tools register/unregister as tabs open/close
+For more, see the [documentation](https://mcp-b.ai).
 
-### Key Features
+## Building the Extension from Source
 
-- Automatic server discovery with exponential backoff
-- Request/response pattern with unique IDs
-- 30-second timeout for all operations
-- Built-in `list_active_tabs` tool
-- Visual indicators for active tabs
+For development builds:
 
-## Development Workflow
+1. Clone the repo: `git clone https://github.com/MiguelsPizza/WebMCP.git`.
+2. Install: `cd WebMCP && pnpm install`.
+3. Build the extension: `pnpm --filter extension build`.
+4. Load in Chrome: Go to `chrome://extensions/`, enable Developer Mode, and load `./extension/.output/chrome-mv3`.
 
-### Initial Setup
+This gives you the latest features for testing your MCP server.
+
+## Hooking Up the Native Host
+
+To connect MCP-B to local MCP clients (e.g., Claude Desktop or Cursor) via a native host:
+
+1. Install globally: `npm install -g @mcp-b/native-host`.
+2. Run the host: `@mcp-b/native-host` (it starts a server on port 12306).
+
+Add this to your MCP client config:
+
+```json
+{
+  "type": "streamable-http",
+  "url": "http://127.0.0.1:12306/mcp",
+  "note": "For Streamable HTTP connections, add this URL directly in your MCP Client"
+}
+```
+
+_Note_: The native server is mostly a clone of `mcp-chrome`. I plan to contribute it upstream when ready.
+
+## Advanced Usage
+
+- **Dynamic Tools**: Register/unregister tools based on page or user state (e.g., admin-only tools).
+- **Tool Caching**: Annotate tools with `{ annotations: { cache: true } }` to persist across tabs.
+- **Security**: Tools run in your page's context—only expose what you'd allow via UI. Use MCP's elicitation for sensitive ops (support coming soon).
+
+## Repository Structure
+
+```
+WebMCP/
+├── examples/                # Starter projects (vanilla-ts, react-shop)
+├── packages/                # Core libs (@mcp-b/transports, etc.)
+├── extension/               # Browser extension source
+└── web/                     # Demo site and docs
+```
+
+## Development
 
 ```bash
-# Install dependencies
+git clone https://github.com/MiguelsPizza/WebMCP.git
+cd WebMCP
 pnpm install
-
-# Build everything
-pnpm build
-
-# Start development
-pnpm dev
+pnpm dev  # Runs all in dev mode
 ```
 
-### Testing Extension with Bridge
+## Contributing
 
-1. Start bridge: `cd local-server && pnpm bridge`
-2. Build extension: `cd extension && pnpm build`
-3. Load `extension/.output/chrome-mv3` in Chrome
-4. Connect with Inspector: `cd local-server && pnpm inspect:bridge`
-5. Navigate to pages with MCP servers (e.g., the web demo app)
+Contributions welcome! Focus on transports, examples, or docs. See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-### Code Quality
+## Security & Trust
 
-- **Format on Save**: Configured in VSCode settings
-- **Import Sorting**: Automatic organization (React → Third-party → Aliases → Relative)
-- **Type Safety**: Strict TypeScript with no implicit any
-- **Linting**: ESLint with React hooks rules
+- Respects browser sandbox and same-origin policy.
+- No data collection; runs locally.
+- Audit tool calls via the extension.
 
-## Publishing Workflow
+## Roadmap
 
-1. Run checks: `pnpm check-all`
-2. Bump versions: `pnpm version:patch`
-3. Dry run: `pnpm publish:dry`
-4. Publish: `pnpm publish:packages`
-5. Commit changes: `git add . && git commit -m "chore: bump versions"`
+- Firefox/Safari support.
+- Full MCP spec (beyond tools).
+- Native host upstreaming.
 
-## Environment Requirements
+## License
 
-- Node.js 22.12+
-- PNPM 10+
-- Chrome/Chromium for extension development
-- PostgreSQL or Cloudflare account for database
+MIT - see [LICENSE](./LICENSE).
 
-## Security Considerations
+Created by [@miguelsPizza](https://github.com/miguelsPizza). Reach out: alexnahasdev@gmail.com.
 
-- Extensions only access tabs user has open
-- Web pages cannot directly access extension APIs
-- All WebSocket connections remain on localhost
-- Browser's existing permission model enforced
-- Tool execution happens in page context
-
-# important-instruction-reminders
-
-Do what has been asked; nothing more, nothing less.
-NEVER create files unless they're absolutely necessary for achieving your goal.
-ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (\*.md) or README files. Only create documentation files if explicitly requested by the User.
+[Website](https://mcp-b.ai) • [GitHub](https://github.com/MiguelsPizza/WebMCP)

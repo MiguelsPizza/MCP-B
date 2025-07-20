@@ -1,0 +1,54 @@
+{
+  "name": "@mcp-b/native-server",
+  "version": "1.0.29",
+  "description": "Chrome Native-Messaging host (Node)",
+  "main": "dist/index.js",
+  "bin": {
+    "mcp-chrome-bridge": "./dist/cli.js"
+  },
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts,js,json --ignore dist/ --exec \"npm run build && npm run register:dev\"",
+    "build": "ts-node src/scripts/build.ts",
+    "register:dev": "node dist/scripts/register-dev.js",
+    "postinstall": "node dist/scripts/postinstall.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "preferGlobal": true,
+  "keywords": [
+    "mcp",
+    "chrome",
+    "browser"
+  ],
+  "author": "hangye",
+  "license": "MIT",
+  "dependencies": {
+    "@fastify/cors": "^11.0.1",
+    "@modelcontextprotocol/sdk": "catalog:",
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "@mcp-b/transports": "workspace:*",
+    "fastify": "^5.3.2",
+    "is-admin": "^4.0.0",
+    "pino": "^9.6.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@types/chrome": "^0.0.318",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.15.3",
+    "@types/supertest": "^6.0.3",
+    "@typescript-eslint/parser": "^8.31.1",
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.10",
+    "pino-pretty": "^13.0.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.3.2",
+    "ts-node": "^10.9.2"
+  }
+}

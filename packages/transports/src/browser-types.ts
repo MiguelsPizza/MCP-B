@@ -143,3 +143,77 @@ export interface StoredEvent {
   timestamp: number;
   clientId: string;
 }
+
+export enum NativeMessageType {
+  START = 'start',
+  STARTED = 'started',
+  STOP = 'stop',
+  STOPPED = 'stopped',
+  PING = 'ping',
+  PONG = 'pong',
+  ERROR = 'error',
+  LIST_TOOLS = 'list_tools',
+  CALL_TOOL = 'call_tool',
+  TOOL_LIST_UPDATED = 'tool_list_updated',
+  TOOL_LIST_UPDATED_ACK = 'tool_list_updated_ack',
+  PROCESS_DATA = 'process_data',
+
+  // Additional message types used in Chrome extension
+  SERVER_STARTED = 'server_started',
+  SERVER_STOPPED = 'server_stopped',
+  ERROR_FROM_NATIVE_HOST = 'error_from_native_host',
+  CONNECT_NATIVE = 'connectNative',
+  PING_NATIVE = 'ping_native',
+  DISCONNECT_NATIVE = 'disconnect_native',
+}
+
+/**
+ * Chrome Extension Constants
+ * Centralized configuration values and magic constants
+ */
+
+// Native Host Configuration
+export const NATIVE_HOST = {
+  NAME: 'com.chromemcp.nativehost',
+  DEFAULT_PORT: 12306,
+} as const;
+
+// Error Messages
+export const ERROR_MESSAGES = {
+  NATIVE_CONNECTION_FAILED: 'Failed to connect to native host',
+  NATIVE_DISCONNECTED: 'Native connection disconnected',
+  SERVER_STATUS_LOAD_FAILED: 'Failed to load server status',
+  TOOL_EXECUTION_FAILED: 'Tool execution failed',
+  SERVER_STATUS_SAVE_FAILED: 'Failed to save server status',
+} as const;
+
+// Success Messages
+export const SUCCESS_MESSAGES = {
+  TOOL_EXECUTED: 'Tool executed successfully',
+  CONNECTION_ESTABLISHED: 'Connection established',
+  SERVER_STARTED: 'Server started successfully',
+  SERVER_STOPPED: 'Server stopped successfully',
+} as const;
+
+// Storage Keys
+export const STORAGE_KEYS = {
+  SERVER_STATUS: 'serverStatus',
+} as const;
+
+// Background script message types
+export const BACKGROUND_MESSAGE_TYPES = {
+  GET_SERVER_STATUS: 'get_server_status',
+  REFRESH_SERVER_STATUS: 'refresh_server_status',
+  SERVER_STATUS_CHANGED: 'server_status_changed',
+} as const;
+
+export const HOST_NAME = NATIVE_HOST.NAME;
+
+/**
+ * Server status management interface
+ */
+export interface ServerStatus {
+  isRunning: boolean;
+  port?: number;
+  lastUpdated: number;
+}
