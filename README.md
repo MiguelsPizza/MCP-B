@@ -34,6 +34,8 @@ See MCP-B in action right away:
 
 - **[Vanilla TypeScript Demo](./examples/vanilla-ts/)**: A simple todo app where MCP tools allow AI to manage tasks (e.g., add, update, delete todos). Run it locally: `cd examples/vanilla-ts && pnpm dev`. Visit the site, install the extension, and use the extension's chat or inspector to call tools like `getTodos` or `createTodo`.
 
+- **[Vue ](https://github.com/bestian/vue-MCP-B-demo)** example By [Besian](https://github.com/bestian)
+
 These demos highlight how MCP-B integrates into websites without needing complex setups. Install the [MCP-B Chrome Extension](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa?authuser=0&hl=en) to interact with the tools via the extension's chat interface or tool inspector.
 
 ## What is MCP-B?
@@ -119,10 +121,6 @@ The `./examples/` folder provides ready-to-run starters:
 
   - Run: `cd examples/vanilla-ts && pnpm dev`.
   - What it does: AI can manage todos, with tools scoped to the page state.
-
-- **react-shop**: E-commerce cart demo. Tools: `addToCart`, `getCurrentCart`.
-  - Run: `cd examples/react-shop && pnpm dev`.
-  - What it does: Integrates with React state; tools fetch/update cart data using existing APIs.
 
 Copy patterns from these to your site. Focus on wrapping client-side functions—e.g., use `fetch` with `credentials: 'same-origin'` for authenticated calls.
 
