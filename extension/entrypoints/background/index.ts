@@ -7,12 +7,12 @@ export default defineBackground({
   persistent: true,
   type: 'module',
   async main() {
+    const server = new McpServer({ name: 'Extension-Hub', version: '1.0.0' });
+    new McpHub(server);
     chrome.runtime.onConnect.addListener((port) => {
       if (port.name === 'mcp') {
         console.log('[MCP Hub] UI client connected');
         const transport = new ExtensionServerTransport(port);
-        const server = new McpServer({ name: 'Extension-Hub', version: '1.0.0' });
-        new McpHub(server);
         server.connect(transport);
       }
     });

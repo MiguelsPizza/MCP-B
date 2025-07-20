@@ -66,14 +66,62 @@ export function parseToolInfo(toolName: string, description?: string): ToolInfo 
     };
   }
 
-  // For website tools with format: website_tool_{cleanedDomain}_{toolName}
+  // For website tools with format: website_tool_{cleanedDomain}_{tabPrefix}_{toolName}
   if (isWebsiteTool(toolName)) {
     // Remove the website_tool_ prefix
     const withoutPrefix = toolName.slice(WEBSITE_PREFIX.length);
 
-    // Find the first underscore to separate domain from tool name
-    const firstUnderscore = withoutPrefix.indexOf('_');
+    // Parse format: {cleanedDomain}_{tabPrefix}_{toolName}
+    // where tabPrefix is either 'tab{tabId}' or 'cached-{timestamp}'
+    // Need to find the tabPrefix (starts with 'tab' or 'cached-') to correctly split
+    const parts = withoutPrefix.split('_');
 
+    // Find the index of the tab prefix (starts with 'tab' or 'cached-')
+    let tabPrefixIndex = -1;
+    for (let i = 0; i < parts.length; i++) {
+      if (parts[i].startsWith('tab') || parts[i].startsWith('cached-')) {
+        tabPrefixIndex = i;
+        break;
+      }
+    }
+
+    if (tabPrefixIndex > 0 && tabPrefixIndex < parts.length - 1) {
+      const cleanedDomain = parts.slice(0, tabPrefixIndex).join('_');
+      const tabPrefix = parts[tabPrefixIndex];
+      const toolName = parts.slice(tabPrefixIndex + 1).join('_');
+
+      // Try to reconstruct the domain from the cleaned version
+      const domain = cleanedDomain
+        .replace(/^localhost_(\d+)$/, 'localhost:$1') // localhost_3000 -> localhost:3000
+        .replace(/_/g, '.'); // github_com -> github.com
+
+      let isActive = false;
+      let isCached = false;
+      let tabId = null;
+
+      // Parse tab prefix to determine status
+      if (tabPrefix.startsWith('tab')) {
+        tabId = parseInt(tabPrefix.slice(3)) || null;
+        // Check description for active status (format: [domain • Active Tab])
+        if (description && description.includes('• Active Tab')) {
+          isActive = true;
+        }
+      } else if (tabPrefix.startsWith('cached-')) {
+        isCached = true;
+      }
+
+      return {
+        domain,
+        cleanName: toolName,
+        tabId,
+        isActive,
+        isCached,
+        tabIndex: null,
+      };
+    }
+
+    // Fallback for older format
+    const firstUnderscore = withoutPrefix.indexOf('_');
     let domain = 'unknown';
     let cleanName = withoutPrefix;
 
@@ -81,32 +129,16 @@ export function parseToolInfo(toolName: string, description?: string): ToolInfo 
       const cleanedDomain = withoutPrefix.slice(0, firstUnderscore);
       cleanName = withoutPrefix.slice(firstUnderscore + 1);
 
-      // Try to reconstruct the domain from the cleaned version
-      // Convert underscores back to dots/colons where appropriate
-      domain = cleanedDomain
-        .replace(/^localhost_(\d+)$/, 'localhost:$1') // localhost_3000 -> localhost:3000
-        .replace(/_/g, '.'); // github_com -> github.com
+      domain = cleanedDomain.replace(/^localhost_(\d+)$/, 'localhost:$1').replace(/_/g, '.');
     }
 
     let isActive = false;
-    let tabIndex = null;
-
+    let isCached = false;
     if (description) {
-      // Extract active status from description
-      const domainMatch = description.match(/^\[([^\]]+)\]/);
-      if (domainMatch) {
-        const fullDomain = domainMatch[1];
-
-        // Check for active indicator
-        if (fullDomain.includes('• Active')) {
-          isActive = true;
-        }
-
-        // Check for tab index (e.g., "Tab 2 Active")
-        const tabIndexMatch = fullDomain.match(/Tab (\d+) Active/);
-        if (tabIndexMatch) {
-          tabIndex = parseInt(tabIndexMatch[1]);
-        }
+      if (description.includes('• Active Tab')) {
+        isActive = true;
+      } else if (description.includes('• Cached Tab')) {
+        isCached = true;
       }
     }
 
@@ -115,7 +147,8 @@ export function parseToolInfo(toolName: string, description?: string): ToolInfo 
       cleanName,
       tabId: null,
       isActive,
-      tabIndex,
+      isCached,
+      tabIndex: null,
     };
   }
 
@@ -325,20 +358,35 @@ export function getDefaultValues(inputSchema?: InputSchema) {
   return defaults;
 }
 
+/**
+ * Group website tools by domain, then by tab status
+ */
 export function groupToolsByDomain(tools: McpTool[]) {
-  const grouped = new Map<string, McpTool[]>();
+  const grouped = new Map<string, { active: McpTool[]; cached: McpTool[]; inactive: McpTool[] }>();
 
   tools.forEach((tool) => {
-    const { domain } = parseToolInfo(tool.name, tool.description);
-    const domainTools = grouped.get(domain) || [];
-    domainTools.push(tool);
-    grouped.set(domain, domainTools);
+    const info = parseToolInfo(tool.name, tool.description);
+    const { domain } = info;
+
+    if (!grouped.has(domain)) {
+      grouped.set(domain, { active: [], cached: [], inactive: [] });
+    }
+
+    const domainGroup = grouped.get(domain)!;
+
+    if (info.isCached) {
+      domainGroup.cached.push(tool);
+    } else if (info.isActive) {
+      domainGroup.active.push(tool);
+    } else {
+      domainGroup.inactive.push(tool);
+    }
   });
 
-  // Sort domains to put 'local' first, then alphabetically
+  // Sort domains to put 'localhost' first, then alphabetically
   const sortedEntries = Array.from(grouped.entries()).sort(([a], [b]) => {
-    if (a === 'local') return -1;
-    if (b === 'local') return 1;
+    if (a.startsWith('localhost')) return -1;
+    if (b.startsWith('localhost')) return 1;
     return a.localeCompare(b);
   });
 

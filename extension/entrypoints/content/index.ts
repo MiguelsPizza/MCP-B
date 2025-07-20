@@ -23,39 +23,53 @@ interface ToolResultMessage {
   };
 }
 
-// Tool registration
-async function registerTools(client: Client, port: chrome.runtime.Port): Promise<void> {
+let cachedToolHashes: Map<string, string> = new Map();
+
+async function checkForToolUpdates(
+  client: Client,
+  port: chrome.runtime.Port,
+  sendType: 'register-tools' | 'tools-updated' = 'tools-updated'
+): Promise<void> {
   try {
     const pageTools = await client.listTools();
-    console.log({ pageTools });
+    const newTools = pageTools.tools;
+    const newHashes = new Map<string, string>();
+    let changed = false;
+    const seen = new Set<string>();
 
-    port.postMessage({
-      type: 'register-tools',
-      tools: pageTools.tools,
-    });
+    for (const tool of newTools) {
+      if (!tool.name) {
+        console.error('Tool without name');
+        continue;
+      }
+      const json = JSON.stringify(tool);
+      newHashes.set(tool.name, json);
+      seen.add(tool.name);
+      if (!cachedToolHashes.has(tool.name) || cachedToolHashes.get(tool.name) !== json) {
+        changed = true;
+      }
+    }
 
-    console.log(
-      `[MCP Proxy] Registered ${pageTools.tools.length} page tools with the background hub.`
-    );
+    // Check for removed tools
+    for (const name of cachedToolHashes.keys()) {
+      if (!seen.has(name)) {
+        changed = true;
+      }
+    }
+
+    if (changed || sendType === 'register-tools') {
+      // Always send for initial registration if tools are fetched
+      port.postMessage({
+        type: sendType,
+        tools: newTools,
+      });
+      cachedToolHashes = newHashes;
+      console.log(`[MCP Proxy] Sent ${sendType} with ${newTools.length} tools to hub.`);
+    } else {
+      console.log('[MCP Proxy] No changes in tool list, skipping update.');
+    }
   } catch (error) {
-    console.error('[MCP Proxy] Failed to register tools:', error);
-  }
-}
-
-// Tool update notification
-async function notifyToolListChanged(client: Client, port: chrome.runtime.Port): Promise<void> {
-  try {
-    const pageTools = await client.listTools();
-    console.log('[MCP Proxy] Tool list changed, updating hub with new tools:', pageTools);
-
-    port.postMessage({
-      type: 'tools-updated',
-      tools: pageTools.tools,
-    });
-
-    console.log(`[MCP Proxy] Updated hub with ${pageTools.tools.length} tools after list change.`);
-  } catch (error) {
-    console.error('[MCP Proxy] Failed to update tools after list change:', error);
+    console.error('[MCP Proxy] Failed to check for tool updates:', error);
   }
 }
 
@@ -153,36 +167,64 @@ export default defineContentScript({
       targetOrigin: window.location.origin,
     });
 
+    // Helper function for timeout promise
+    const timeoutPromise = (ms: number, message: string) =>
+      new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms));
+
     try {
-      // Connect the client (this will start the transport internally)
-      await client.connect(transport);
+      // Start connection process
+      const connectPromise = client.connect(transport);
+
+      // Race with initial timeout for logging
+      const racePromise = Promise.race([
+        connectPromise,
+        timeoutPromise(30000, 'Server ready timeout after 30 seconds'),
+      ]);
+
+      racePromise.catch((error) => {
+        if (error.message.includes('timeout')) {
+          console.log(
+            '[MCP Proxy] No MCP server found on this page (timeout), but will continue waiting for late initialization.'
+          );
+        } else {
+          throw error;
+        }
+      });
+
+      // Await the actual connect promise (may resolve later)
+      await connectPromise;
+
       console.log('[MCP Proxy] Client connected to transport');
-
-      // Wait for server to be ready with timeout
-
-      console.log('[MCP Proxy] Server is ready');
 
       // Get server capabilities to verify connection
       const capabilities = await client.getServerCapabilities();
-      const tools = await client.listTools();
-      console.log('[MCP Proxy] Tools:', tools);
-
-      if (!capabilities) {
-        await Promise.race([
-          transport.serverReadyPromise,
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('Server ready timeout after 30 seconds')), 30000)
-          ),
-        ]);
-      }
-
       console.log('[MCP Proxy] Server capabilities:', capabilities);
 
-      // Register tools with background
-      await registerTools(client, backgroundPort);
+      const tools = await client.listTools();
+      console.log('first tools', tools);
+      console.log('[MCP Proxy] Tools:', tools);
+
+      backgroundPort.postMessage({
+        type: 'register-tools',
+        tools: tools.tools,
+      });
+
+      // Register tools with background (initial check and send)
+      await checkForToolUpdates(client, backgroundPort, 'register-tools');
 
       // Setup message handler for tool execution
       setupMessageHandler(client, backgroundPort);
+
+      // Setup handler for tools refresh requests
+      backgroundPort.onMessage.addListener(async (message) => {
+        if (message.type === 'request-tools-refresh') {
+          if (!client) {
+            console.error('[MCP Proxy] No page client available for refresh');
+            return;
+          }
+          await checkForToolUpdates(client, backgroundPort);
+        }
+      });
 
       // Listen for tool list change notifications from the server
       if (capabilities?.tools?.listChanged) {
@@ -191,34 +233,20 @@ export default defineContentScript({
         // Set up notification handler for tool list changes
         client.setNotificationHandler(ToolListChangedNotificationSchema, async () => {
           console.log('[MCP Proxy] Received tool list change notification from server');
-          await notifyToolListChanged(client, backgroundPort);
+          await checkForToolUpdates(client, backgroundPort);
         });
       } else {
         console.log('[MCP Proxy] Server does not support tool list change notifications');
 
         // Fallback: periodically check for tool updates every 30 seconds
         setInterval(async () => {
-          try {
-            const currentTools = await client.listTools();
-            // Note: We're sending updates regardless of changes since we can't easily compare
-            // The hub will handle deduplication
-            backgroundPort.postMessage({
-              type: 'tools-updated',
-              tools: currentTools.tools,
-            });
-          } catch (error) {
-            console.error('[MCP Proxy] Failed to poll for tool updates:', error);
-          }
+          await checkForToolUpdates(client, backgroundPort);
         }, 30000);
       }
 
       console.log('[MCP Proxy] Successfully connected to page server');
     } catch (error) {
-      if (error instanceof Error && error.message.includes('timeout')) {
-        console.log('[MCP Proxy] No MCP server found on this page (timeout)');
-      } else {
-        console.error('[MCP Proxy] Error connecting to server:', error);
-      }
+      console.error('[MCP Proxy] Error connecting to server:', error);
     }
 
     // Clean up on disconnect

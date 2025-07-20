@@ -1,3 +1,5 @@
+// TabServerTransport.ts
+
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { type JSONRPCMessage, JSONRPCMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 
@@ -8,7 +10,7 @@ export interface TabServerTransportOptions {
 
 export class TabServerTransport implements Transport {
   private _started = false;
-  private _allowedOrigins: string[] | '*';
+  private _allowedOrigins: string[];
   private _channelId: string;
   private _messageHandler?: (event: MessageEvent) => void;
   private _clientOrigin?: string;
@@ -49,11 +51,29 @@ export class TabServerTransport implements Transport {
       // Store client origin for responses
       this._clientOrigin = event.origin;
 
+      const payload = event.data.payload;
+
+      if (typeof payload === 'string' && payload === 'mcp-check-ready') {
+        // Respond with server ready
+        window.postMessage(
+          {
+            channel: this._channelId,
+            type: 'mcp',
+            direction: 'server-to-client',
+            payload: 'mcp-server-ready',
+          },
+          this._clientOrigin
+        );
+        return;
+      }
+
       try {
-        const message = JSONRPCMessageSchema.parse(event.data.payload);
+        const message = JSONRPCMessageSchema.parse(payload);
         this.onmessage?.(message);
       } catch (error) {
-        this.onerror?.(new Error(`Invalid message: ${error}`));
+        this.onerror?.(
+          new Error(`Invalid message: ${error instanceof Error ? error.message : String(error)}`)
+        );
       }
     };
 

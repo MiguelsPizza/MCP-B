@@ -1,14 +1,11 @@
-// McpHub.ts (further simplified with tabId-based naming)
+// mcphub.ts
 
-import { ExtensionServerTransport, NATIVE_HOST, NativeServerTransport } from '@mcp-b/transports';
-import type { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { sanitizeToolName } from '@/entrypoints/sidepanel/components/McpServer/utils';
 import { RequestManager } from '../lib/utils'; // Assume this handles request IDs.
 import { ExtensionToolsService } from './ExtensionToolsService';
-import { connectNativeHost, initNativeHostListener } from './NativeHostManager';
 
 interface TabData {
   tools: Tool[];
@@ -74,6 +71,14 @@ export default class McpHub {
     });
   }
 
+  private requestToolsFromTab(domain: string, dataId: string) {
+    const domainData = this.getDomainData(domain);
+    const tabData = domainData.get(dataId);
+    if (tabData && !tabData.isClosed && tabData.port) {
+      tabData.port.postMessage({ type: 'request-tools-refresh' });
+    }
+  }
+
   private handleContentScriptConnection(port: chrome.runtime.Port) {
     const tabId = port.sender?.tab?.id;
     const url = port.sender?.tab?.url || '';
@@ -126,6 +131,11 @@ export default class McpHub {
       isClosed: false,
     };
     domainData.set(dataId, tabData);
+
+    // Ensure we have the current active tab ID before registering tools
+    if (this.activeTabId === null) {
+      await this.initializeActiveTab();
+    }
 
     const cleanedDomain = sanitizeToolName(domain);
     const namePrefix = dataId.startsWith('cached-') ? dataId : `tab${tabData.tabId}`; // Use tabId numerically for open, full dataId for cached.
@@ -320,6 +330,9 @@ export default class McpHub {
   }
 
   private trackActiveTab() {
+    // Initialize with current active tab
+    this.initializeActiveTab();
+
     chrome.tabs.onActivated.addListener(async (activeInfo) => {
       const previousActiveTabId = this.activeTabId;
       this.activeTabId = activeInfo.tabId;
@@ -343,10 +356,22 @@ export default class McpHub {
         const domain = this.extractDomainFromUrl(tab.url);
         const dataId = `tab-${this.activeTabId}`;
         this.updateToolDescriptions(domain, dataId);
+        this.requestToolsFromTab(domain, dataId);
       } catch (e) {
         // Handle error if needed
       }
     });
+  }
+
+  private async initializeActiveTab() {
+    try {
+      const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (activeTab?.id) {
+        this.activeTabId = activeTab.id;
+      }
+    } catch (e) {
+      // Handle error if needed
+    }
   }
 
   private updateToolDescriptions(domain: string, dataId: string) {

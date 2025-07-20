@@ -1,4 +1,4 @@
-import { ChevronDown, Package, Play } from 'lucide-react';
+import { ChevronDown, Clock, Package, Play } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { AutoForm } from '../ui/autoform';
 import { Badge } from '../ui/badge';
@@ -17,14 +17,13 @@ export function ToolCard({
     tool.inputSchema?.properties && Object.keys(tool.inputSchema.properties).length > 0;
 
   // Parse tool info for cleaner display
-  const { cleanName, domain, isActive, tabIndex } = parseToolInfo(tool.name, tool.description);
+  const { cleanName, domain, isActive, tabIndex, isCached } = parseToolInfo(
+    tool.name,
+    tool.description
+  );
 
   // Clean up the description by removing domain prefix
   const cleanDescription = tool.description?.replace(/^\[[^\]]+\]\s*/, '') || '';
-
-  // Determine tab identifier based on domain
-  const tabIdentifier =
-    domain && domain !== 'local' ? (tabIndex ? `${domain}_${tabIndex}` : domain) : null;
 
   const handleSubmit = (data: Record<string, unknown>) => {
     onCall(tool.name, data);
@@ -34,7 +33,11 @@ export function ToolCard({
     <div
       className={cn(
         'rounded-md border bg-card overflow-hidden',
-        isActive ? 'border-primary/50 shadow-sm' : 'border-border/50'
+        isActive
+          ? 'border-green-500/50 shadow-sm'
+          : isCached
+            ? 'border-orange-500/30'
+            : 'border-border/50'
       )}
     >
       <div
@@ -42,28 +45,19 @@ export function ToolCard({
         onClick={onToggle}
       >
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
-          <Package
-            className={cn(
-              'h-3 w-3 flex-shrink-0',
-              isActive ? 'text-primary' : 'text-muted-foreground'
-            )}
-          />
+          {isCached ? (
+            <Clock className="h-3 w-3 flex-shrink-0 text-muted-foreground" />
+          ) : (
+            <Package
+              className={cn(
+                'h-3 w-3 flex-shrink-0',
+                isActive ? 'text-green-500' : 'text-muted-foreground'
+              )}
+            />
+          )}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-medium truncate">{cleanName}</span>
-              {isActive && (
-                <Badge variant="default" className="text-[9px] px-1 py-0 h-3.5">
-                  Active
-                </Badge>
-              )}
-              {tabIdentifier && !isActive && (
-                <Badge
-                  variant="outline"
-                  className="text-[9px] px-1 py-0 h-3.5 text-muted-foreground"
-                >
-                  {tabIdentifier}
-                </Badge>
-              )}
               {!hasParameters && (
                 <Badge variant="outline" className="text-[9px] px-1 py-0 h-3.5">
                   No params

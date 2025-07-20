@@ -20,7 +20,7 @@ import {
   Wrench,
   XCircle,
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { mcpToolsToZodSchemas } from '../../lib/mcpToZod';
@@ -75,6 +75,7 @@ export default function McpServer(): React.ReactElement {
   const [expandedSection, setExpandedSection] = useState<string>('');
   const [expandedChromeApi, setExpandedChromeApi] = useState<string>('');
   const [expandedDomain, setExpandedDomain] = useState<string>('');
+  const [expandedTabGroup, setExpandedTabGroup] = useState<string>('');
 
   // Separate extension tools from web tools
   const { extensionTools, webTools } = useMemo(() => {
@@ -105,6 +106,43 @@ export default function McpServer(): React.ReactElement {
   const toolSchemas = useMemo(() => {
     return mcpToolsToZodSchemas(mcpTools);
   }, [mcpTools]);
+
+  // Track active tab changes and manage accordion states
+  const [lastActiveTabId, setLastActiveTabId] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Find the current active tab by looking for tools with "Active Tab" in description
+    let currentActiveTabId: number | null = null;
+    let activeDomain: string | null = null;
+
+    for (const [domain, domainGroups] of toolsByDomain.entries()) {
+      if (domainGroups.active.length > 0) {
+        // Parse the first active tool to get tab ID
+        const firstActiveTool = domainGroups.active[0];
+        const toolInfo = parseToolInfo(firstActiveTool.name, firstActiveTool.description);
+        if (toolInfo.tabId) {
+          currentActiveTabId = toolInfo.tabId;
+          activeDomain = domain;
+          break;
+        }
+      }
+    }
+
+    // If active tab changed, update accordion states
+    if (currentActiveTabId !== lastActiveTabId && currentActiveTabId !== null && activeDomain) {
+      // Collapse any currently expanded tab groups
+      if (expandedTabGroup) {
+        setExpandedTabGroup('');
+      }
+
+      // Expand the new active domain and its active tab group
+      setExpandedDomain(activeDomain);
+      setExpandedTabGroup(`${activeDomain}-active`);
+
+      // Update the tracked active tab ID
+      setLastActiveTabId(currentActiveTabId);
+    }
+  }, [toolsByDomain, lastActiveTabId, expandedTabGroup]);
 
   if (isLoading) {
     return (
@@ -488,41 +526,196 @@ export default function McpServer(): React.ReactElement {
                           value={expandedDomain}
                           onValueChange={setExpandedDomain}
                         >
-                          {Array.from(toolsByDomain.entries()).map(([domain, domainTools]) => (
-                            <AccordionItem key={domain} value={domain} className="border-none">
-                              <AccordionTrigger className="w-full px-0 py-0 hover:no-underline">
-                                <div className="flex items-center justify-between gap-2 py-1 px-1.5 rounded hover:bg-muted/30 transition-colors">
-                                  <div className="flex items-center gap-1.5">
-                                    <Globe className="h-2.5 w-2.5 text-muted-foreground" />
-                                    <span className="text-[11px] font-medium truncate max-w-[120px]">
-                                      {domain}
-                                    </span>
-                                    <Badge
-                                      variant="secondary"
-                                      className="text-[9px] px-0.5 py-0 h-3"
-                                    >
-                                      {domainTools.length}
-                                    </Badge>
+                          {Array.from(toolsByDomain.entries()).map(([domain, domainGroups]) => {
+                            const totalTools =
+                              domainGroups.active.length +
+                              domainGroups.cached.length +
+                              domainGroups.inactive.length;
+                            return (
+                              <AccordionItem key={domain} value={domain} className="border-none">
+                                <AccordionTrigger className="w-full px-0 py-0 hover:no-underline">
+                                  <div className="flex items-center justify-between gap-2 py-1 px-1.5 rounded hover:bg-muted/30 transition-colors">
+                                    <div className="flex items-center gap-1.5">
+                                      <Globe className="h-2.5 w-2.5 text-muted-foreground" />
+                                      <span className="text-[11px] font-medium truncate max-w-[120px]">
+                                        {domain}
+                                      </span>
+                                      <div className="flex items-center gap-0.5">
+                                        {domainGroups.active.length > 0 && (
+                                          <Badge
+                                            variant="default"
+                                            className="text-[9px] px-0.5 py-0 h-3 bg-green-500"
+                                          >
+                                            {domainGroups.active.length}
+                                          </Badge>
+                                        )}
+                                        {domainGroups.cached.length > 0 && (
+                                          <Badge
+                                            variant="secondary"
+                                            className="text-[9px] px-0.5 py-0 h-3"
+                                          >
+                                            {domainGroups.cached.length}
+                                          </Badge>
+                                        )}
+                                        {domainGroups.inactive.length > 0 && (
+                                          <Badge
+                                            variant="outline"
+                                            className="text-[9px] px-0.5 py-0 h-3"
+                                          >
+                                            {domainGroups.inactive.length}
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
-                              </AccordionTrigger>
-                              <AccordionContent className="p-0">
-                                <div className="pl-3 space-y-1 mt-0.5">
-                                  {domainTools.map((tool) => (
-                                    <ToolCard
-                                      key={tool.name}
-                                      tool={tool}
-                                      isExpanded={expandedTools.has(tool.name)}
-                                      onToggle={() => toggleToolExpanded(tool.name)}
-                                      onCall={callTool}
-                                      isCalling={callingTools.has(tool.name)}
-                                      schema={toolSchemas[tool.name]}
-                                    />
-                                  ))}
-                                </div>
-                              </AccordionContent>
-                            </AccordionItem>
-                          ))}
+                                </AccordionTrigger>
+                                <AccordionContent className="p-0">
+                                  <div className="pl-3 space-y-2 mt-0.5">
+                                    <Accordion
+                                      type="single"
+                                      collapsible
+                                      value={expandedTabGroup}
+                                      onValueChange={setExpandedTabGroup}
+                                    >
+                                      {domainGroups.active.length > 0 && (
+                                        <AccordionItem
+                                          key={`${domain}-active`}
+                                          value={`${domain}-active`}
+                                          className="border-none"
+                                        >
+                                          <AccordionTrigger className="w-full px-0 py-0 hover:no-underline">
+                                            <div className="flex items-center justify-between gap-2 py-0.5 px-1 rounded hover:bg-muted/30 transition-colors">
+                                              <div className="flex items-center gap-1">
+                                                <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                                                <span className="text-[10px] text-muted-foreground font-medium">
+                                                  Active Tab{' '}
+                                                  {domainGroups.active[0] &&
+                                                    (() => {
+                                                      const info = parseToolInfo(
+                                                        domainGroups.active[0].name,
+                                                        domainGroups.active[0].description
+                                                      );
+                                                      return info.tabId ? `(${info.tabId})` : '';
+                                                    })()}
+                                                </span>
+                                                <Badge
+                                                  variant="default"
+                                                  className="text-[9px] px-0.5 py-0 h-3 bg-green-500"
+                                                >
+                                                  {domainGroups.active.length}
+                                                </Badge>
+                                              </div>
+                                            </div>
+                                          </AccordionTrigger>
+                                          <AccordionContent className="p-0">
+                                            <div className="pl-2 space-y-1 mt-0.5">
+                                              {domainGroups.active.map((tool) => (
+                                                <ToolCard
+                                                  key={tool.name}
+                                                  tool={tool}
+                                                  isExpanded={expandedTools.has(tool.name)}
+                                                  onToggle={() => toggleToolExpanded(tool.name)}
+                                                  onCall={callTool}
+                                                  isCalling={callingTools.has(tool.name)}
+                                                  schema={toolSchemas[tool.name]}
+                                                />
+                                              ))}
+                                            </div>
+                                          </AccordionContent>
+                                        </AccordionItem>
+                                      )}
+                                      {domainGroups.inactive.length > 0 && (
+                                        <AccordionItem
+                                          key={`${domain}-inactive`}
+                                          value={`${domain}-inactive`}
+                                          className="border-none"
+                                        >
+                                          <AccordionTrigger className="w-full px-0 py-0 hover:no-underline">
+                                            <div className="flex items-center justify-between gap-2 py-0.5 px-1 rounded hover:bg-muted/30 transition-colors">
+                                              <div className="flex items-center gap-1">
+                                                <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground" />
+                                                <span className="text-[10px] text-muted-foreground font-medium">
+                                                  Inactive Tab{' '}
+                                                  {domainGroups.inactive[0] &&
+                                                    (() => {
+                                                      const info = parseToolInfo(
+                                                        domainGroups.inactive[0].name,
+                                                        domainGroups.inactive[0].description
+                                                      );
+                                                      return info.tabId ? `(${info.tabId})` : '';
+                                                    })()}
+                                                </span>
+                                                <Badge
+                                                  variant="outline"
+                                                  className="text-[9px] px-0.5 py-0 h-3"
+                                                >
+                                                  {domainGroups.inactive.length}
+                                                </Badge>
+                                              </div>
+                                            </div>
+                                          </AccordionTrigger>
+                                          <AccordionContent className="p-0">
+                                            <div className="pl-2 space-y-1 mt-0.5">
+                                              {domainGroups.inactive.map((tool) => (
+                                                <ToolCard
+                                                  key={tool.name}
+                                                  tool={tool}
+                                                  isExpanded={expandedTools.has(tool.name)}
+                                                  onToggle={() => toggleToolExpanded(tool.name)}
+                                                  onCall={callTool}
+                                                  isCalling={callingTools.has(tool.name)}
+                                                  schema={toolSchemas[tool.name]}
+                                                />
+                                              ))}
+                                            </div>
+                                          </AccordionContent>
+                                        </AccordionItem>
+                                      )}
+                                      {domainGroups.cached.length > 0 && (
+                                        <AccordionItem
+                                          key={`${domain}-cached`}
+                                          value={`${domain}-cached`}
+                                          className="border-none"
+                                        >
+                                          <AccordionTrigger className="w-full px-0 py-0 hover:no-underline">
+                                            <div className="flex items-center justify-between gap-2 py-0.5 px-1 rounded hover:bg-muted/30 transition-colors">
+                                              <div className="flex items-center gap-1">
+                                                <Clock className="h-2 w-2 text-muted-foreground" />
+                                                <span className="text-[10px] text-muted-foreground font-medium">
+                                                  Cached
+                                                </span>
+                                                <Badge
+                                                  variant="secondary"
+                                                  className="text-[9px] px-0.5 py-0 h-3"
+                                                >
+                                                  {domainGroups.cached.length}
+                                                </Badge>
+                                              </div>
+                                            </div>
+                                          </AccordionTrigger>
+                                          <AccordionContent className="p-0">
+                                            <div className="pl-2 space-y-1 mt-0.5">
+                                              {domainGroups.cached.map((tool) => (
+                                                <ToolCard
+                                                  key={tool.name}
+                                                  tool={tool}
+                                                  isExpanded={expandedTools.has(tool.name)}
+                                                  onToggle={() => toggleToolExpanded(tool.name)}
+                                                  onCall={callTool}
+                                                  isCalling={callingTools.has(tool.name)}
+                                                  schema={toolSchemas[tool.name]}
+                                                />
+                                              ))}
+                                            </div>
+                                          </AccordionContent>
+                                        </AccordionItem>
+                                      )}
+                                    </Accordion>
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
+                            );
+                          })}
                         </Accordion>
                       </>
                     )}

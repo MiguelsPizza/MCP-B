@@ -1,4 +1,8 @@
-import type { Tool as McpTool } from '@modelcontextprotocol/sdk/types.js';
+import type {
+  CallToolResult,
+  ContentBlock,
+  Tool as McpTool,
+} from '@modelcontextprotocol/sdk/types.js';
 import {
   AlertTriangle,
   CheckCircle,
@@ -77,111 +81,178 @@ export const ToolRunningUI: React.FC<ToolRunningUIProps> = ({ tool, args, showSp
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="my-2">
-      <Card className="border-blue-200 bg-blue-50/50 shadow-sm">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="my-1">
+      <div className="border border-blue-200 bg-blue-50/50 shadow-sm rounded-md overflow-hidden">
         <CollapsibleTrigger asChild>
-          <CardHeader className="p-3 cursor-pointer hover:bg-blue-100/50 transition-colors">
-            <div className="space-y-2">
-              {/* Status and Icon Row */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  {showSpinner && <Loader2 className="h-4 w-4 animate-spin text-blue-600" />}
-                  <Zap className="h-4 w-4 text-blue-600" />
-                  <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-300">
-                    In Progress
-                  </Badge>
-                </div>
-                <ChevronRight
-                  className={`h-4 w-4 text-blue-600 transition-transform ${isOpen ? 'rotate-90' : ''}`}
-                />
+          <div className="p-1.5 cursor-pointer hover:bg-blue-100/50 transition-colors">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                {showSpinner && (
+                  <Loader2 className="h-3 w-3 animate-spin text-blue-600 flex-shrink-0" />
+                )}
+                <Zap className="h-3 w-3 text-blue-600 flex-shrink-0" />
+                <Badge
+                  variant="outline"
+                  className="bg-blue-100 text-blue-700 border-blue-300 text-[10px] px-1 py-0 h-4 flex-shrink-0"
+                >
+                  Running
+                </Badge>
+                <span className="text-xs font-medium text-blue-700 truncate" title={tool.name}>
+                  {tool.name}
+                </span>
               </div>
-
-              {/* Tool Name - Full width, wrappable */}
-              <h3 className="text-sm font-semibold text-blue-700 break-words">{tool.name}</h3>
-
-              {/* Description if available */}
-              {tool.description && (
-                <p className="text-xs text-slate-600 leading-relaxed break-words">
-                  {tool.description}
-                </p>
-              )}
+              <ChevronRight
+                className={`h-3 w-3 text-blue-600 transition-transform flex-shrink-0 ${isOpen ? 'rotate-90' : ''}`}
+              />
             </div>
-          </CardHeader>
+          </div>
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <CardContent className="p-3 pt-0 border-t border-blue-200">
-            <ToolArgumentsDisplay tool={tool} args={args} />
-          </CardContent>
-        </CollapsibleContent>
-      </Card>
-    </Collapsible>
-  );
-};
-
-export const ToolErrorUI: React.FC<{ tool: McpTool; status: any }> = ({ tool, status }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const errorMessage = (status.error as Error)?.message || 'An unknown error occurred.';
-
-  return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="my-2">
-      <Card className="border-red-200 bg-red-50/50 shadow-sm">
-        <CollapsibleTrigger asChild>
-          <CardHeader className="p-3 cursor-pointer hover:bg-red-100/50 transition-colors">
-            <div className="space-y-2">
-              {/* Status and Icon Row */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-red-600" />
-                  <Badge variant="outline" className="bg-red-100 text-red-700 border-red-300">
-                    Failed
-                  </Badge>
-                </div>
-                <ChevronRight
-                  className={`h-4 w-4 text-red-600 transition-transform ${isOpen ? 'rotate-90' : ''}`}
-                />
-              </div>
-
-              {/* Tool Name - Full width, wrappable */}
-              <h3 className="text-sm font-semibold text-red-700 break-words">{tool.name}</h3>
-
-              {/* Error Message Preview */}
-              <p className="text-xs text-red-700 font-medium break-words">{errorMessage}</p>
-            </div>
-          </CardHeader>
-        </CollapsibleTrigger>
-
-        <CollapsibleContent>
-          <CardContent className="p-3 pt-0 border-t border-red-200 space-y-3">
+          <div className="p-3 space-y-3 bg-white">
             <div>
-              <h4 className="text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-                Error Details
-              </h4>
-              <div className="bg-white/50 p-2 rounded-lg border border-red-200 overflow-x-auto">
-                <pre className="text-xs text-red-700 whitespace-pre-wrap break-words">
-                  {(status.error as Error)?.stack || errorMessage}
-                </pre>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
+              <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
                 Tool Information
               </h4>
-              <div className="text-xs text-muted-foreground space-y-1">
-                <div className="break-words">
-                  <span className="font-medium">Tool Name:</span> {tool.name}
+              <div className="space-y-2">
+                <div className="text-xs">
+                  <span className="font-medium text-blue-700">Name:</span>
+                  <span className="ml-2 break-all">{tool.name}</span>
                 </div>
                 {tool.description && (
-                  <div className="break-words">
-                    <span className="font-medium">Description:</span> {tool.description}
+                  <div className="text-xs">
+                    <span className="font-medium text-blue-700">Description:</span>
+                    <span className="ml-2 break-words text-slate-600">{tool.description}</span>
                   </div>
                 )}
               </div>
             </div>
-          </CardContent>
+            <ToolArgumentsDisplay tool={tool} args={args} />
+          </div>
         </CollapsibleContent>
-      </Card>
+      </div>
+    </Collapsible>
+  );
+};
+
+// Function to parse and clean error messages
+const parseErrorMessage = (errorMessage: string): { summary: string; details?: any } => {
+  // Handle MCP validation errors
+  const mcpErrorMatch = errorMessage.match(/MCP error -32602: (.+?)(?:\n|$)/);
+  if (mcpErrorMatch) {
+    const mcpMessage = mcpErrorMatch[1];
+
+    // Try to extract JSON validation details
+    const jsonMatch = errorMessage.match(/(\[[\s\S]*?\])/);
+    if (jsonMatch) {
+      try {
+        const validationErrors = JSON.parse(jsonMatch[1]);
+        if (Array.isArray(validationErrors) && validationErrors.length > 0) {
+          const firstError = validationErrors[0];
+          let summary = mcpMessage;
+
+          if (firstError.path && firstError.message) {
+            summary = `Invalid ${firstError.path.join('.')}: ${firstError.message}`;
+          }
+
+          return {
+            summary,
+            details: validationErrors,
+          };
+        }
+      } catch {
+        // Fall through to simpler parsing
+      }
+    }
+
+    return { summary: mcpMessage };
+  }
+
+  // Handle "Failed to execute tool:" prefix
+  const failedMatch = errorMessage.match(/^Failed to execute tool: (.+)/);
+  if (failedMatch) {
+    return parseErrorMessage(failedMatch[1]); // Recursively parse the inner error
+  }
+
+  // Handle other common error patterns
+  if (errorMessage.includes('Error:')) {
+    const cleanMessage = errorMessage.replace(/^Error:\s*/, '');
+    return { summary: cleanMessage };
+  }
+
+  // Return original message if no patterns match
+  return { summary: errorMessage };
+};
+
+export const ToolErrorUI: React.FC<{ tool: McpTool; status: any }> = ({ tool, status }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const rawErrorMessage = (status.error as Error)?.message || 'An unknown error occurred.';
+  const { summary: errorMessage, details: errorDetails } = parseErrorMessage(rawErrorMessage);
+
+  return (
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="my-1">
+      <div className="border border-red-200 bg-red-50/50 shadow-sm rounded-md overflow-hidden">
+        <CollapsibleTrigger asChild>
+          <div className="p-1.5 cursor-pointer hover:bg-red-100/50 transition-colors">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <AlertTriangle className="h-3 w-3 text-red-600 flex-shrink-0" />
+                <Badge
+                  variant="outline"
+                  className="bg-red-100 text-red-700 border-red-300 text-[10px] px-1 py-0 h-4 flex-shrink-0"
+                >
+                  Failed
+                </Badge>
+                <span className="text-xs font-medium text-red-700 truncate" title={tool.name}>
+                  {tool.name}
+                </span>
+              </div>
+              <ChevronRight
+                className={`h-3 w-3 text-red-600 transition-transform flex-shrink-0 ${isOpen ? 'rotate-90' : ''}`}
+              />
+            </div>
+          </div>
+        </CollapsibleTrigger>
+
+        <CollapsibleContent>
+          <div className="p-3 space-y-3 bg-white">
+            <div>
+              <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
+                Error
+              </h4>
+              <div className="bg-red-50 p-2 rounded-lg border border-red-200 overflow-x-auto">
+                <div className="text-xs text-red-700 whitespace-pre-wrap break-words">
+                  {errorMessage}
+                </div>
+                {errorDetails && (
+                  <div className="mt-2 pt-2 border-t border-red-100">
+                    <h5 className="text-xs font-medium text-red-600 mb-1">Details:</h5>
+                    <JsonViewer data={errorDetails} defaultExpanded={true} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
+                Tool Information
+              </h4>
+              <div className="space-y-2">
+                <div className="text-xs">
+                  <span className="font-medium text-red-700">Name:</span>
+                  <span className="ml-2 break-all">{tool.name}</span>
+                </div>
+                {tool.description && (
+                  <div className="text-xs">
+                    <span className="font-medium text-red-700">Description:</span>
+                    <span className="ml-2 break-words text-slate-600">{tool.description}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </CollapsibleContent>
+      </div>
     </Collapsible>
   );
 };
@@ -320,22 +391,33 @@ const JsonViewer = ({
   return renderValue(data, name);
 };
 
-type ToolResult = {
-  content: {
-    type: 'text';
-    text: string;
-  }[];
-};
-
-export const ToolSuccessUI: React.FC<{ tool: McpTool; result: ToolResult }> = ({
+export const ToolSuccessUI: React.FC<{ tool: McpTool; result: CallToolResult }> = ({
   tool,
   result,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  // Check if this is an error result according to MCP spec
+  const isError = result?.isError === true;
+
   // Extract the main message from the MCP server response
-  const mainMessage =
-    result?.content?.[0]?.text || 'Tool executed successfully but returned no result.';
+  const getContentText = (content: ContentBlock[]): string => {
+    if (!content || content.length === 0) {
+      return 'Tool executed successfully but returned no result.';
+    }
+
+    // Handle different content types according to MCP spec
+    const textContent = content.find((block) => block.type === 'text');
+    if (textContent && 'text' in textContent) {
+      return textContent.text;
+    }
+
+    // If no text content, provide a summary of what was returned
+    const types = content.map((block) => block.type).join(', ');
+    return `Tool returned ${content.length} content block(s) of type(s): ${types}`;
+  };
+
+  const mainMessage = getContentText(result?.content || []);
 
   // Function to extract and parse JSON from text
   const parseResponseContent = (text: string) => {
@@ -352,7 +434,7 @@ export const ToolSuccessUI: React.FC<{ tool: McpTool; result: ToolResult }> = ({
           hasJson: true,
         };
       }
-    } catch (e) {
+    } catch {
       // If parsing fails, treat as regular text
     }
 
@@ -365,74 +447,133 @@ export const ToolSuccessUI: React.FC<{ tool: McpTool; result: ToolResult }> = ({
 
   const { description, jsonData, hasJson } = parseResponseContent(mainMessage);
 
+  // Determine styling based on error state
+  const colorClasses = isError
+    ? {
+        border: 'border-red-200',
+        bg: 'bg-red-50/50',
+        hover: 'hover:bg-red-100/50',
+        icon: 'text-red-600',
+        badge: 'bg-red-100 text-red-700 border-red-300',
+        text: 'text-red-700',
+        contentBg: 'bg-red-50',
+        contentBorder: 'border-red-200',
+      }
+    : {
+        border: 'border-green-200',
+        bg: 'bg-green-50/50',
+        hover: 'hover:bg-green-100/50',
+        icon: 'text-green-600',
+        badge: 'bg-green-100 text-green-700 border-green-300',
+        text: 'text-green-700',
+        contentBg: 'bg-green-50',
+        contentBorder: 'border-green-200',
+      };
+
+  const IconComponent = isError ? AlertTriangle : CheckCircle;
+  const statusText = isError ? 'Error' : 'Success';
+
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="my-2">
-      <Card className="border-green-200 bg-green-50/50 shadow-sm">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen} className="my-1">
+      <div
+        className={`border ${colorClasses.border} ${colorClasses.bg} shadow-sm rounded-md overflow-hidden`}
+      >
         <CollapsibleTrigger asChild>
-          <CardHeader className="p-3 cursor-pointer hover:bg-green-100/50 transition-colors">
-            <div className="space-y-2">
-              {/* Status and Icon Row */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                  <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300">
-                    Completed
-                  </Badge>
-                </div>
-                <ChevronRight
-                  className={`h-4 w-4 text-green-600 transition-transform ${isOpen ? 'rotate-90' : ''}`}
-                />
+          <div className={`p-1.5 cursor-pointer ${colorClasses.hover} transition-colors`}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <IconComponent className={`h-3 w-3 ${colorClasses.icon} flex-shrink-0`} />
+                <Badge
+                  variant="outline"
+                  className={`${colorClasses.badge} text-[10px] px-1 py-0 h-4 flex-shrink-0`}
+                >
+                  {statusText}
+                </Badge>
+                <span
+                  className={`text-xs font-medium ${colorClasses.text} truncate`}
+                  title={tool.name}
+                >
+                  {tool.name}
+                </span>
               </div>
-
-              {/* Tool Name - Full width, wrappable */}
-              <h3 className="text-sm font-semibold text-green-700 break-words">{tool.name}</h3>
-
-              {/* Result Preview */}
-              <p className="text-xs text-green-700 font-medium break-words">{description}</p>
+              <ChevronRight
+                className={`h-3 w-3 ${colorClasses.icon} transition-transform flex-shrink-0 ${isOpen ? 'rotate-90' : ''}`}
+              />
             </div>
-          </CardHeader>
+          </div>
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <CardContent className="p-3 pt-0 border-t border-green-200 space-y-3">
+          <div className="p-3 space-y-3 bg-white">
+            <div>
+              <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
+                {isError ? 'Error Message' : 'Result'}
+              </h4>
+              <div
+                className={`text-xs ${colorClasses.text} break-words ${colorClasses.contentBg} p-2 rounded-lg border ${colorClasses.contentBorder}`}
+              >
+                {description}
+              </div>
+            </div>
+
             {hasJson && (
               <div>
-                <h4 className="text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-                  Parsed Result
+                <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
+                  Parsed Data
                 </h4>
-                <div className="bg-white/50 p-2 rounded-lg border border-green-200 overflow-x-auto">
+                <div
+                  className={`${colorClasses.contentBg} p-2 rounded-lg border ${colorClasses.contentBorder} overflow-x-auto`}
+                >
                   <JsonViewer data={jsonData} defaultExpanded={true} />
                 </div>
               </div>
             )}
 
+            {/* Show structured content if available */}
+            {result.structuredContent && (
+              <div>
+                <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
+                  Structured Content
+                </h4>
+                <div
+                  className={`${colorClasses.contentBg} p-2 rounded-lg border ${colorClasses.contentBorder} overflow-x-auto`}
+                >
+                  <JsonViewer data={result.structuredContent} defaultExpanded={true} />
+                </div>
+              </div>
+            )}
+
             <div>
-              <h4 className="text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
-                Raw Tool Response
+              <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
+                Raw Response
               </h4>
-              <div className="bg-white/50 p-2 rounded-lg border border-green-200 overflow-x-auto">
+              <div
+                className={`${colorClasses.contentBg} p-2 rounded-lg border ${colorClasses.contentBorder} overflow-x-auto`}
+              >
                 <JsonViewer data={result} defaultExpanded={false} />
               </div>
             </div>
 
             <div>
-              <h4 className="text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
+              <h4 className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">
                 Tool Information
               </h4>
-              <div className="text-xs text-muted-foreground space-y-1">
-                <div className="break-words">
-                  <span className="font-medium">Tool Name:</span> {tool.name}
+              <div className="space-y-2">
+                <div className="text-xs">
+                  <span className={`font-medium ${colorClasses.text}`}>Name:</span>
+                  <span className="ml-2 break-all">{tool.name}</span>
                 </div>
                 {tool.description && (
-                  <div className="break-words">
-                    <span className="font-medium">Description:</span> {tool.description}
+                  <div className="text-xs">
+                    <span className={`font-medium ${colorClasses.text}`}>Description:</span>
+                    <span className="ml-2 break-words text-slate-600">{tool.description}</span>
                   </div>
                 )}
               </div>
             </div>
-          </CardContent>
+          </div>
         </CollapsibleContent>
-      </Card>
+      </div>
     </Collapsible>
   );
 };

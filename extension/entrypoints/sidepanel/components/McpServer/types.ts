@@ -22,6 +22,7 @@ export interface ToolInfo {
   tabId: number | null;
   isActive: boolean;
   tabIndex: number | null;
+  isCached?: boolean;
 }
 
 export interface InputSchema {

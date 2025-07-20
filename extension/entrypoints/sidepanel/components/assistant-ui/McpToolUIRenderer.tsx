@@ -35,15 +35,26 @@ const FancyToolRenderer = ({ tool }: { tool: McpTool }) => {
       }
 
       if (status.type === 'complete') {
-        // Check if the result contains an error message
+        // Check for the isError flag first (proper MCP protocol)
+        if (result?.isError) {
+          const errorText = result?.content?.[0]?.text || 'Tool execution failed';
+          const errorStatus = {
+            type: 'incomplete',
+            reason: 'error',
+            error: new Error(errorText),
+          };
+          return <ToolErrorUI tool={tool} status={errorStatus} />;
+        }
+
+        // Fallback: Check if the result content contains error messages (for legacy compatibility)
         const resultText = result?.content?.[0]?.text || '';
-        const isError =
+        const hasErrorText =
           resultText.includes('McpError:') ||
           resultText.includes('MCP error') ||
           resultText.includes('Error:') ||
           resultText.includes('Failed to');
 
-        if (isError) {
+        if (hasErrorText) {
           // Create a synthetic error status for the error UI
           const errorStatus = {
             type: 'incomplete',
