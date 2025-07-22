@@ -36,6 +36,8 @@ See MCP-B in action right away:
 
 - **[Vue ](https://github.com/bestian/vue-MCP-B-demo)** example By [Besian](https://github.com/bestian)
 
+- **[Nuxt 3](https://github.com/mikechao/nuxt3-mcp-b-demo)** example by [Mike Chao](https://github.com/mikechao/)
+
 These demos highlight how MCP-B integrates into websites without needing complex setups. Install the [MCP-B Chrome Extension](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa?authuser=0&hl=en) to interact with the tools via the extension's chat interface or tool inspector.
 
 ## What is MCP-B?
