@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/transports",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Transports for the in browser transport protocols",
   "license": "MIT",
   "author": "Alex Nahas",
@@ -26,9 +26,9 @@
   "main": "./dist/index.js",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/index.js"
     }
   },
   "files": [
