@@ -1,3 +1,7 @@
+> [!IMPORTANT]
+> 🚨 Important Update: Please download version [1.0.0](https://www.npmjs.com/package/@mcp-b/transports/v/1.0.0?activeTab=readme) from NPM as this is a breaking change! 🚨
+
+
 # MCP-B:
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/daohopfhkdelnpemnhlekblhnikhdhfa?style=flat-square&label=Chrome%20Extension)](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa)
