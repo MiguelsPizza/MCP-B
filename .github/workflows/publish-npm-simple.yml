@@ -112,8 +112,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install dependencies (ignore scripts)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build packages first
+        run: pnpm build:packages
+
+      - name: Run postinstall scripts
+        run: pnpm rebuild
 
       - name: Build all packages
         run: pnpm build:packages
