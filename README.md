@@ -1,7 +1,6 @@
 > [!IMPORTANT]
 > 🚨 Important Update: Please download version [1.0.0](https://www.npmjs.com/package/@mcp-b/transports/v/1.0.0?activeTab=readme) from NPM as this is a breaking change! 🚨
 
-
 # MCP-B:
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/daohopfhkdelnpemnhlekblhnikhdhfa?style=flat-square&label=Chrome%20Extension)](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa)
@@ -61,17 +60,68 @@ Get MCP-B running on your website in minutes. This guide focuses on adding an MC
 
 ### Prerequisites
 
-- Node.js 18+ and npm/pnpm.
-- A website with JavaScript (vanilla, React, etc.).
-- [MCP-B Chrome Extension](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa?authuser=0&hl=en) installed for testing.
+- **Node.js 22.12+** (check with `node --version`)
+- **pnpm 10+** (install via `npm install -g pnpm`)
+- A website with JavaScript (vanilla, React, etc.)
+- [MCP-B Chrome Extension](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa?authuser=0&hl=en) installed for testing
 
-### Step 1: Install Dependencies
+### Development Setup (Repository Contributors)
+
+If you want to contribute to MCP-B or run the examples locally:
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/MiguelsPizza/WebMCP.git
+   cd WebMCP
+   ```
+
+2. **Install all dependencies:**
+
+   ```bash
+   pnpm install
+   ```
+
+   Note: Some postinstall scripts may fail initially - this is normal.
+
+3. **Build the workspace packages:**
+
+   ```bash
+   pnpm build:packages
+   ```
+
+4. **Start the development environment:**
+
+   > **Note**: If you're using the development extension build, add your OpenAI API key to `web/example/.dev.vars` and rename the file to `.dev.vars`
+
+   ```bash
+   pnpm dev
+   ```
+
+   This will start:
+
+   - Extension development server with hot reload
+   - Documentation website with webMCP
+   - All package watchers
+
+5. **Test with the vanilla TypeScript example:**
+   ```bash
+   cd examples/vanilla-ts
+   npx vite
+   ```
+   Visit `http://localhost:5173` in Chrome with the MCP-B extension installed.
+
+### Adding MCP-B to Your Existing Website
+
+For adding MCP-B to your own project (recommended for most users):
+
+#### Step 1: Install Dependencies
 
 ```bash
 npm install @mcp-b/transports @modelcontextprotocol/sdk zod
 ```
 
-### Step 2: Add an MCP Server to Your Website
+#### Step 2: Add an MCP Server to Your Website
 
 Create a single MCP server instance and connect it via Tab Transport. Expose tools that wrap your existing logic.
 
@@ -110,7 +160,7 @@ await server.connect(new TabServerTransport({ allowedOrigins: ["*"] })); // Adju
 - **What this does**: The server listens for clients (e.g., the extension injects one). Tools like `getPageInfo` become callable by AI.
 - **Tips**: Use Zod for input schemas. Add visual feedback (e.g., notifications) so users see AI actions.
 
-### Step 3: Test It
+#### Step 3: Test It
 
 1. Run your site (e.g., via a dev server).
 2. Visit the page in Chrome with the MCP-B extension installed.
@@ -119,14 +169,27 @@ await server.connect(new TabServerTransport({ allowedOrigins: ["*"] })); // Adju
    - Use the chat interface to ask AI to call them (e.g., "Get the page info").
    - Or manually invoke via the inspector.
 
-### Step 4: Explore Examples
+#### Step 4: Explore Examples
 
 The `./examples/` folder provides ready-to-run starters:
 
 - **vanilla-ts**: Basic todo app. Tools: `createTodo`, `getTodos`, etc. Demonstrates dynamic tool registration and UI updates.
 
-  - Run: `cd examples/vanilla-ts && pnpm dev`.
-  - What it does: AI can manage todos, with tools scoped to the page state.
+**To run examples** (after setting up the development environment above):
+
+```bash
+# From the root directory, after running pnpm dev
+cd examples/vanilla-ts
+npx vite
+```
+
+Visit `http://localhost:5174` to see the todo app with MCP tools enabled.
+
+**What the example demonstrates:**
+
+- AI can manage todos with tools scoped to page state
+- Real-time UI updates when tools are called
+- Dynamic tool registration based on app state
 
 Copy patterns from these to your site. Focus on wrapping client-side functions—e.g., use `fetch` with `credentials: 'same-origin'` for authenticated calls.
 
@@ -195,12 +258,75 @@ WebMCP/
 └── web/                     # Demo site and docs
 ```
 
+## Troubleshooting
+
+### Common Setup Issues
+
+**Git clone times out:**
+
+```bash
+# If the initial clone fails, complete it manually:
+git clone https://github.com/MiguelsPizza/WebMCP.git
+cd WebMCP
+git pull origin main
+```
+
+**Native server postinstall errors:**
+
+```bash
+# These errors during pnpm install are normal and can be ignored:
+# "Cannot find module '/path/to/native-server/dist/scripts/postinstall.js'"
+# The packages will still build correctly.
+```
+
+**Example won't start:**
+
+```bash
+# Make sure you've built the workspace packages first:
+pnpm build:packages
+
+# Then run the example with npx:
+cd examples/vanilla-ts
+npx vite
+```
+
+**Import resolution errors:**
+
+```bash
+# Ensure the workspace is properly built:
+pnpm build:packages
+# Or run from the root with workspace support:
+pnpm dev
+```
+
+**Port conflicts:**
+
+- Main dev server runs on port 5173-5174
+- Extension dev server runs on port 3000
+- Native host runs on port 12306
+
+### Extension Issues
+
+**Extension not detecting tools:**
+
+1. Ensure the extension is installed and enabled
+2. Refresh the page after starting your MCP server
+3. Check the extension popup "Tools" tab
+4. Look for console errors in browser DevTools
+
+**Tools not working:**
+
+1. Verify your `TabServerTransport` configuration
+2. Check that `allowedOrigins` includes your domain
+3. Ensure tools are properly registered before transport connection
+
 ## Development
 
 ```bash
 git clone https://github.com/MiguelsPizza/WebMCP.git
 cd WebMCP
 pnpm install
+pnpm build:packages  # Build workspace packages first
 pnpm dev  # Runs all in dev mode
 ```
 
