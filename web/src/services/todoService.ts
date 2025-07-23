@@ -1,281 +1,100 @@
-import { hc } from 'hono/client';
-import type { AppType } from '../../worker';
-import type { ErrorResponse, Todo } from '../../worker/db/schema';
+import { z } from 'zod';
 
-const client = hc<AppType>(location.origin);
-
-export type SortParams = {
-  sortBy: keyof Todo;
-  sortOrder: 'desc' | 'asc';
-  completed: boolean | undefined;
-  search: string | undefined;
+// Simple Todo type
+export type Todo = {
+  id: string;
+  text: string;
+  completed: boolean;
+  created_at: string;
 };
 
-export const DEFAULT_SORT_PARAMS = {
-  sortBy: 'created_at',
-  sortOrder: 'desc',
-  completed: undefined,
-  search: undefined,
-} as const satisfies SortParams;
+// Simple Zod schema for validation
+const todoSchema = z.object({
+  id: z.string(),
+  text: z.string().min(1),
+  completed: z.boolean(),
+  created_at: z.string(),
+});
 
-const SORT_PARAMS_KEY = 'todo-sort-params';
+const TODOS_KEY = 'todos';
 
-export class TodoApiError extends Error {
-  public readonly code?: string;
-  public readonly details?: unknown;
-  public readonly statusCode: number;
-  public readonly originalError: ErrorResponse;
-
-  constructor(errorResponse: ErrorResponse, statusCode: number, defaultMessage: string) {
-    const message = errorResponse.message || errorResponse.error || defaultMessage;
-    super(message);
-    this.name = 'TodoApiError';
-    this.code = errorResponse.code;
-    this.details = errorResponse.details;
-    this.statusCode = statusCode;
-    this.originalError = errorResponse;
-  }
-
-  get errorResponse(): ErrorResponse {
-    return this.originalError;
-  }
-
-  get isNotFound(): boolean {
-    return this.code === 'NOT_FOUND';
-  }
-
-  get isValidationError(): boolean {
-    return this.code === 'VALIDATION_ERROR';
-  }
-
-  get isUniqueConstraintError(): boolean {
-    return this.code === 'UNIQUE_CONSTRAINT_FAILED';
-  }
-
-  get isDatabaseError(): boolean {
-    return this.code === 'DATABASE_ERROR';
-  }
-}
-
-const handleApiError = async (res: Response, defaultMessage: string): Promise<never> => {
+// Basic localStorage operations
+const getTodos = (): Todo[] => {
   try {
-    const errorData = await res.json();
+    const stored = localStorage.getItem(TODOS_KEY);
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
 
-    if (
-      errorData &&
-      typeof errorData === 'object' &&
-      'success' in errorData &&
-      errorData.success === false &&
-      'error' in errorData
-    ) {
-      const zodError = errorData as { success: false; error: { name: string; message: string } };
+const saveTodos = (todos: Todo[]) => {
+  localStorage.setItem(TODOS_KEY, JSON.stringify(todos));
+  // Dispatch custom event for same-tab updates
+  window.dispatchEvent(new CustomEvent('todos-updated'));
+};
 
-      let errorMessage = 'Validation error';
-      try {
-        const errors = JSON.parse(zodError.error.message) as Array<{
-          path: string[];
-          message: string;
-          code?: string;
-          minimum?: number;
-        }>;
+// Helper function for artificial delay
+const delay = () => new Promise((resolve) => setTimeout(resolve, 300 + Math.random() * 700));
 
-        const fieldErrors = errors
-          .map((err) => {
-            const field = err.path.join('.');
-            return `${field}: ${err.message}`;
-          })
-          .join(', ');
+// Simple API
+export const todoService = {
+  getAll(): Todo[] {
+    return getTodos();
+  },
 
-        errorMessage = fieldErrors || 'Validation failed';
-      } catch {
-        errorMessage = zodError.error.message || 'Validation failed';
-      }
+  async create(text: string): Promise<Todo> {
+    await delay();
 
-      const normalizedError: ErrorResponse = {
-        error: 'VALIDATION_ERROR',
-        message: errorMessage,
-        code: 'VALIDATION_ERROR',
-        details: errorData,
-      };
-
-      throw new TodoApiError(normalizedError, res.status, defaultMessage);
-    }
-
-    const typedErrorData = errorData as ErrorResponse;
-
-    const normalizedError: ErrorResponse = {
-      error: typedErrorData.error || defaultMessage,
-      message: typedErrorData.message || typedErrorData.error || defaultMessage,
-      code: typedErrorData.code || 'HTTP_ERROR',
-      details: typedErrorData.details,
+    const newTodo: Todo = {
+      id: crypto.randomUUID(),
+      text,
+      completed: false,
+      created_at: new Date().toISOString(),
     };
 
-    throw new TodoApiError(normalizedError, res.status, defaultMessage);
-  } catch (parseError) {
-    if (parseError instanceof TodoApiError) {
-      throw parseError;
-    }
+    const todos = getTodos();
+    todos.push(newTodo);
+    saveTodos(todos);
 
-    const errorResponse: ErrorResponse = {
-      error: defaultMessage,
-      message: res.statusText || defaultMessage,
-      code: 'HTTP_ERROR',
-    };
-    throw new TodoApiError(errorResponse, res.status, defaultMessage);
-  }
-};
-
-export type TodosGetQueryParams = Parameters<typeof client.api.todos.$get>[0]['query'];
-export type UserTodosGetQueryParams = Parameters<
-  (typeof client.api.users)[':userId']['todos']['$get']
->[0]['query'];
-export type TodosPostJsonBody = Parameters<(typeof client.api.todos)['$post']>[0]['json'];
-export type TodoPutJsonBody = Parameters<(typeof client.api.todos)[':id']['$put']>[0]['json'];
-
-export const todoApi = {
-  async getAll(queryParams?: TodosGetQueryParams) {
-    const res = await client.api.todos.$get({
-      query: queryParams || {},
-    });
-
-    if (!res.ok) {
-      await handleApiError(res, 'Failed to get todos');
-    }
-
-    return await res.json();
+    return newTodo;
   },
 
-  async getById(id: string) {
-    const res = await client.api.todos[':id'].$get({ param: { id } });
+  async update(
+    id: string,
+    updates: Partial<Pick<Todo, 'text' | 'completed'>>
+  ): Promise<Todo | null> {
+    await delay();
 
-    if (!res.ok) {
-      await handleApiError(res, 'Failed to get todo');
-    }
+    const todos = getTodos();
+    const index = todos.findIndex((t) => t.id === id);
 
-    return await res.json();
+    if (index === -1) return null;
+
+    todos[index] = { ...todos[index], ...updates };
+    saveTodos(todos);
+
+    return todos[index];
   },
 
-  async getForUser(userId: string, queryParams?: UserTodosGetQueryParams) {
-    const res = await client.api.users[':userId'].todos.$get({
-      param: { userId },
-      query: queryParams || {},
-    });
+  async delete(id: string): Promise<boolean> {
+    await delay();
 
-    if (!res.ok) {
-      await handleApiError(res, 'Failed to get user todos');
-    }
+    const todos = getTodos();
+    const index = todos.findIndex((t) => t.id === id);
 
-    return await res.json();
+    if (index === -1) return false;
+
+    todos.splice(index, 1);
+    saveTodos(todos);
+
+    return true;
   },
 
-  async create(todo: TodosPostJsonBody) {
-    const res = await client.api.todos.$post({
-      json: todo,
-    });
-
-    if (!res.ok) {
-      await handleApiError(res, 'Failed to create todo');
-    }
-
-    return await res.json();
+  async deleteAll(): Promise<void> {
+    await delay();
+    saveTodos([]);
   },
-
-  async update(id: string, changes: TodoPutJsonBody) {
-    const res = await client.api.todos[':id'].$put({
-      param: { id },
-      json: changes,
-    });
-
-    if (!res.ok) {
-      await handleApiError(res, 'Failed to update todo');
-    }
-
-    return await res.json();
-  },
-
-  async delete(id: string) {
-    const res = await client.api.todos[':id'].$delete({
-      param: { id },
-    });
-
-    if (!res.ok) {
-      await handleApiError(res, 'Failed to delete todo');
-    }
-
-    return { success: true };
-  },
-
-  async deleteAllForUser(userId: string) {
-    const res = await client.api.users[':userId'].todos.$delete({
-      param: { userId },
-    });
-
-    if (!res.ok) {
-      await handleApiError(res, 'Failed to delete all todos');
-    }
-
-    return await res.json();
-  },
-};
-
-export const getSortParamsFromStorage = () => {
-  try {
-    const stored = localStorage.getItem(SORT_PARAMS_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      return { ...DEFAULT_SORT_PARAMS, ...parsed };
-    }
-  } catch (error) {
-    console.warn('Failed to parse sort parameters from localStorage:', error);
-  }
-  return DEFAULT_SORT_PARAMS;
-};
-
-export const updateSortParams = (newParams: Partial<typeof DEFAULT_SORT_PARAMS>) => {
-  const currentParams = getSortParamsFromStorage();
-  const updatedParams = { ...currentParams, ...newParams };
-
-  localStorage.setItem(SORT_PARAMS_KEY, JSON.stringify(updatedParams));
-  window.dispatchEvent(new CustomEvent('todoSortParamsChanged'));
-};
-
-export const resetSortParams = () => {
-  localStorage.setItem(SORT_PARAMS_KEY, JSON.stringify(DEFAULT_SORT_PARAMS));
-  window.dispatchEvent(new CustomEvent('todoSortParamsChanged'));
-};
-
-export const isApiError = (error: unknown): error is TodoApiError => error instanceof TodoApiError;
-
-export const getErrorMessage = (error: unknown): string => {
-  if (isApiError(error)) {
-    return error.message;
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return 'An unexpected error occurred';
-};
-
-export const getErrorCode = (error: unknown): string | undefined => {
-  if (isApiError(error)) {
-    return error.code;
-  }
-  return undefined;
-};
-
-export const handleCommonErrors = (error: TodoApiError): string => {
-  switch (error.code) {
-    case 'NOT_FOUND':
-      return 'The requested resource was not found.';
-    case 'UNIQUE_CONSTRAINT_FAILED':
-      return 'This resource already exists.';
-    case 'VALIDATION_ERROR':
-      return 'The provided data is invalid.';
-    case 'DATABASE_ERROR':
-      return 'A database error occurred. Please try again.';
-    case 'FOREIGN_KEY_CONSTRAINT_FAILED':
-      return 'Cannot perform this action due to related data.';
-    default:
-      return error.message || 'An unexpected error occurred.';
-  }
 };

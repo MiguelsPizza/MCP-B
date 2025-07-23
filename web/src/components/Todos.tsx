@@ -1,76 +1,37 @@
-import { useLiveQuery } from '@tanstack/react-db';
-import { AlertCircle, CheckCircle2, Circle, ListTodo } from 'lucide-react';
-import { useTodoSortParamsRouter } from '../hooks/useTodoSortParamsRouter';
-import { userTodoCollection } from '../services/collections';
-import { Alert, AlertDescription } from './ui/alert';
-import { Skeleton } from './ui/skeleton';
+import { useEffect, useState } from 'react';
+import { CheckCircle2, Circle, ListTodo } from 'lucide-react';
+import { todoService, type Todo } from '../services/todoService';
 
-export default function Todos({ route }: { route: '/assistant' | '/blogs' }) {
-  const { sortParams, getSortDescription } = useTodoSortParamsRouter(route);
-  const { data: todos = [] } = useLiveQuery(
-    (query) => {
-      let baseQuery = query.from({ userTodoCollection });
+export default function Todos() {
+  const [todos, setTodos] = useState<Todo[]>([]);
 
-      // if (sortParams.completed !== undefined) {
-      //     baseQuery = baseQuery.where('@userTodoCollection.completed', '=', sortParams.completed);
-      // }
+  const refreshTodos = () => {
+    setTodos(todoService.getAll());
+  };
 
-      if (sortParams.search) {
-        baseQuery = baseQuery.where('@userTodoCollection.text', 'like', `%${sortParams.search}%`);
+  useEffect(() => {
+    refreshTodos();
+
+    // Listen for storage changes from other tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'todos') {
+        refreshTodos();
       }
+    };
 
-      const sortOrder = sortParams.sortOrder === 'desc' ? 'desc' : 'asc';
-      baseQuery = baseQuery.orderBy({
-        [`@userTodoCollection.${sortParams.sortBy}`]: sortOrder,
-      } as any);
+    // Listen for custom events for same-tab updates
+    const handleCustomStorageChange = () => {
+      refreshTodos();
+    };
 
-      return baseQuery
-        .keyBy('@id')
-        .select(
-          '@userTodoCollection.id',
-          '@userTodoCollection.text',
-          '@userTodoCollection.completed',
-          '@userTodoCollection.userId',
-          '@userTodoCollection.created_at',
-          '@userTodoCollection.updated_at'
-        );
-    },
-    [userTodoCollection, sortParams]
-  );
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('todos-updated', handleCustomStorageChange);
 
-  const isLoading = false;
-  const error: Error | null = null;
-  const isMutating = false;
-
-  if (isLoading) {
-    return (
-      <div className="h-full p-3 sm:p-4 space-y-3">
-        {[...Array(5)].map((_, i) => (
-          <div
-            key={i}
-            className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-card/50 border border-border/50"
-          >
-            <Skeleton className="h-4 w-4 sm:h-5 sm:w-5 rounded-full mt-0.5" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-3 w-1/2" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="h-full p-3 sm:p-4 flex items-center justify-center">
-        <Alert variant="destructive" className="border-destructive/50">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{(error as Error)?.message || 'Failed to load todos'}</AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('todos-updated', handleCustomStorageChange);
+    };
+  }, []);
 
   const completedCount = todos.filter((t) => t.completed).length;
   const totalCount = todos.length;
@@ -79,24 +40,18 @@ export default function Todos({ route }: { route: '/assistant' | '/blogs' }) {
     <div className="h-full flex flex-col">
       {/* Header Stats */}
       <div className="px-3 sm:px-4 py-2 sm:py-3 border-b bg-muted/30">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <ListTodo className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-            </div>
-            <div>
-              <p className="text-xs sm:text-sm font-medium">
-                {totalCount === 0 ? 'No tasks' : `${completedCount} of ${totalCount} completed`}
-              </p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">{getSortDescription()}</p>
-            </div>
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <ListTodo className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
           </div>
-          {isMutating && (
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-          )}
+          <div>
+            <p className="text-xs sm:text-sm font-medium">
+              {totalCount === 0 ? 'No tasks' : `${completedCount} of ${totalCount} completed`}
+            </p>
+          </div>
         </div>
         {totalCount > 0 && (
-          <div className="w-full bg-muted rounded-full h-1.5 sm:h-2 overflow-hidden">
+          <div className="w-full bg-muted rounded-full h-1.5 sm:h-2 overflow-hidden mt-2">
             <div
               className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-500"
               style={{ width: `${(completedCount / totalCount) * 100}%` }}
@@ -117,19 +72,10 @@ export default function Todos({ route }: { route: '/assistant' | '/blogs' }) {
           </div>
         ) : (
           <div className="space-y-1.5 sm:space-y-2">
-            {todos.map((todo, index) => (
+            {todos.map((todo) => (
               <div
                 key={todo.id}
-                className={`
-                  group flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg
-                  bg-card/50 backdrop-blur-sm border border-border/50
-                  transition-all duration-200 hover:bg-card/80 hover:border-border
-                  hover:shadow-sm animate-in fade-in-50 slide-in-from-bottom-1
-                `}
-                style={{
-                  animationDelay: `${Math.min(index * 50, 500)}ms`,
-                  animationFillMode: 'both',
-                }}
+                className="group flex items-start gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50 transition-all duration-200 hover:bg-card/80 hover:border-border hover:shadow-sm"
               >
                 <div className="mt-0.5 flex-shrink-0">
                   {todo.completed ? (

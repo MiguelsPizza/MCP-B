@@ -3,9 +3,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import type { Todo } from '../../worker/db/schema.ts';
-import { userId } from '../lib/utils.ts';
-import { getErrorMessage, isApiError, todoApi } from './todoService.ts';
+import { todoService } from './todoService.ts';
 
 const generateServer = (): McpServer => {
   const server = new McpServer(
@@ -14,28 +12,20 @@ const generateServer = (): McpServer => {
       version: '1.0.0',
     },
     {
-      instructions:
-        'You are a helpful assistant that can create, update, and delete todos for the current user.',
+      instructions: 'You are a helpful assistant that can create, update, and delete todos.',
     }
   );
 
   // Create Todo Tool
   server.tool(
     'createTodo',
-    'Creates a new todo item for the current user',
+    'Creates a new todo item',
     {
       todoText: z.string().describe('The content of the todo item.'),
     },
     async (args) => {
-      if (!userId) {
-        return { content: [{ type: 'text', text: 'Error: User ID not found.' }] };
-      }
-
       try {
-        const newTodo = (await todoApi.create({
-          text: args.todoText,
-          userId,
-        })) as Todo;
+        const newTodo = await todoService.create(args.todoText);
 
         return {
           content: [
@@ -47,8 +37,7 @@ const generateServer = (): McpServer => {
         };
       } catch (error) {
         console.error('MCP Tool Error:', error);
-        const errorMessage = isApiError(error) ? getErrorMessage(error) : 'Failed to create todo';
-        return { content: [{ type: 'text', text: `Error: ${errorMessage}` }] };
+        return { content: [{ type: 'text', text: 'Error: Failed to create todo' }] };
       }
     }
   );
@@ -63,10 +52,6 @@ const generateServer = (): McpServer => {
       completed: z.boolean().optional().describe('The new completion status.'),
     },
     async (args) => {
-      if (!userId) {
-        return { content: [{ type: 'text', text: 'Error: User ID not found.' }] };
-      }
-
       try {
         const updates: { text?: string; completed?: boolean } = {};
         if (args.text !== undefined) updates.text = args.text;
@@ -78,7 +63,11 @@ const generateServer = (): McpServer => {
           };
         }
 
-        const updatedTodo = (await todoApi.update(args.id, updates)) as Todo;
+        const updatedTodo = await todoService.update(args.id, updates);
+
+        if (!updatedTodo) {
+          return { content: [{ type: 'text', text: 'Error: Todo not found' }] };
+        }
 
         return {
           content: [
@@ -90,8 +79,7 @@ const generateServer = (): McpServer => {
         };
       } catch (error) {
         console.error('MCP Tool Error:', error);
-        const errorMessage = isApiError(error) ? getErrorMessage(error) : 'Failed to update todo';
-        return { content: [{ type: 'text', text: `Error: ${errorMessage}` }] };
+        return { content: [{ type: 'text', text: 'Error: Failed to update todo' }] };
       }
     }
   );
@@ -104,155 +92,60 @@ const generateServer = (): McpServer => {
       id: z.string().uuid().describe('The ID of the todo to delete.'),
     },
     async (args) => {
-      if (!userId) {
-        return { content: [{ type: 'text', text: 'Error: User ID not found.' }] };
-      }
-
       try {
-        await todoApi.delete(args.id);
+        const success = await todoService.delete(args.id);
+
+        if (!success) {
+          return { content: [{ type: 'text', text: 'Error: Todo not found' }] };
+        }
+
         return { content: [{ type: 'text', text: 'Todo deleted successfully' }] };
       } catch (error) {
         console.error('MCP Tool Error:', error);
-        const errorMessage = isApiError(error) ? getErrorMessage(error) : 'Failed to delete todo';
-        return { content: [{ type: 'text', text: `Error: ${errorMessage}` }] };
+        return { content: [{ type: 'text', text: 'Error: Failed to delete todo' }] };
       }
     }
   );
 
   // Delete All Todos Tool
-  server.tool(
-    'deleteAllTodos',
-    'Permanently deletes all todo items for the current user',
-    {},
-    async () => {
-      if (!userId) {
-        return { content: [{ type: 'text', text: 'Error: User ID not found.' }] };
-      }
-
-      try {
-        await todoApi.deleteAllForUser(userId);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Successfully deleted all todos`,
-            },
-          ],
-        };
-      } catch (error) {
-        console.error('MCP Tool Error:', error);
-        const errorMessage = isApiError(error)
-          ? getErrorMessage(error)
-          : 'Failed to delete all todos';
-        return { content: [{ type: 'text', text: `Error: ${errorMessage}` }] };
-      }
+  server.tool('deleteAllTodos', 'Permanently deletes all todo items', {}, async () => {
+    try {
+      await todoService.deleteAll();
+      return {
+        content: [
+          {
+            type: 'text',
+            text: 'Successfully deleted all todos',
+          },
+        ],
+      };
+    } catch (error) {
+      console.error('MCP Tool Error:', error);
+      return { content: [{ type: 'text', text: 'Error: Failed to delete all todos' }] };
     }
-  );
+  });
 
-  // Get User's Todos Tool
-  server.tool(
-    'getTodos',
-    'Retrieves a list of todos for the current user with filtering, sorting, and pagination options',
-    {
-      completed: z
-        .boolean()
-        .optional()
-        .default(false)
-        .describe('Filter todos by completion status'),
-      sortBy: z
-        .enum(['text', 'completed', 'created_at', 'updated_at'])
-        .optional()
-        .default('text')
-        .describe('Field to sort by'),
-      sortOrder: z.enum(['asc', 'desc']).optional().default('asc').describe('Sort order'),
-      limit: z
-        .number()
-        .int()
-        .positive()
-        .max(100)
-        .optional()
-        .default(50)
-        .describe('Maximum number of todos to return'),
-      offset: z.number().int().min(0).optional().default(0).describe('Number of todos to skip'),
-      search: z.string().optional().default('').describe('Search text within todo text'),
-    },
-    async (args) => {
-      if (!userId) {
-        return { content: [{ type: 'text', text: 'Error: User ID not found.' }] };
-      }
+  // Get Todos Tool
+  server.tool('getTodos', 'Retrieves a list of all todos', {}, async () => {
+    try {
+      const todos = todoService.getAll();
 
-      try {
-        const queryParams = {
-          completed: args.completed,
-          sortBy: args.sortBy,
-          sortOrder: args.sortOrder,
-          limit: args.limit,
-          offset: args.offset,
-          search: args.search,
-        };
-
-        const todos = (await todoApi.getForUser(userId, queryParams as any)) as Todo[];
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Found ${todos.length} todos:\n${JSON.stringify(todos, null, 2)}`,
-            },
-          ],
-        };
-      } catch (error) {
-        console.error('MCP Tool Error:', error);
-        const errorMessage = isApiError(error)
-          ? getErrorMessage(error)
-          : 'Failed to retrieve todos';
-        return { content: [{ type: 'text', text: `Error: ${errorMessage}` }] };
-      }
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Found ${todos.length} todos:\n${JSON.stringify(todos, null, 2)}`,
+          },
+        ],
+      };
+    } catch (error) {
+      console.error('MCP Tool Error:', error);
+      return { content: [{ type: 'text', text: 'Error: Failed to retrieve todos' }] };
     }
-  );
-
-  // Get Single Todo Tool
-  server.tool(
-    'getTodo',
-    'Retrieves a specific todo item by its ID',
-    {
-      id: z.string().uuid().describe('The ID of the todo to retrieve.'),
-    },
-    async (args) => {
-      try {
-        const todo = await todoApi.getById(args.id);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Todo details:\n${JSON.stringify(todo, null, 2)}`,
-            },
-          ],
-        };
-      } catch (error) {
-        console.error('MCP Tool Error:', error);
-        const errorMessage = isApiError(error) ? getErrorMessage(error) : 'Failed to retrieve todo';
-        return { content: [{ type: 'text', text: `Error: ${errorMessage}` }] };
-      }
-    }
-  );
+  });
 
   return server;
 };
-
-// export const initializeMcpServer = async () => {
-//   try {
-//     const server = generateServer();
-//     const transport = new TabServerTransport({
-//       allowedOrigins: ['*'],
-//     });
-//     await server.connect(transport);
-//     console.log(server);
-//     console.log('MCP Server connected successfully');
-//   } catch (error) {
-//     console.error('Failed to connect MCP Server:', error);
-//   }
-// };
 
 const initializeInMemoryServer = () => {
   const server = generateServer();

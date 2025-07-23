@@ -2,11 +2,10 @@ import type { RegisteredTool } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
-import type { Todo } from 'worker/db/schema';
 import { z } from 'zod';
-import { getErrorMessage, isApiError, todoApi } from '@/services/todoService';
-import { userId } from '../lib/utils';
+import { todoService } from '@/services/todoService';
 import { server } from '../TabServer';
+
 // Component to handle MCP tool registration
 export function McpToolsProvider({
   children,
@@ -33,7 +32,7 @@ export function McpToolsProvider({
         'createTodo',
         {
           title: 'Create Todo',
-          description: 'Creates a new todo item for the current user',
+          description: 'Creates a new todo item',
           inputSchema: {
             todoText: z.string().describe('The content of the todo item.') as any,
           },
@@ -49,18 +48,8 @@ export function McpToolsProvider({
         async (args) => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
 
-          if (!userId) {
-            toast.error('User ID not found');
-            return {
-              content: [{ type: 'text', text: 'Error: User ID not found.' }],
-            };
-          }
-
           try {
-            const newTodo = (await todoApi.create({
-              text: args.todoText,
-              userId,
-            })) as Todo;
+            const newTodo = await todoService.create(args.todoText);
 
             toast.success('Todo created', {
               description: `"${args.todoText}" has been added to your list`,
@@ -76,14 +65,9 @@ export function McpToolsProvider({
             };
           } catch (error) {
             console.error('MCP Tool Error:', error);
-            const errorMessage = isApiError(error)
-              ? getErrorMessage(error)
-              : 'Failed to create todo';
-            toast.error('Failed to create todo', {
-              description: errorMessage,
-            });
+            toast.error('Failed to create todo');
             return {
-              content: [{ type: 'text', text: `Error: ${errorMessage}` }],
+              content: [{ type: 'text', text: 'Error: Failed to create todo' }],
             };
           }
         }
@@ -117,13 +101,6 @@ export function McpToolsProvider({
         async (args) => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
 
-          if (!userId) {
-            toast.error('User ID not found');
-            return {
-              content: [{ type: 'text', text: 'Error: User ID not found.' }],
-            };
-          }
-
           try {
             const updates: { text?: string; completed?: boolean } = {};
             if (args.text !== undefined) updates.text = args.text;
@@ -135,7 +112,14 @@ export function McpToolsProvider({
               };
             }
 
-            const updatedTodo = (await todoApi.update(args.id, updates)) as Todo;
+            const updatedTodo = await todoService.update(args.id, updates);
+
+            if (!updatedTodo) {
+              toast.error('Todo not found');
+              return {
+                content: [{ type: 'text', text: 'Error: Todo not found' }],
+              };
+            }
 
             toast.success('Todo updated', {
               description:
@@ -156,14 +140,9 @@ export function McpToolsProvider({
             };
           } catch (error) {
             console.error('MCP Tool Error:', error);
-            const errorMessage = isApiError(error)
-              ? getErrorMessage(error)
-              : 'Failed to update todo';
-            toast.error('Failed to update todo', {
-              description: errorMessage,
-            });
+            toast.error('Failed to update todo');
             return {
-              content: [{ type: 'text', text: `Error: ${errorMessage}` }],
+              content: [{ type: 'text', text: 'Error: Failed to update todo' }],
             };
           }
         }
@@ -191,34 +170,29 @@ export function McpToolsProvider({
             openWorldHint: false,
             cache: cache,
           },
-          // ...(cache && { _meta: { cache: true } }),
         },
         async (args) => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
 
-          if (!userId) {
-            toast.error('User ID not found');
-            return {
-              content: [{ type: 'text', text: 'Error: User ID not found.' }],
-            };
-          }
-
           try {
-            await todoApi.delete(args.id);
+            const success = await todoService.delete(args.id);
+
+            if (!success) {
+              toast.error('Todo not found');
+              return {
+                content: [{ type: 'text', text: 'Error: Todo not found' }],
+              };
+            }
+
             toast.success('Todo deleted');
             return {
               content: [{ type: 'text', text: 'Todo deleted successfully' }],
             };
           } catch (error) {
             console.error('MCP Tool Error:', error);
-            const errorMessage = isApiError(error)
-              ? getErrorMessage(error)
-              : 'Failed to delete todo';
-            toast.error('Failed to delete todo', {
-              description: errorMessage,
-            });
+            toast.error('Failed to delete todo');
             return {
-              content: [{ type: 'text', text: `Error: ${errorMessage}` }],
+              content: [{ type: 'text', text: 'Error: Failed to delete todo' }],
             };
           }
         }
@@ -234,7 +208,7 @@ export function McpToolsProvider({
         'deleteAllTodos',
         {
           title: 'Delete All Todos',
-          description: 'Permanently deletes all todo items for the current user',
+          description: 'Permanently deletes all todo items',
           inputSchema: {},
           annotations: {
             title: 'Delete All Todos',
@@ -248,15 +222,8 @@ export function McpToolsProvider({
         async () => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
 
-          if (!userId) {
-            toast.error('User ID not found');
-            return {
-              content: [{ type: 'text', text: 'Error: User ID not found.' }],
-            };
-          }
-
           try {
-            await todoApi.deleteAllForUser(userId);
+            await todoService.deleteAll();
             toast.success('All todos deleted', {
               description: 'Your todo list has been cleared',
             });
@@ -264,20 +231,15 @@ export function McpToolsProvider({
               content: [
                 {
                   type: 'text',
-                  text: `Successfully deleted all todos`,
+                  text: 'Successfully deleted all todos',
                 },
               ],
             };
           } catch (error) {
             console.error('MCP Tool Error:', error);
-            const errorMessage = isApiError(error)
-              ? getErrorMessage(error)
-              : 'Failed to delete all todos';
-            toast.error('Failed to delete all todos', {
-              description: errorMessage,
-            });
+            toast.error('Failed to delete all todos');
             return {
-              content: [{ type: 'text', text: `Error: ${errorMessage}` }],
+              content: [{ type: 'text', text: 'Error: Failed to delete all todos' }],
             };
           }
         }
@@ -293,37 +255,8 @@ export function McpToolsProvider({
         'getTodos',
         {
           title: 'Get Todos',
-          description:
-            'Retrieves a list of todos for the current user with filtering, sorting, and pagination options',
-          inputSchema: {
-            completed: z
-              .boolean()
-              .optional()
-              .default(false)
-              .describe('Filter todos by completion status'),
-            sortBy: z
-              .enum(['text', 'completed', 'created_at', 'updated_at'])
-              .optional()
-              .default('text')
-              .describe('Field to sort by'),
-            sortOrder: z.enum(['asc', 'desc']).optional().default('asc').describe('Sort order'),
-            limit: z
-              .number()
-              .int()
-              .positive()
-              .max(100)
-              .optional()
-              .default(50)
-              .describe('Maximum number of todos to return'),
-            offset: z
-              .number()
-              .int()
-              .min(0)
-              .optional()
-              .default(0)
-              .describe('Number of todos to skip'),
-            search: z.string().optional().default('').describe('Search text within todo text'),
-          },
+          description: 'Retrieves a list of all todos',
+          inputSchema: {},
           annotations: {
             title: 'Get Todos',
             readOnlyHint: true,
@@ -333,27 +266,11 @@ export function McpToolsProvider({
             cache: cache,
           },
         },
-        async (args) => {
+        async () => {
           navigate({ to: '/assistant', search: { activeView: 'todos' } });
 
-          if (!userId) {
-            toast.error('User ID not found');
-            return {
-              content: [{ type: 'text', text: 'Error: User ID not found.' }],
-            };
-          }
-
           try {
-            const queryParams = {
-              completed: args.completed?.toString(),
-              sortBy: args.sortBy,
-              sortOrder: args.sortOrder,
-              limit: args.limit?.toString(),
-              offset: args.offset?.toString(),
-              search: args.search,
-            };
-
-            const todos = (await todoApi.getForUser(userId, queryParams)) as Todo[];
+            const todos = todoService.getAll();
 
             return {
               content: [
@@ -365,14 +282,9 @@ export function McpToolsProvider({
             };
           } catch (error) {
             console.error('MCP Tool Error:', error);
-            const errorMessage = isApiError(error)
-              ? getErrorMessage(error)
-              : 'Failed to retrieve todos';
-            toast.error('Failed to retrieve todos', {
-              description: errorMessage,
-            });
+            toast.error('Failed to retrieve todos');
             return {
-              content: [{ type: 'text', text: `Error: ${errorMessage}` }],
+              content: [{ type: 'text', text: 'Error: Failed to retrieve todos' }],
             };
           }
         }
@@ -380,57 +292,6 @@ export function McpToolsProvider({
       registerTool('getTodos', getTodosTool);
     } catch (error) {
       console.warn('Tool getTodos registration failed:', error);
-    }
-
-    // Get Single Todo Tool
-    try {
-      const getTodoTool = server.registerTool(
-        'getTodo',
-        {
-          title: 'Get Todo',
-          description: 'Retrieves a specific todo item by its ID',
-          inputSchema: {
-            id: z.string().uuid().describe('The ID of the todo to retrieve.'),
-          },
-          annotations: {
-            title: 'Get Todo',
-            readOnlyHint: true,
-            destructiveHint: false,
-            idempotentHint: true,
-            openWorldHint: false,
-            cache: cache,
-          },
-        },
-        async (args) => {
-          navigate({ to: '/assistant', search: { activeView: 'todos' } });
-
-          try {
-            const todo = (await todoApi.getById(args.id)) as Todo;
-            return {
-              content: [
-                {
-                  type: 'text',
-                  text: `Todo details:\n${JSON.stringify(todo, null, 2)}`,
-                },
-              ],
-            };
-          } catch (error) {
-            console.error('MCP Tool Error:', error);
-            const errorMessage = isApiError(error)
-              ? getErrorMessage(error)
-              : 'Failed to retrieve todo';
-            toast.error('Failed to retrieve todo', {
-              description: errorMessage,
-            });
-            return {
-              content: [{ type: 'text', text: `Error: ${errorMessage}` }],
-            };
-          }
-        }
-      );
-      registerTool('getTodo', getTodoTool);
-    } catch (error) {
-      console.warn('Tool getTodo registration failed:', error);
     }
 
     return () => {
