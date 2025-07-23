@@ -28,7 +28,6 @@
     "@hookform/resolvers": "4.1.1",
     "@mcp-b/mcp-react-hooks": "workspace:*",
     "@mcp-b/transports": "workspace:*",
-    "@mcp-b/web-tools": "workspace:*",
     "@modelcontextprotocol/sdk": "catalog:",
     "@radix-ui/react-checkbox": "^1.3.2",
     "@radix-ui/react-collapsible": "^1.1.11",

@@ -1,4 +1,3 @@
-import { PromptApiTools } from '@mcp-b/web-tools';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -149,8 +148,6 @@ const generateServer = (): McpServer => {
 
 const initializeInMemoryServer = () => {
   const server = generateServer();
-  const promptApiTools = new PromptApiTools(server);
-  promptApiTools.register();
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   server.connect(serverTransport);
   return { clientTransport, serverTransport };
