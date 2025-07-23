@@ -1,147 +1,48 @@
-# Fastify Chrome Native Messaging服务
+# MCP-B Native Server
 
-这是一个基于Fastify的TypeScript项目，用于与Chrome扩展进行原生通信。
+A Chrome Native Messaging host for bridging browser extensions to local MCP clients.
 
-## 功能特性
+## Attribution
 
-- 通过Chrome Native Messaging协议与Chrome扩展进行双向通信
-- 提供RESTful API服务
-- 完全使用TypeScript开发
-- 包含完整的测试套件
-- 遵循代码质量最佳实践
+This native server is based on [mcp-chrome](https://github.com/hangwin/mcp-chrome) by [hangwin](https://github.com/hangwin). We've adapted it for MCP-B with additional features like dual extension ID support and automated registration workflows.
 
-## 开发环境设置
+## Features
 
-### 前置条件
+- Bridges Chrome extensions to local MCP clients via Native Messaging
+- HTTP server on port 12306 for MCP communication
+- Supports both production and development extension IDs
+- Automated manifest registration for development workflows
+- Cross-platform support (macOS, Windows, Linux)
 
-- Node.js 14+ 
-- npm 6+
+## Development
 
-### 安装
+This package is part of the MCP-B monorepo. For development setup, see the main [README.md](../README.md).
 
-```bash
-git clone https://github.com/your-username/fastify-chrome-native.git
-cd fastify-chrome-native
-npm install
-```
+### Key Scripts
 
-### 开发
+- `pnpm run build` - Build the native server
+- `pnpm run register:dev` - Register native messaging manifests for development
+- `pnpm run dev` - Build and register for development (with file watching)
 
-1. 本地构建注册native server
-```bash
-cd app/native-server
-npm run dev
-```
-2. 启动chrome extension
-```bash
-cd app/chrome-extension
-npm run dev
-```
+### Extension ID Configuration
 
-### 构建
+The server supports both production and development extension IDs:
+- Production: `mhipkdochajohklmmjinmicahanmldbj`
+- Development: Configurable via `native-server/.env` file
 
-```bash
-npm run build
-```
+## Architecture
 
-### 注册Native Messaging主机
+The native server acts as a proxy between:
+1. Local MCP clients (Claude Desktop, Cursor, etc.)
+2. Browser extensions via Chrome Native Messaging
+3. Web pages with MCP servers via the extension
 
-全局安装后会自动注册
-```bash
-npm i -g mcp-chrome-bridge
-```
+This enables desktop AI applications to interact with tools exposed by websites through the browser's security context.
 
-### 与Chrome扩展集成
-
-以下是Chrome扩展中如何使用此服务的简单示例：
-
-```javascript
-// background.js
-let nativePort = null;
-let serverRunning = false;
-
-// 启动Native Messaging服务
-function startServer() {
-  if (nativePort) {
-    console.log('已连接到Native Messaging主机');
-    return;
-  }
-  
-  try {
-    nativePort = chrome.runtime.connectNative('com.yourcompany.fastify_native_host');
-    
-    nativePort.onMessage.addListener(message => {
-      console.log('收到Native消息:', message);
-      
-      if (message.type === 'started') {
-        serverRunning = true;
-        console.log(`服务已启动，端口: ${message.payload.port}`);
-      } else if (message.type === 'stopped') {
-        serverRunning = false;
-        console.log('服务已停止');
-      } else if (message.type === 'error') {
-        console.error('Native错误:', message.payload.message);
-      }
-    });
-    
-    nativePort.onDisconnect.addListener(() => {
-      console.log('Native连接断开:', chrome.runtime.lastError);
-      nativePort = null;
-      serverRunning = false;
-    });
-    
-    // 启动服务器
-    nativePort.postMessage({ type: 'start', payload: { port: 3000 } });
-    
-  } catch (error) {
-    console.error('启动Native Messaging时出错:', error);
-  }
-}
-
-// 停止服务器
-function stopServer() {
-  if (nativePort && serverRunning) {
-    nativePort.postMessage({ type: 'stop' });
-  }
-}
-
-// 测试与服务器的通信
-async function testPing() {
-  try {
-    const response = await fetch('http://localhost:3000/ping');
-    const data = await response.json();
-    console.log('Ping响应:', data);
-    return data;
-  } catch (error) {
-    console.error('Ping失败:', error);
-    return null;
-  }
-}
-
-// 在扩展启动时连接Native主机
-chrome.runtime.onStartup.addListener(startServer);
-
-// 导出供popup或内容脚本使用的API
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'startServer') {
-    startServer();
-    sendResponse({ success: true });
-  } else if (message.action === 'stopServer') {
-    stopServer();
-    sendResponse({ success: true });
-  } else if (message.action === 'testPing') {
-    testPing().then(sendResponse);
-    return true; // 指示我们将异步发送响应
-  }
-});
-```
-
-### 测试
-
-```bash
-npm run test
-```
-
-### 许可证
+## License
 
 MIT
+
+## Credits
+
+Based on [mcp-chrome](https://github.com/hangwin/mcp-chrome) by [hangwin](https://github.com/hangwin).

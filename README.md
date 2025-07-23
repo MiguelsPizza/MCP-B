@@ -69,47 +69,50 @@ Get MCP-B running on your website in minutes. This guide focuses on adding an MC
 
 If you want to contribute to MCP-B or run the examples locally:
 
-1. **Clone the repository:**
+1. **Clone and install:**
 
    ```bash
    git clone https://github.com/MiguelsPizza/WebMCP.git
    cd WebMCP
-   ```
-
-2. **Install all dependencies:**
-
-   ```bash
    pnpm install
    ```
 
    Note: Some postinstall scripts may fail initially - this is normal.
 
-3. **Build the workspace packages:**
+2. **Configure your development extension ID (optional):**
 
    ```bash
-   pnpm build:packages
+   # If your extension ID differs from the default
+   cp native-server/.env.example native-server/.env
+   # Edit native-server/.env with your extension ID
    ```
 
-4. **Start the development environment:**
-
-   > **Note**: If you're using the development extension build, add your OpenAI API key to `web/example/.dev.vars` and rename the file to `.dev.vars`
+3. **Start development:**
 
    ```bash
    pnpm dev
    ```
 
-   This will start:
+   This automatically:
+   - Builds all packages and native server
+   - Registers native messaging host for both production and dev extension IDs  
+   - Starts WXT with persistent browser profile
+   - Launches extension in Chrome with hot reload
+   - Starts documentation website and all package watchers
 
-   - Extension development server with hot reload
-   - Documentation website with webMCP
-   - All package watchers
+4. **Find your extension ID (if needed):**
+   - Open Chrome at `chrome://extensions/`
+   - Enable "Developer mode"
+   - Find your MCP-B extension and copy the ID
+   - Update `native-server/.env` with `DEV_EXTENSION_ID=your-extension-id`
+   - Restart `pnpm dev`
 
-5. **Test with the vanilla TypeScript example:**
+5. **Test with examples:**
    ```bash
    cd examples/vanilla-ts
    npx vite
    ```
-   Visit `http://localhost:5173` in Chrome with the MCP-B extension installed.
+   Visit `http://localhost:5173` in Chrome with the extension installed.
 
 ### Adding MCP-B to Your Existing Website
 
@@ -238,7 +241,7 @@ Add this configuration to your MCP client (e.g., in Claude's config or Cursor's 
 ```
 
 - **What this does**: The native host proxies requests from local clients to the browser extension, allowing tools from your website to be called from desktop apps.
-- **Note**: The native server is mostly a clone of `mcp-chrome`. I plan to contribute it upstream when ready. Ensure the extension is running and tabs with your site are open.
+- **Note**: The native server is based on [mcp-chrome](https://github.com/hangwin/mcp-chrome) by [hangwin](https://github.com/hangwin). Ensure the extension is running and tabs with your site are open.
 
 Test by running a local client (e.g., MCP Inspector) pointed at the URL, then calling tools from your site.
 

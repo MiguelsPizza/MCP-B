@@ -28,10 +28,11 @@
   "license": "MIT",
   "dependencies": {
     "@fastify/cors": "^11.0.1",
+    "@mcp-b/transports": "workspace:*",
     "@modelcontextprotocol/sdk": "catalog:",
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
-    "@mcp-b/transports": "workspace:*",
+    "dotenv": "catalog:",
     "fastify": "^5.3.2",
     "is-admin": "^4.0.0",
     "pino": "^9.6.0",

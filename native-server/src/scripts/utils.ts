@@ -3,7 +3,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { promisify } from 'util';
-import { COMMAND_NAME, DESCRIPTION, EXTENSION_ID, HOST_NAME } from './constant';
+import { COMMAND_NAME, DESCRIPTION, DEV_EXTENSION_ID, EXTENSION_ID, HOST_NAME } from './constant';
 
 export const access = promisify(fs.access);
 export const mkdir = promisify(fs.mkdir);
@@ -195,7 +195,10 @@ export async function createManifestContent(): Promise<any> {
     description: DESCRIPTION,
     path: mainPath, // Node.js可执行文件路径
     type: 'stdio',
-    allowed_origins: [`chrome-extension://${EXTENSION_ID}/`],
+    allowed_origins: [
+      `chrome-extension://${EXTENSION_ID}/`,
+      `chrome-extension://${DEV_EXTENSION_ID}/`,
+    ],
   };
 }
 

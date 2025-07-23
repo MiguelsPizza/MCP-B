@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Development Setup
 - `pnpm install` - Install all dependencies across the monorepo
 - `pnpm build:packages` - Build all workspace packages (required before running examples)
-- `pnpm dev` - Start all development servers (extension, web demo, and packages in watch mode)
+- `pnpm dev` - Start all development servers with automatic native messaging registration
 
 ### Build and Quality
 - `pnpm build` - Build all projects in the monorepo
@@ -69,6 +69,7 @@ Full-stack demo showcasing MCP-B capabilities:
 Node.js server that bridges browser extension to local MCP clients:
 - HTTP server on port 12306
 - Proxies requests from desktop apps (Claude Desktop, Cursor) to browser
+- **Native Messaging Setup**: Automatically registers native messaging host manifests for both regular Chrome and Chrome for Testing during development
 
 ### Data Flow
 1. Website registers MCP server with tools using `TabServerTransport`
@@ -110,6 +111,61 @@ Uses changesets for version management:
 2. Run `pnpm changeset` to document changes
 3. Run `pnpm changeset:version` to update versions
 4. Run `pnpm changeset:publish` to publish
+
+### Native Messaging Setup
+
+#### Development Workflow
+The development workflow is fully automated with configurable extension IDs:
+
+1. **New Developer Setup:**
+   ```bash
+   git clone <repo-url>
+   cd WebMCP
+   pnpm install
+   
+   # Optional: Configure your development extension ID
+   cp native-server/.env.example native-server/.env
+   # Edit native-server/.env with your extension ID if different
+   
+   pnpm dev
+   ```
+
+2. **Finding Your Extension ID:**
+   - Run `pnpm dev` first (uses default ID)
+   - Open Chrome at `chrome://extensions/`
+   - Enable "Developer mode"
+   - Find your MCP-B extension and copy the ID
+   - Update `native-server/.env` with `DEV_EXTENSION_ID=your-extension-id`
+   - Restart `pnpm dev`
+
+3. **What `pnpm dev` does automatically:**
+   - Builds all packages and the native server
+   - Loads extension ID from `native-server/.env` (git-ignored)
+   - Registers native messaging host for both production and dev extension IDs
+   - Starts WXT with a persistent profile (`extension/.wxt/chrome-data`)
+   - Launches the extension in Chrome
+
+4. **Extension ID Management:**
+   - Production extension ID: `mhipkdochajohklmmjinmicahanmldbj` (hardcoded)
+   - Development extension ID: Configurable via `native-server/.env` (git-ignored)
+   - Default dev ID: `oeidgnbdmdjeacgmfhemhpngaplpkiel`
+   - Both IDs are included in all native messaging manifests
+
+5. **Persistent Profile Benefits:**
+   - Browser data persists between dev sessions
+   - Native messaging manifests are found correctly
+   - Can install devtools extensions and remember logins
+   - Configured via `extension/web-ext.config.ts`
+
+#### Manual Registration (if needed)
+- Run `pnpm --filter @mcp-b/native-server run register:dev`
+- Registers manifests in all Chrome variants and the persistent WXT profile
+
+#### Troubleshooting
+If you still get "Access to the specified native messaging host is forbidden":
+- Ensure `pnpm dev` completed successfully
+- Check that manifests exist in the persistent profile directory:
+  - `extension/.wxt/chrome-data/NativeMessagingHosts/com.chromemcp.nativehost.json`
 
 ## Important Implementation Notes
 
