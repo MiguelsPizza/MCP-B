@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@mcp-b/transports':
-        specifier: ^0.1.8
-        version: 0.1.8(@modelcontextprotocol/sdk@1.15.0)
+        specifier: ^1.0.0
+        version: 1.0.0(@modelcontextprotocol/sdk@1.15.0)
       '@modelcontextprotocol/sdk':
         specifier: ^1.15.0
         version: 1.15.0
@@ -177,8 +177,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@mcp-b/transports@0.1.8':
-    resolution: {integrity: sha512-BfHDXrhXOP+WP+7+hZO6EcWNZUVAOGtkR9AusqpE5dpaqA3V/DVlsieEVA7KU11dfrF4TR4VTfYY/T9PujFv9Q==}
+  '@mcp-b/transports@1.0.0':
+    resolution: {integrity: sha512-YGg/AYnGB2qKxJjpSK3ocyuLYBdTV9EV2K6Zs0t1XEOMofUMat1i4NH/6dFVwFn8oN0ofGcSTPuqDzfHIv8otA==}
     peerDependencies:
       '@modelcontextprotocol/sdk': ^1.15.0
 
@@ -797,7 +797,7 @@ snapshots:
   '@esbuild/win32-x64@0.25.5':
     optional: true
 
-  '@mcp-b/transports@0.1.8(@modelcontextprotocol/sdk@1.15.0)':
+  '@mcp-b/transports@1.0.0(@modelcontextprotocol/sdk@1.15.0)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.15.0
       zod: 3.25.74
