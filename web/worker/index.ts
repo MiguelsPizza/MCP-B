@@ -1,12 +1,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { globalErrorHandler } from './lib/error-handler';
+import { logger } from 'hono/logger';
 // Import route modules
 import chat from './routes/chat';
-import electric from './routes/electric';
-import todos from './routes/todos';
-import userTodos from './routes/user-todos';
-import users from './routes/users';
 
 /**
  * Main Hono application
@@ -43,23 +39,8 @@ const app = new Hono<{ Bindings: Env }>()
       credentials: true,
     })
   )
-  // Uncomment to enable request logging
-  // .use(logger())
-
-  // Mount Electric SQL proxy routes
-  .route('/', electric)
-
-  // Mount chat routes
-  .route('/', chat)
-
-  // Mount API routes
-  .route('/api/users', users)
-  .route('/api/users', userTodos)
-  .route('/api/todos', todos);
-
-// Global error handler
-app.onError(globalErrorHandler);
-
+  .use(logger())
+  .route('/api', chat);
 export default app;
 
 export type AppType = typeof app;

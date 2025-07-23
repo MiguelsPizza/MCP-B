@@ -28,7 +28,7 @@ const chat = new Hono<{ Bindings: Env }>()
    * - system: Optional system prompt
    * - tools: Optional tools configuration for function calling
    */
-  .post('/api/chat', zValidator('json', PostRequestBodySchema), async (c) => {
+  .post('/chat', zValidator('json', PostRequestBodySchema), async (c) => {
     const { messages, system, tools } = c.req.valid('json');
     // console.log({ tools, system, messages: JSON.stringify(messages, null, 2) });
 
