@@ -18,6 +18,7 @@ AI-powered browser assistant with Model Context Protocol integration for enhance
    - `VITE_CHAT_API_URL`: (Optional) Override the full chat API URL
    - `VITE_ENABLE_DEBUG_LOGGING`: Enable debug logging (default: false)
    - `VITE_MAX_CHAT_STEPS`: Maximum chat steps (default: 5)
+   - `CHROME_PATH`: (Optional) Path to Chrome binary for development testing
 
 ### Running the Extension
 
