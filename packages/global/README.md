@@ -32,7 +32,7 @@ Add this to your HTML for instant integration:
     <h1>Welcome</h1>
 
     <!-- Load MCP-B via CDN -->
-    <script src="https://unpkg.com/@mcp-b/global@latest/dist/index.js"></script>
+    <script src="https://unpkg.com/@mcp-b/global@latest"></script>
 
     <!-- Your custom script -->
     <script>
@@ -222,7 +222,7 @@ This complete HTML file creates a todo list with AI tools for adding, viewing, a
     <div id="todos"></div>
 
     <!-- MCP-B Script -->
-    <script src="https://unpkg.com/@mcp-b/global@latest/dist/index.js"></script>
+    <script src="https://unpkg.com/@mcp-b/global@latest"></script>
     <!-- Zod for Schemas -->
     <script src="https://unpkg.com/zod@latest/lib/index.umd.js"></script>
 
@@ -346,7 +346,7 @@ Examples:
 
 ```html
 <!-- UMD CDN -->
-<script src="https://unpkg.com/@mcp-b/global@latest/dist/index.js"></script>
+<script src="https://unpkg.com/@mcp-b/global@latest"></script>
 ```
 
 ```javascript
