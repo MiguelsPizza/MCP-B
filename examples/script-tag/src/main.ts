@@ -27,9 +27,12 @@ function showAIAction(action: string, details: string) {
 function renderTodos() {
   const list = document.getElementById('todos');
   if (!list) return;
-  list.innerHTML = todos.map((todo, i) => 
-    `<div class="todo">${i + 1}. ${todo} <button onclick="deleteTodo(${i})">❌</button></div>`
-  ).join('');
+  list.innerHTML = todos
+    .map(
+      (todo, i) =>
+        `<div class="todo">${i + 1}. ${todo} <button onclick="deleteTodo(${i})">❌</button></div>`
+    )
+    .join('');
 }
 
 // Todo functions
@@ -57,56 +60,71 @@ function deleteTodo(index: number) {
 function registerMCPTools() {
   const mcp = window.mcp;
 
-  
   // Add todo tool
-  mcp.registerTool('addTodo', {
-    title: 'Add Todo',
-    description: 'Add a new todo item',
-    inputSchema: { text: z.string().describe('Todo text to add') }
-  }, async ({ text }) => {
-    showAIAction('Adding Todo', `"${text}"`);
-    const result = addTodo(text);
-    return { content: [{ type: 'text', text: result ? `✅ Added: "${result}"` : '❌ Failed' }] };
-  });
+  mcp.registerTool(
+    'addTodo',
+    {
+      title: 'Add Todo',
+      description: 'Add a new todo item',
+      inputSchema: { text: z.string().describe('Todo text to add') },
+    },
+    async ({ text }) => {
+      showAIAction('Adding Todo', `"${text}"`);
+      const result = addTodo(text);
+      return { content: [{ type: 'text', text: result ? `✅ Added: "${result}"` : '❌ Failed' }] };
+    }
+  );
 
   // Get todos tool
-  mcp.registerTool('getTodos', {
-    title: 'Get Todos',
-    description: 'Get all current todos'
-  }, async () => {
-    showAIAction('Getting Todos', `${todos.length} items`);
-    return { content: [{ type: 'text', text: `📋 Todos: ${JSON.stringify(todos)}` }] };
-  });
+  mcp.registerTool(
+    'getTodos',
+    {
+      title: 'Get Todos',
+      description: 'Get all current todos',
+    },
+    async () => {
+      showAIAction('Getting Todos', `${todos.length} items`);
+      return { content: [{ type: 'text', text: `📋 Todos: ${JSON.stringify(todos)}` }] };
+    }
+  );
 
   // Delete todo tool
-  mcp.registerTool('deleteTodo', {
-    title: 'Delete Todo',
-    description: 'Delete a todo by index (1-based)',
-    inputSchema: { index: z.number().describe('Todo number (1, 2, 3...)') }
-  }, async ({ index }) => {
-    const i = index - 1; // Convert to 0-based
-    if (i >= 0 && i < todos.length) {
-      const deleted = deleteTodo(i);
-      showAIAction('Deleted Todo', `"${deleted}"`);
-      return { content: [{ type: 'text', text: `🗑️ Deleted: "${deleted}"` }] };
+  mcp.registerTool(
+    'deleteTodo',
+    {
+      title: 'Delete Todo',
+      description: 'Delete a todo by index (1-based)',
+      inputSchema: { index: z.number().describe('Todo number (1, 2, 3...)') },
+    },
+    async ({ index }) => {
+      const i = index - 1; // Convert to 0-based
+      if (i >= 0 && i < todos.length) {
+        const deleted = deleteTodo(i);
+        showAIAction('Deleted Todo', `"${deleted}"`);
+        return { content: [{ type: 'text', text: `🗑️ Deleted: "${deleted}"` }] };
+      }
+      return { content: [{ type: 'text', text: `❌ Todo ${index} not found` }] };
     }
-    return { content: [{ type: 'text', text: `❌ Todo ${index} not found` }] };
-  });
+  );
 
   // Simple calculator
-  mcp.registerTool('calculate', {
-    title: 'Calculator',
-    description: 'Do simple math calculations',
-    inputSchema: { expression: z.string().describe('Math expression like "2+2" or "15*23"') }
-  }, async ({ expression }) => {
-    showAIAction('Calculating', expression);
-    try {
-      const result = Function(`return ${expression}`)();
-      return { content: [{ type: 'text', text: `🧮 ${expression} = ${result}` }] };
-    } catch (e) {
-      return { content: [{ type: 'text', text: `❌ Math error: ${e}` }] };
+  mcp.registerTool(
+    'calculate',
+    {
+      title: 'Calculator',
+      description: 'Do simple math calculations',
+      inputSchema: { expression: z.string().describe('Math expression like "2+2" or "15*23"') },
+    },
+    async ({ expression }) => {
+      showAIAction('Calculating', expression);
+      try {
+        const result = Function(`return ${expression}`)();
+        return { content: [{ type: 'text', text: `🧮 ${expression} = ${result}` }] };
+      } catch (e) {
+        return { content: [{ type: 'text', text: `❌ Math error: ${e}` }] };
+      }
     }
-  });
+  );
 
   // Status update
   const status = document.getElementById('status');

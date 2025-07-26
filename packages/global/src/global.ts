@@ -29,9 +29,7 @@ function initializeMCP(): void {
           tools: {
             listChanged: true,
           },
-          debouncedNotificationMethods: [
-            'notifications/tools/list_changed',
-          ],
+          debouncedNotificationMethods: ['notifications/tools/list_changed'],
         },
       }
     );
@@ -48,7 +46,15 @@ function initializeMCP(): void {
           return { content: [{ type: 'text', text: title }] };
         } catch (error) {
           console.error('Error in get_current_website_title tool:', error);
-          return { content: [{ type: 'text', text: `Error getting website title ${error instanceof Error ? error.message : String(error)}` }], isError: true };
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `Error getting website title ${error instanceof Error ? error.message : String(error)}`,
+              },
+            ],
+            isError: true,
+          };
         }
       }
     );
