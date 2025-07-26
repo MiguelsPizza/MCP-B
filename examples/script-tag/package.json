@@ -1,0 +1,20 @@
+{
+  "name": "mcp-b-script-tag-demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:no-open": "vite --no-open",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@mcp-b/global": "latest",
+    "@modelcontextprotocol/sdk": "1.15.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.0.0",
+    "zod": "3.23.8"
+  }
+}

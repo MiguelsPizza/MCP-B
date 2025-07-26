@@ -18,7 +18,8 @@
         "websocket-bridge",
         "local-server",
         "deps",
-        "monorepo"
+        "monorepo",
+        "global"
       ]
     ],
     "subject-case": [2, "always", "lower-case"],

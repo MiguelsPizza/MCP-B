@@ -1,0 +1,74 @@
+{
+  "name": "@mcp-b/global",
+  "version": "1.0.10",
+  "description": "Global bundle for MCP-B with window.mcp API for script tag usage",
+  "license": "MIT",
+  "author": "Alex Nahas",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MiguelsPizza/WebMCP.git",
+    "directory": "packages/global"
+  },
+  "homepage": "https://github.com/MiguelsPizza/WebMCP#readme",
+  "bugs": {
+    "url": "https://github.com/MiguelsPizza/WebMCP/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "browser",
+    "global",
+    "script-tag",
+    "cdn",
+    "umd"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "browser": "./dist/index.umd.js",
+  "unpkg": "./dist/index.umd.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "browser": "./dist/index.umd.js"
+    },
+    "./umd": "./dist/index.umd.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo",
+    "prepublishOnly": "pnpm run build",
+    "publish:npm": "npm publish --access public --no-git-checks",
+    "publish:dry": "pnpm publish --access public --no-git-checks --dry-run",
+    "version:patch": "pnpm version patch --no-git-tag-version",
+    "version:minor": "pnpm version minor --no-git-tag-version",
+    "version:major": "pnpm version major --no-git-tag-version",
+    "lint": "biome lint --write .",
+    "format": "biome format --write .",
+    "check": "biome check --write ."
+  },
+  "dependencies": {
+    "@mcp-b/transports": "^1.0.0",
+    "@modelcontextprotocol/sdk": "1.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  }
+}

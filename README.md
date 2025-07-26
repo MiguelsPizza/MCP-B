@@ -35,7 +35,43 @@ Receive domain-prefixed tools from open tabs; call them with JSON params for det
 
 See MCP-B in action right away:
 
-- **[Vanilla TypeScript Demo](./examples/vanilla-ts/)**: A simple todo app where MCP tools allow AI to manage tasks (e.g., add, update, delete todos). Run it locally: `cd examples/vanilla-ts && pnpm dev`. Visit the site, install the extension, and use the extension's chat or inspector to call tools like `getTodos` or `createTodo`.
+### Run Examples Locally
+
+```bash
+git clone https://github.com/MiguelsPizza/WebMCP.git
+cd WebMCP
+pnpm install
+```
+
+**Easiest approach** - Use the Chrome Web Store extension:
+```bash
+cd examples/vanilla-ts          # or examples/script-tag
+pnpm install --ignore-workspace
+pnpm dev
+```
+Just install the [MCP-B Chrome Extension](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa) and run your example.
+
+**Development build** (only if you need latest features):
+
+**Terminal 1** - Start MCP-B development environment:
+```bash
+pnpm dev:mcp
+```
+
+**Terminal 2** - Run an example:
+```bash
+cd examples/vanilla-ts          # or examples/script-tag
+pnpm install --ignore-workspace
+pnpm dev
+```
+
+Available examples:
+
+- **[Vanilla TypeScript Demo](./examples/vanilla-ts/)**: A simple todo app where MCP tools allow AI to manage tasks (e.g., add, update, delete todos). Tools include `getTodos`, `createTodo`, `updateTodo`, and `deleteTodo`.
+
+- **[Script Tag Demo](./examples/script-tag/)**: The simplest integration - add MCP-B to any website using just a script tag, no build tools required.
+
+### Community Examples
 
 - **[Vue ](https://github.com/bestian/vue-MCP-B-demo)** example By [Besian](https://github.com/bestian)
 
@@ -107,12 +143,8 @@ If you want to contribute to MCP-B or run the examples locally:
    - Update `native-server/.env` with `DEV_EXTENSION_ID=your-extension-id`
    - Restart `pnpm dev`
 
-5. **Test with examples:**
-   ```bash
-   cd examples/vanilla-ts
-   npx vite
-   ```
-   Visit `http://localhost:5173` in Chrome with the extension installed.
+5. **Run examples** - See the [Run Examples Locally](#run-examples-locally) section above for detailed instructions.
+   
 
 ### Adding MCP-B to Your Existing Website
 
@@ -177,16 +209,11 @@ await server.connect(new TabServerTransport({ allowedOrigins: ["*"] })); // Adju
 The `./examples/` folder provides ready-to-run starters:
 
 - **vanilla-ts**: Basic todo app. Tools: `createTodo`, `getTodos`, etc. Demonstrates dynamic tool registration and UI updates.
+- **script-tag**: Simple MCP-B integration using just a script tag - no build tools required.
 
-**To run examples** (after setting up the development environment above):
+**To run examples**: See the [Run Examples Locally](#run-examples-locally) section above.
 
-```bash
-# From the root directory, after running pnpm dev
-cd examples/vanilla-ts
-npx vite
-```
-
-Visit `http://localhost:5174` to see the todo app with MCP tools enabled.
+Visit `http://localhost:5173` to see the todo app with MCP tools enabled.
 
 **What the example demonstrates:**
 
@@ -282,25 +309,19 @@ git pull origin main
 # The packages will still build correctly.
 ```
 
-**Example won't start:**
-
-```bash
-# Make sure you've built the workspace packages first:
-pnpm build:packages
-
-# Then run the example with npx:
-cd examples/vanilla-ts
-npx vite
-```
+**Example won't start:** See the [Run Examples Locally](#run-examples-locally) section for proper setup instructions.
 
 **Import resolution errors:**
 
+For monorepo development:
 ```bash
 # Ensure the workspace is properly built:
 pnpm build:packages
 # Or run from the root with workspace support:
 pnpm dev
 ```
+
+For examples: See the [Run Examples Locally](#run-examples-locally) section.
 
 **Port conflicts:**
 
