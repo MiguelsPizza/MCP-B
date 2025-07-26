@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "start-example-app": "turbo run dev",
+    "dev:mcp": "turbo run dev --filter=@mcp-b/extension --filter=@mcp-b/native-server",
     "lint": "biome lint --write .",
     "lint:check": "biome lint .",
     "format": "biome format --write .",

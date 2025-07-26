@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP-B Script Tag Demo</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f8f9fa;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+        
+        .script-tag {
+            background: #f1f3f4;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .todo-form {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        button {
+            padding: 12px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        .todo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #4CAF50;
+        }
+        
+        .todo button {
+            background: #dc3545;
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        .examples {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .examples h3 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+        
+        .examples code {
+            background: #c8e6c9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 MCP-B Script Tag Demo</h1>
+        <div class="subtitle">One script tag = AI superpowers!</div>
+        
+        <div class="script-tag">
+            &lt;script src="https://unpkg.com/@mcp-b/global@1.0.4/dist/index.umd.js"&gt;&lt;/script&gt;
+        </div>
+        
+        <div id="status" class="status">
+            ⏳ Loading MCP...
+        </div>
+        
+        <div class="examples">
+            <h3>🎯 Try These AI Commands</h3>
+            <p>Install the <a href="https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa" target="_blank">MCP-B Extension</a>, then chat:</p>
+            <ul>
+                <li><code>"Add a todo: Buy groceries"</code></li>
+                <li><code>"Show all my todos"</code></li>
+                <li><code>"Delete todo 2"</code></li>
+                <li><code>"Calculate 15 * 23"</code></li>
+            </ul>
+            <p><strong>Watch for big green popups!</strong> 🎉</p>
+        </div>
+        
+        <div class="section">
+            <h3>📝 Todo List</h3>
+            <p>AI can add, view, and delete todos. You can too:</p>
+            
+            <div class="todo-form">
+                <input id="input" type="text" placeholder="Add a todo...">
+                <button onclick="addTodo()">Add</button>
+            </div>
+            
+            <div id="todos"></div>
+        </div>
+        
+        <div class="section">
+            <h3>🧮 Calculator</h3>
+            <p>Ask AI: <code>"What's 2 + 2?"</code> or <code>"Calculate 100 / 4"</code></p>
+        </div>
+    </div>
+
+    <!-- The magic script tag -->
+    <script src="https://unpkg.com/@mcp-b/global@latest"></script>
+    
+    <!-- Our app -->
+    <script type="module" src="./main.ts"></script>
+</body>
+</html>

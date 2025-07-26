@@ -18,9 +18,16 @@ MCP-B (Model Context Protocol for Browsers) enables AI assistants to interact wi
 
 ### 1. Install Dependencies
 
+This example runs in isolation from the monorepo. Install dependencies using:
+
 ```bash
-npm install @mcp-b/transports @modelcontextprotocol/sdk zod
+cd examples/vanilla-ts
+pnpm install --ignore-workspace
+# or
+npm install
 ```
+
+Note: The example uses published versions of `@mcp-b/transports` from npm registry.
 
 ### 2. Add MCP Server to Your Website
 
@@ -57,7 +64,17 @@ await server.connect(new TabServerTransport({ allowedOrigins: ["*"] }));
 
 Install the MCP-B browser extension from the Chrome Web Store.
 
-### 4. Test It
+### 4. Run the Example
+
+```bash
+pnpm dev
+# or
+npm run dev
+```
+
+Then visit http://localhost:5173
+
+### 5. Test It
 
 1. Visit your website
 2. Open the MCP-B extension  
@@ -327,11 +344,13 @@ server.tool("searchProducts", "Search for products", {
 
 ## Getting Started Checklist
 
-- [ ] Install `@mcp-b/transports` and dependencies
-- [ ] Create basic MCP server with one simple tool
-- [ ] Test with MCP-B extension
+- [ ] Clone/download this example and run `pnpm install --ignore-workspace`
+- [ ] Run `pnpm dev` to start the development server
+- [ ] Install the MCP-B browser extension
+- [ ] Visit http://localhost:5173 and test the tools
+- [ ] Modify the example to add your own tools
 - [ ] Add visual feedback for tool calls
-- [ ] Integrate with existing application logic
+- [ ] Integrate with your existing application logic
 - [ ] Add error handling and validation
 - [ ] Document your tools clearly
 - [ ] Test edge cases and error scenarios
