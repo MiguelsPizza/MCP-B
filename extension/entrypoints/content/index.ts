@@ -70,6 +70,17 @@ async function checkForToolUpdates(
     }
   } catch (error) {
     console.error('[MCP Proxy] Failed to check for tool updates:', error);
+    
+    // If we can't get tools (server might be disconnected), send empty tools list
+    // but only if we previously had tools cached
+    if (cachedToolHashes.size > 0) {
+      console.log('[MCP Proxy] Server appears disconnected, sending empty tools list');
+      port.postMessage({
+        type: 'tools-updated',
+        tools: [],
+      });
+      cachedToolHashes.clear();
+    }
   }
 }
 
@@ -170,6 +181,17 @@ export default defineContentScript({
     // Helper function for timeout promise
     const timeoutPromise = (ms: number, message: string) =>
       new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms));
+
+    // Listen for custom event indicating MCP server has stopped
+    // This should be outside the try/catch so it always listens, even if initial connection fails
+    window.addEventListener('mcp-server-stopped', () => {
+      console.log('[MCP Proxy] Received mcp-server-stopped event, clearing tools');
+      backgroundPort.postMessage({
+        type: 'tools-updated',
+        tools: [],
+      });
+      cachedToolHashes.clear();
+    });
 
     try {
       // Start connection process
