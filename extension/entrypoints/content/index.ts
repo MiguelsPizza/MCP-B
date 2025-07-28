@@ -131,31 +131,6 @@ async function executeToolRequest(
   }
 }
 
-// Message handling
-function setupMessageHandler(client: Client, port: chrome.runtime.Port): void {
-  port.onMessage.addListener(async (message) => {
-    if (message.type === 'execute-tool' && message.toolName && message.requestId) {
-      if (!client) {
-        console.error('[MCP Proxy] No page client available');
-        port.postMessage({
-          type: 'tool-result',
-          requestId: message.requestId,
-          data: { success: false, payload: 'No page client connected' },
-        });
-        return;
-      }
-
-      if (!message.requestId) {
-        console.warn('[MCP Proxy] Received tool request without requestId, ignoring');
-        return;
-      }
-
-      const result = await executeToolRequest(client, message);
-      port.postMessage(result);
-    }
-  });
-}
-
 // Export the content script
 export default defineContentScript({
   matches: ['<all_urls>'],
@@ -174,6 +149,35 @@ export default defineContentScript({
     // Helper function for timeout promise
     const timeoutPromise = (ms: number, message: string) =>
       new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms));
+
+    // Setup message handler for tool execution - ONLY ONCE
+    backgroundPort.onMessage.addListener(async (message) => {
+      if (message.type === 'execute-tool' && message.toolName && message.requestId) {
+        if (!client || !isConnected) {
+          console.error('[MCP Proxy] No page client available');
+          backgroundPort.postMessage({
+            type: 'tool-result',
+            requestId: message.requestId,
+            data: { success: false, payload: 'No page client connected' },
+          });
+          return;
+        }
+
+        if (!message.requestId) {
+          console.warn('[MCP Proxy] Received tool request without requestId, ignoring');
+          return;
+        }
+
+        const result = await executeToolRequest(client, message);
+        backgroundPort.postMessage(result);
+      } else if (message.type === 'request-tools-refresh') {
+        if (!client || !isConnected) {
+          console.error('[MCP Proxy] No page client available for refresh');
+          return;
+        }
+        await checkForToolUpdates(client, backgroundPort);
+      }
+    });
 
     // Function to attempt connection to MCP server
     async function attemptConnection(): Promise<void> {
@@ -234,20 +238,6 @@ export default defineContentScript({
         // Register tools with background (initial check and send)
         await checkForToolUpdates(client, backgroundPort, 'register-tools');
 
-        // Setup message handler for tool execution
-        setupMessageHandler(client, backgroundPort);
-
-        // Setup handler for tools refresh requests
-        backgroundPort.onMessage.addListener(async (message) => {
-          if (message.type === 'request-tools-refresh') {
-            if (!client) {
-              console.error('[MCP Proxy] No page client available for refresh');
-              return;
-            }
-            await checkForToolUpdates(client, backgroundPort);
-          }
-        });
-
         // Listen for tool list change notifications from the server
         if (capabilities?.tools?.listChanged) {
           console.log('[MCP Proxy] Server supports tool list change notifications');
@@ -255,14 +245,18 @@ export default defineContentScript({
           // Set up notification handler for tool list changes
           client.setNotificationHandler(ToolListChangedNotificationSchema, async () => {
             console.log('[MCP Proxy] Received tool list change notification from server');
-            await checkForToolUpdates(client, backgroundPort);
+            if (client) {
+              await checkForToolUpdates(client, backgroundPort);
+            }
           });
         } else {
           console.log('[MCP Proxy] Server does not support tool list change notifications');
 
           // Fallback: periodically check for tool updates every 30 seconds
           setInterval(async () => {
-            await checkForToolUpdates(client, backgroundPort);
+            if (client && isConnected) {
+              await checkForToolUpdates(client!, backgroundPort);
+            }
           }, 30000);
         }
 
