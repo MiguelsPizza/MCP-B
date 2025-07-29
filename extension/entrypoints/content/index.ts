@@ -70,7 +70,7 @@ async function checkForToolUpdates(
     }
   } catch (error) {
     console.error('[MCP Proxy] Failed to check for tool updates:', error);
-    
+
     // If we can't get tools (server might be disconnected), send empty tools list
     // but only if we previously had tools cached
     if (cachedToolHashes.size > 0) {

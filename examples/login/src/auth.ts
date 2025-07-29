@@ -36,7 +36,10 @@ const personalState: PersonalState = {
 };
 
 // Show notification when AI calls a tool
-function showNotification(message: string, type: 'success' | 'info' | 'warning' | 'error' = 'success') {
+function showNotification(
+  message: string,
+  type: 'success' | 'info' | 'warning' | 'error' = 'success'
+) {
   const notification = document.createElement('div');
   notification.style.cssText = `
     position: fixed;
@@ -51,7 +54,7 @@ function showNotification(message: string, type: 'success' | 'info' | 'warning' 
     font-weight: 500;
     animation: slideIn 0.3s ease-out;
   `;
-  
+
   // Add animation keyframes
   if (!document.querySelector('#notification-styles')) {
     const style = document.createElement('style');
@@ -68,10 +71,10 @@ function showNotification(message: string, type: 'success' | 'info' | 'warning' 
     `;
     document.head.appendChild(style);
   }
-  
+
   notification.textContent = message;
   document.body.appendChild(notification);
-  
+
   setTimeout(() => {
     notification.style.animation = 'slideOut 0.3s ease-in';
     setTimeout(() => notification.remove(), 300);
@@ -93,13 +96,13 @@ function updateUI() {
   if (authState.isLoggedIn) {
     loginBtn.disabled = true;
     logoutBtn.disabled = false;
-    
+
     statusIndicator.className = 'status-indicator status-online';
     statusText.textContent = 'Online';
   } else {
     loginBtn.disabled = false;
     logoutBtn.disabled = true;
-    
+
     statusIndicator.className = 'status-indicator status-offline';
     statusText.textContent = 'Offline';
     if (statusElement) {
@@ -117,14 +120,14 @@ export async function performLogin(username?: string) {
 
   // Simulate login process
   const user = username || `user_${Math.floor(Math.random() * 1000)}`;
-  
+
   authState.isLoggedIn = true;
   authState.username = user;
 
   await setupMcpServer();
   updateUI();
   showNotification(`Successfully logged in as ${user}`, 'success');
-  
+
   console.log('Login successful:', {
     username: authState.username,
   });
@@ -137,7 +140,7 @@ export function performLogout() {
   }
 
   const previousUser = authState.username;
-  
+
   // Clear auth state
   authState.isLoggedIn = false;
   authState.username = null;
@@ -145,7 +148,7 @@ export function performLogout() {
   stopMcpServer();
   updateUI();
   showNotification(`Successfully logged out ${previousUser}`, 'success');
-  
+
   console.log('Logout successful for user:', previousUser);
 }
 
@@ -156,10 +159,13 @@ export function getAuthStatus() {
 }
 
 // Set up the authentication buttons
-export function setupAuthButtons(loginElement: HTMLButtonElement, logoutElement: HTMLButtonElement) {
+export function setupAuthButtons(
+  loginElement: HTMLButtonElement,
+  logoutElement: HTMLButtonElement
+) {
   loginElement.addEventListener('click', () => performLogin());
   logoutElement.addEventListener('click', () => performLogout());
-  
+
   // Initial UI update
   updateUI();
 }
@@ -198,13 +204,15 @@ export async function setupMcpServer() {
   authState.transport = new TabServerTransport({ allowedOrigins: ['*'] });
 
   // Create a new MCP server instance
-  authState.server = new McpServer({
-    name: 'PersonalAIWebsite',
-    version: '1.0.0',
-  },
-  {
-    capabilities: { tools: { listChanged: true } },
-  });
+  authState.server = new McpServer(
+    {
+      name: 'PersonalAIWebsite',
+      version: '1.0.0',
+    },
+    {
+      capabilities: { tools: { listChanged: true } },
+    }
+  );
 
   authState.server.tool('ping', () => ({
     content: [{ type: 'text', text: 'pong' }],
@@ -280,7 +288,7 @@ export async function setupMcpServer() {
         content: [{ type: 'text', text: `Current project updated to: ${project}` }],
       };
     }
-  )
+  );
 
   authState.server.tool(
     'changeFavoriteColor',
@@ -297,25 +305,30 @@ export async function setupMcpServer() {
         content: [{ type: 'text', text: `Favorite color changed to: ${color}` }],
       };
     }
-  )
+  );
 
-  authState.server.tool('getMyStatus', 'Get a complete overview of my current status', {}, async () => {
-    showNotification(`Generated status report`, 'info');
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `Current Status Report:
+  authState.server.tool(
+    'getMyStatus',
+    'Get a complete overview of my current status',
+    {},
+    async () => {
+      showNotification(`Generated status report`, 'info');
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `Current Status Report:
   🎭 Mood: ${personalState.mood}
   🚀 Project: ${personalState.currentProject}  
   📋 Todos: ${personalState.todoList.length} items (${personalState.todoList.join(', ')})
   🎨 Favorite Color: ${personalState.favoriteColor}
   💭 Last Thought: "${personalState.lastThought}"
   👀 Visits Today: ${personalState.visitCount}`,
-        },
-      ],
-    };
-  });
+          },
+        ],
+      };
+    }
+  );
 
   await authState.server.connect(authState.transport);
 }
