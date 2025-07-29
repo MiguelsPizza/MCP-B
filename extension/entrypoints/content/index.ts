@@ -196,6 +196,19 @@ export default defineContentScript({
         targetOrigin: window.location.origin,
       });
 
+      // Handle transport closure (including server-stopped events)
+      transport.onclose = () => {
+        console.log('[MCP Proxy] Transport closed, clearing tools');
+        backgroundPort.postMessage({
+          type: 'tools-updated',
+          tools: [],
+        });
+        cachedToolHashes.clear();
+        isConnected = false;
+        client = null;
+        transport = null;
+      };
+
       try {
         // Start connection process
         const connectPromise = client.connect(transport);
@@ -266,24 +279,6 @@ export default defineContentScript({
         isConnected = false;
       }
     }
-
-    // Listen for custom event indicating MCP server has stopped
-    window.addEventListener('mcp-server-stopped', () => {
-      console.log('[MCP Proxy] Received mcp-server-stopped event, clearing tools');
-      backgroundPort.postMessage({
-        type: 'tools-updated',
-        tools: [],
-      });
-      cachedToolHashes.clear();
-      isConnected = false;
-      
-      // Close current transport if it exists
-      if (transport) {
-        transport.close();
-        transport = null;
-      }
-      client = null;
-    });
 
     // Listen for MCP server ready events (including new servers starting)
     window.addEventListener('message', (event) => {
