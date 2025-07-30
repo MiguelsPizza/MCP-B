@@ -1,6 +1,7 @@
 > [!IMPORTANT]
 > 🚨 Important Update: Please download version [1.0.0](https://www.npmjs.com/package/@mcp-b/transports/v/1.0.0?activeTab=readme) from NPM as this is a breaking change! 🚨
 
+
 # MCP-B:
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/daohopfhkdelnpemnhlekblhnikhdhfa?style=flat-square&label=Chrome%20Extension)](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa)
@@ -10,6 +11,11 @@
 [![GitHub stars](https://img.shields.io/github/stars/MiguelsPizza/WebMCP?style=flat-square)](https://github.com/MiguelsPizza/WebMCP/stargazers)
 
 [🚀 Quick Start](#quick-start) • [✨ Live Demo](#live-demo) • [📚 Documentation](https://mcp-b.ai) • [🤝 Contributing](#contributing)
+
+## Join Our Community
+
+[![Join Our Discord](https://img.shields.io/badge/Join%20Our%20Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/a9fBR6Bw)
+
 
 ## Tutorial video
 
