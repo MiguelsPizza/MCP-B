@@ -1,8 +1,7 @@
-import { AssistantRuntimeProvider } from '@assistant-ui/react';
-import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router';
-import { AlertCircle, FileQuestion, MessageSquare, Server } from 'lucide-react';
+import { createRootRouteWithContext, Link, Outlet, useNavigate } from '@tanstack/react-router';
+import { AlertCircle, FileQuestion, MessageSquare, Server, Settings } from 'lucide-react';
 import * as React from 'react';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
 import { Button } from '../components/ui/button';
 
@@ -39,6 +38,44 @@ export const Route = createRootRouteWithContext<any>()({
 });
 
 function RootComponent() {
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    // Global consent decision listener
+    const handleConsentDecision = (message: any) => {
+      if (message.type === 'consent-updated' && message.isNewDecision) {
+        // Only show global toasts for new consent decisions from website interactions
+        // Not for manual user actions in settings (those show their own toasts)
+        const { domain, granted } = message;
+        
+        if (granted) {
+          toast.success('Access granted', {
+            description: `MCP-B Assistant can now access tools from ${domain} MCP Server`,
+            action: {
+              label: 'Review Settings',
+              onClick: () => {
+                navigate({ to: '/settings' });
+              }
+            }
+          });
+        } else {
+          toast.error('Access denied', {
+            description: `MCP-B Assistant denied access to tools from ${domain} MCP Server`,
+            action: {
+              label: 'Open Settings',
+              onClick: () => {
+                navigate({ to: '/settings' });
+              }
+            }
+          });
+        }
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(handleConsentDecision);
+    return () => chrome.runtime.onMessage.removeListener(handleConsentDecision);
+  }, [navigate]);
+
   return (
     <>
       <div className="flex flex-col h-screen">
@@ -57,6 +94,13 @@ function RootComponent() {
             >
               <Server className="h-4 w-4" />
               MCP Server
+            </Link>
+            <Link
+              to="/settings"
+              className="flex items-center gap-2 text-sm font-medium hover:text-primary [&.active]:text-primary"
+            >
+              <Settings className="h-4 w-4" />
+              Settings
             </Link>
           </nav>
         </header>

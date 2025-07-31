@@ -131,6 +131,68 @@ async function executeToolRequest(
   }
 }
 
+// Message handling
+function setupMessageHandler(client: Client, port: chrome.runtime.Port): void {
+  port.onMessage.addListener(async (message) => {
+    if (message.type === 'execute-tool' && message.toolName && message.requestId) {
+      if (!client) {
+        console.error('[MCP Proxy] No page client available');
+        port.postMessage({
+          type: 'tool-result',
+          requestId: message.requestId,
+          data: { success: false, payload: 'No page client connected' },
+        });
+        return;
+      }
+
+      if (!message.requestId) {
+        console.warn('[MCP Proxy] Received tool request without requestId, ignoring');
+        return;
+      }
+
+      const result = await executeToolRequest(client, message);
+      port.postMessage(result);
+    }
+  });
+}
+
+// Helper function to extract domain from URL
+function extractDomainFromUrl(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    const hostname = urlObj.hostname;
+    return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]'
+      ? `localhost:${urlObj.port || '80'}`
+      : hostname;
+  } catch {
+    return 'unknown';
+  }
+}
+
+// Helper function to request consent from background
+async function requestConsentFromBackground(domain: string, url: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const messageId = `consent-${Date.now()}-${Math.random()}`;
+    
+    const handleMessage = (message: any) => {
+      if (message.type === 'consent-response' && message.messageId === messageId) {
+        chrome.runtime.onMessage.removeListener(handleMessage);
+        resolve(message.granted);
+      }
+    };
+    
+    chrome.runtime.onMessage.addListener(handleMessage);
+    
+    chrome.runtime.sendMessage({
+      type: 'request-consent',
+      messageId,
+      domain,
+      url,
+      tabId: null // Will be set by background script
+    });
+  });
+}
+
 // Export the content script
 export default defineContentScript({
   matches: ['<all_urls>'],
@@ -140,6 +202,7 @@ export default defineContentScript({
     let client: Client | null = null;
     let transport: TabClientTransport | null = null;
     let isConnected = false;
+    let isConnecting = false; // Flag to prevent concurrent connection attempts
 
     // Connect to background
     const backgroundPort = chrome.runtime.connect({
@@ -186,48 +249,75 @@ export default defineContentScript({
         return;
       }
 
-      // Create new client and transport for each connection attempt
-      client = new Client({
-        name: 'ExtensionProxyClient',
-        version: '1.0.0',
-      });
+      if (isConnecting) {
+        console.log('[MCP Proxy] Connection attempt already in progress, skipping');
+        return;
+      }
 
-      transport = new TabClientTransport({
-        targetOrigin: window.location.origin,
-      });
-
-      // Handle transport closure (including server-stopped events)
-      transport.onclose = () => {
-        console.log('[MCP Proxy] Transport closed, clearing tools');
-        backgroundPort.postMessage({
-          type: 'tools-updated',
-          tools: [],
-        });
-        cachedToolHashes.clear();
-        isConnected = false;
-        client = null;
-        transport = null;
-      };
+      isConnecting = true;
 
       try {
+        // Create new client and transport for each connection attempt
+        client = new Client({
+          name: 'ExtensionProxyClient',
+          version: '1.0.0',
+        });
+
+        transport = new TabClientTransport({
+          targetOrigin: window.location.origin,
+        });
+
+        // Handle transport closure (including server-stopped events)
+        transport.onclose = () => {
+          console.log('[MCP Proxy] Transport closed, clearing tools');
+          backgroundPort.postMessage({
+            type: 'tools-updated',
+            tools: [],
+          });
+          cachedToolHashes.clear();
+          isConnected = false;
+          isConnecting = false;
+          client = null;
+          transport = null;
+        };
+
         // Start connection process
         const connectPromise = client.connect(transport);
 
-        // Race with initial timeout for logging
-        const racePromise = Promise.race([
+        // Quick check to see if there's an MCP server
+        const quickCheckPromise = Promise.race([
           connectPromise,
-          timeoutPromise(30000, 'Server ready timeout after 30 seconds'),
+          timeoutPromise(5000, 'Quick MCP server check timeout')
         ]);
 
-        racePromise.catch((error) => {
-          if (error.message.includes('timeout')) {
-            console.log(
-              '[MCP Proxy] No MCP server found on this page (timeout), but will continue waiting for late initialization.'
-            );
-          } else {
-            throw error;
+        let mcpServerDetected = false;
+        try {
+          await quickCheckPromise;
+          mcpServerDetected = true;
+          console.log('[MCP Proxy] MCP server detected on page');
+        } catch (error) {
+          if (error instanceof Error && error.message.includes('timeout')) {
+            console.log('[MCP Proxy] No MCP server detected on page (quick check timeout)');
+            return; // Exit early if no MCP server
           }
-        });
+          throw error; // Re-throw other errors
+        }
+
+        // If MCP server detected, request consent
+        if (mcpServerDetected) {
+          const currentDomain = extractDomainFromUrl(window.location.href);
+          console.log(`[MCP Proxy] Requesting consent for domain: ${currentDomain}`);
+          const consentGranted = await requestConsentFromBackground(currentDomain, window.location.href);
+          
+          if (!consentGranted) {
+            console.log('[MCP Proxy] Consent denied by user, aborting connection');
+            transport.close();
+            backgroundPort.disconnect();
+            return;
+          }
+          
+          console.log('[MCP Proxy] Consent granted, proceeding with connection');
+        }
 
         // Await the actual connect promise (may resolve later)
         await connectPromise;
@@ -277,6 +367,8 @@ export default defineContentScript({
       } catch (error) {
         console.error('[MCP Proxy] Error connecting to server:', error);
         isConnected = false;
+      } finally {
+        isConnecting = false;
       }
     }
 

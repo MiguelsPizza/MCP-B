@@ -37,6 +37,7 @@ export default class McpHub {
     this.registerStaticTools();
     this.setupConnections();
     this.trackActiveTab();
+    this.setupConsentListener();
   }
 
   private registerStaticTools() {
@@ -390,6 +391,75 @@ export default class McpHub {
         this.registeredTools.get(toolName)!.update({ description });
       }
     }
+  }
+
+  /**
+   * Setup listener for consent revocation messages
+   */
+  private setupConsentListener() {
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message.type === 'consent-revoked' && message.domain) {
+        this.disconnectDomainServers(message.domain);
+      }
+    });
+  }
+
+  /**
+   * Disconnect all servers for a specific domain when consent is revoked
+   */
+  public disconnectDomainServers(domain: string) {
+    console.log(`[MCP Hub] Disconnecting servers for domain: ${domain}`);
+    
+    const domainData = this.getDomainData(domain);
+    const tabsToDisconnect: number[] = [];
+    
+    // Collect all active tabs for this domain
+    for (const [dataId, tabData] of domainData.entries()) {
+      if (!tabData.isClosed && tabData.port && tabData.tabId) {
+        tabsToDisconnect.push(tabData.tabId);
+        
+        // Disconnect the port to trigger cleanup
+        try {
+          tabData.port.disconnect();
+        } catch (error) {
+          console.warn(`[MCP Hub] Error disconnecting port for tab ${tabData.tabId}:`, error);
+        }
+      }
+    }
+    
+    // Unregister all tools for this domain
+    this.unregisterDomainTools(domain);
+    
+    // Clear domain data
+    this.domains.delete(domain);
+    
+    console.log(`[MCP Hub] Disconnected ${tabsToDisconnect.length} tabs for domain: ${domain}`);
+  }
+
+  /**
+   * Unregister all tools for a specific domain
+   */
+  private unregisterDomainTools(domain: string) {
+    const cleanedDomain = sanitizeToolName(domain);
+    const toolsToRemove: string[] = [];
+    
+    // Find all tools for this domain
+    for (const [toolName, tool] of this.registeredTools.entries()) {
+      if (toolName.includes(`website_tool_${cleanedDomain}_`)) {
+        toolsToRemove.push(toolName);
+      }
+    }
+    
+    // Remove the tools
+    for (const toolName of toolsToRemove) {
+      const tool = this.registeredTools.get(toolName);
+      if (tool) {
+        tool.remove();
+        this.registeredTools.delete(toolName);
+      }
+    }
+    
+    console.log(`[MCP Hub] Unregistered ${toolsToRemove.length} tools for domain: ${domain}`);
   }
 
   // Cleanup method if needed...

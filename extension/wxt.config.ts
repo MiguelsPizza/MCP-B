@@ -31,6 +31,7 @@ export default defineConfig({
       'windows',
       'history',
       'nativeMessaging', // Enable communication with native hosts
+      'notifications', // Enable consent notifications
     ],
     content_security_policy: {
       extension_pages:
