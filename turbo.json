@@ -50,6 +50,9 @@
       "dependsOn": ["build"],
       "cache": false
     },
+    "prepare:publish": {
+      "cache": false
+    },
     "publish:npm": {
       "dependsOn": ["prepublishOnly"],
       "cache": false,

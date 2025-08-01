@@ -20,6 +20,8 @@
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build",
+    "prepare:publish": "node ../../scripts/replace-workspace-deps.cjs ./package.json",
     "lint": "biome lint --write .",
     "format": "biome format --write .",
     "check": "biome check --write ."

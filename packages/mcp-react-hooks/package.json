@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/mcp-react-hooks",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "React hooks for MCP (Model Context Protocol) client",
   "license": "MIT",
   "author": "mcp-b Team",
@@ -39,6 +39,7 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo",
     "prepublishOnly": "pnpm run build",
+    "prepare:publish": "node ../../scripts/replace-workspace-deps.cjs ./package.json",
     "publish:npm": "npm publish --access public --no-git-checks",
     "publish:dry": "pnpm publish --access public --no-git-checks --dry-run",
     "version:patch": "pnpm version patch --no-git-tag-version",

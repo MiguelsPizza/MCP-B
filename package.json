@@ -31,6 +31,7 @@
     "version:minor": "turbo run version:minor --filter='./packages/*'",
     "version:major": "turbo run version:major --filter='./packages/*'",
     "build:packages": "turbo run build --filter='./packages/*'",
+    "prepare:publish": "turbo run prepare:publish --filter='./packages/*' --filter='./native-server'",
     "publish:wizard": "./scripts/publish-packages.sh",
     "prepare": "husky"
   },
