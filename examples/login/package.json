@@ -1,0 +1,21 @@
+{
+  "name": "mcp-b-login-demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:no-open": "vite --no-open",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^7.0.0"
+  },
+  "dependencies": {
+    "@mcp-b/transports": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "zod": "^3.25.74"
+  }
+}

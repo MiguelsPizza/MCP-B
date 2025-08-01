@@ -70,6 +70,17 @@ async function checkForToolUpdates(
     }
   } catch (error) {
     console.error('[MCP Proxy] Failed to check for tool updates:', error);
+
+    // If we can't get tools (server might be disconnected), send empty tools list
+    // but only if we previously had tools cached
+    if (cachedToolHashes.size > 0) {
+      console.log('[MCP Proxy] Server appears disconnected, sending empty tools list');
+      port.postMessage({
+        type: 'tools-updated',
+        tools: [],
+      });
+      cachedToolHashes.clear();
+    }
   }
 }
 
@@ -120,138 +131,179 @@ async function executeToolRequest(
   }
 }
 
-// Message handling
-function setupMessageHandler(client: Client, port: chrome.runtime.Port): void {
-  port.onMessage.addListener(async (message) => {
-    if (message.type === 'execute-tool' && message.toolName && message.requestId) {
-      if (!client) {
-        console.error('[MCP Proxy] No page client available');
-        port.postMessage({
-          type: 'tool-result',
-          requestId: message.requestId,
-          data: { success: false, payload: 'No page client connected' },
-        });
-        return;
-      }
-
-      if (!message.requestId) {
-        console.warn('[MCP Proxy] Received tool request without requestId, ignoring');
-        return;
-      }
-
-      const result = await executeToolRequest(client, message);
-      port.postMessage(result);
-    }
-  });
-}
-
 // Export the content script
 export default defineContentScript({
   matches: ['<all_urls>'],
   async main() {
     console.log('[MCP Proxy] Initializing MCP proxy...');
 
-    // Create client
-    const client = new Client({
-      name: 'ExtensionProxyClient',
-      version: '1.0.0',
-    });
+    let client: Client | null = null;
+    let transport: TabClientTransport | null = null;
+    let isConnected = false;
 
     // Connect to background
     const backgroundPort = chrome.runtime.connect({
       name: 'mcp-content-script-proxy',
     });
 
-    // Setup transport
-    const transport = new TabClientTransport({
-      targetOrigin: window.location.origin,
-    });
-
     // Helper function for timeout promise
     const timeoutPromise = (ms: number, message: string) =>
       new Promise((_, reject) => setTimeout(() => reject(new Error(message)), ms));
 
-    try {
-      // Start connection process
-      const connectPromise = client.connect(transport);
-
-      // Race with initial timeout for logging
-      const racePromise = Promise.race([
-        connectPromise,
-        timeoutPromise(30000, 'Server ready timeout after 30 seconds'),
-      ]);
-
-      racePromise.catch((error) => {
-        if (error.message.includes('timeout')) {
-          console.log(
-            '[MCP Proxy] No MCP server found on this page (timeout), but will continue waiting for late initialization.'
-          );
-        } else {
-          throw error;
+    // Setup message handler for tool execution - ONLY ONCE
+    backgroundPort.onMessage.addListener(async (message) => {
+      if (message.type === 'execute-tool' && message.toolName && message.requestId) {
+        if (!client || !isConnected) {
+          console.error('[MCP Proxy] No page client available');
+          backgroundPort.postMessage({
+            type: 'tool-result',
+            requestId: message.requestId,
+            data: { success: false, payload: 'No page client connected' },
+          });
+          return;
         }
-      });
 
-      // Await the actual connect promise (may resolve later)
-      await connectPromise;
-
-      console.log('[MCP Proxy] Client connected to transport');
-
-      // Get server capabilities to verify connection
-      const capabilities = await client.getServerCapabilities();
-      console.log('[MCP Proxy] Server capabilities:', capabilities);
-
-      const tools = await client.listTools();
-      console.log('first tools', tools);
-      console.log('[MCP Proxy] Tools:', tools);
-
-      backgroundPort.postMessage({
-        type: 'register-tools',
-        tools: tools.tools,
-      });
-
-      // Register tools with background (initial check and send)
-      await checkForToolUpdates(client, backgroundPort, 'register-tools');
-
-      // Setup message handler for tool execution
-      setupMessageHandler(client, backgroundPort);
-
-      // Setup handler for tools refresh requests
-      backgroundPort.onMessage.addListener(async (message) => {
-        if (message.type === 'request-tools-refresh') {
-          if (!client) {
-            console.error('[MCP Proxy] No page client available for refresh');
-            return;
-          }
-          await checkForToolUpdates(client, backgroundPort);
+        if (!message.requestId) {
+          console.warn('[MCP Proxy] Received tool request without requestId, ignoring');
+          return;
         }
-      });
 
-      // Listen for tool list change notifications from the server
-      if (capabilities?.tools?.listChanged) {
-        console.log('[MCP Proxy] Server supports tool list change notifications');
+        const result = await executeToolRequest(client, message);
+        backgroundPort.postMessage(result);
+      } else if (message.type === 'request-tools-refresh') {
+        if (!client || !isConnected) {
+          console.error('[MCP Proxy] No page client available for refresh');
+          return;
+        }
+        await checkForToolUpdates(client, backgroundPort);
+      }
+    });
 
-        // Set up notification handler for tool list changes
-        client.setNotificationHandler(ToolListChangedNotificationSchema, async () => {
-          console.log('[MCP Proxy] Received tool list change notification from server');
-          await checkForToolUpdates(client, backgroundPort);
-        });
-      } else {
-        console.log('[MCP Proxy] Server does not support tool list change notifications');
-
-        // Fallback: periodically check for tool updates every 30 seconds
-        setInterval(async () => {
-          await checkForToolUpdates(client, backgroundPort);
-        }, 30000);
+    // Function to attempt connection to MCP server
+    async function attemptConnection(): Promise<void> {
+      if (isConnected) {
+        console.log('[MCP Proxy] Already connected, skipping connection attempt');
+        return;
       }
 
-      console.log('[MCP Proxy] Successfully connected to page server');
-    } catch (error) {
-      console.error('[MCP Proxy] Error connecting to server:', error);
+      // Create new client and transport for each connection attempt
+      client = new Client({
+        name: 'ExtensionProxyClient',
+        version: '1.0.0',
+      });
+
+      transport = new TabClientTransport({
+        targetOrigin: window.location.origin,
+      });
+
+      // Handle transport closure (including server-stopped events)
+      transport.onclose = () => {
+        console.log('[MCP Proxy] Transport closed, clearing tools');
+        backgroundPort.postMessage({
+          type: 'tools-updated',
+          tools: [],
+        });
+        cachedToolHashes.clear();
+        isConnected = false;
+        client = null;
+        transport = null;
+      };
+
+      try {
+        // Start connection process
+        const connectPromise = client.connect(transport);
+
+        // Race with initial timeout for logging
+        const racePromise = Promise.race([
+          connectPromise,
+          timeoutPromise(30000, 'Server ready timeout after 30 seconds'),
+        ]);
+
+        racePromise.catch((error) => {
+          if (error.message.includes('timeout')) {
+            console.log(
+              '[MCP Proxy] No MCP server found on this page (timeout), but will continue waiting for late initialization.'
+            );
+          } else {
+            throw error;
+          }
+        });
+
+        // Await the actual connect promise (may resolve later)
+        await connectPromise;
+        isConnected = true;
+
+        console.log('[MCP Proxy] Client connected to transport');
+
+        // Get server capabilities to verify connection
+        const capabilities = await client.getServerCapabilities();
+        console.log('[MCP Proxy] Server capabilities:', capabilities);
+
+        const tools = await client.listTools();
+        console.log('first tools', tools);
+        console.log('[MCP Proxy] Tools:', tools);
+
+        backgroundPort.postMessage({
+          type: 'register-tools',
+          tools: tools.tools,
+        });
+
+        // Register tools with background (initial check and send)
+        await checkForToolUpdates(client, backgroundPort, 'register-tools');
+
+        // Listen for tool list change notifications from the server
+        if (capabilities?.tools?.listChanged) {
+          console.log('[MCP Proxy] Server supports tool list change notifications');
+
+          // Set up notification handler for tool list changes
+          client.setNotificationHandler(ToolListChangedNotificationSchema, async () => {
+            console.log('[MCP Proxy] Received tool list change notification from server');
+            if (client) {
+              await checkForToolUpdates(client, backgroundPort);
+            }
+          });
+        } else {
+          console.log('[MCP Proxy] Server does not support tool list change notifications');
+
+          // Fallback: periodically check for tool updates every 30 seconds
+          setInterval(async () => {
+            if (client && isConnected) {
+              await checkForToolUpdates(client!, backgroundPort);
+            }
+          }, 30000);
+        }
+
+        console.log('[MCP Proxy] Successfully connected to page server');
+      } catch (error) {
+        console.error('[MCP Proxy] Error connecting to server:', error);
+        isConnected = false;
+      }
     }
+
+    // Listen for MCP server ready events (including new servers starting)
+    window.addEventListener('message', (event) => {
+      // Check if this is an mcp-server-ready message
+      if (
+        event.origin === window.location.origin &&
+        event.data?.type === 'mcp' &&
+        event.data?.direction === 'server-to-client' &&
+        event.data?.payload === 'mcp-server-ready'
+      ) {
+        console.log('[MCP Proxy] Detected MCP server ready, attempting connection');
+        attemptConnection().catch((error) => {
+          console.error('[MCP Proxy] Failed to connect to new server:', error);
+        });
+      }
+    });
+
+    // Initial connection attempt
+    await attemptConnection();
 
     // Clean up on disconnect
     backgroundPort.onDisconnect.addListener(() => {
-      transport.close();
+      if (transport) {
+        transport.close();
+      }
     });
   },
 });

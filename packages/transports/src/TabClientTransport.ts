@@ -69,6 +69,13 @@ export class TabClientTransport implements Transport {
         return;
       }
 
+      // Handle server stopped signal
+      if (typeof payload === 'string' && payload === 'mcp-server-stopped') {
+        console.log('[TabClientTransport] Received mcp-server-stopped event, closing transport');
+        this.close();
+        return;
+      }
+
       try {
         const message = JSONRPCMessageSchema.parse(payload);
         this._serverReadyResolve();

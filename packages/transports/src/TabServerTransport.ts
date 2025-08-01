@@ -117,6 +117,18 @@ export class TabServerTransport implements Transport {
       window.removeEventListener('message', this._messageHandler);
     }
     this._started = false;
+
+    // Post message to notify content scripts that the MCP server has stopped
+    window.postMessage(
+      {
+        channel: this._channelId,
+        type: 'mcp',
+        direction: 'server-to-client',
+        payload: 'mcp-server-stopped',
+      },
+      '*'
+    );
+
     this.onclose?.();
   }
 }
