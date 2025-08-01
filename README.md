@@ -50,21 +50,25 @@ pnpm install
 ```
 
 **Easiest approach** - Use the Chrome Web Store extension:
+
 ```bash
 cd examples/vanilla-ts          # or examples/script-tag
 pnpm install --ignore-workspace
 pnpm dev
 ```
+
 Just install the [MCP-B Chrome Extension](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa) and run your example.
 
 **Development build** (only if you need latest features):
 
 **Terminal 1** - Start MCP-B development environment:
+
 ```bash
 pnpm dev:mcp
 ```
 
 **Terminal 2** - Run an example:
+
 ```bash
 cd examples/vanilla-ts          # or examples/script-tag
 pnpm install --ignore-workspace
@@ -136,13 +140,15 @@ If you want to contribute to MCP-B or run the examples locally:
    ```
 
    This automatically:
+
    - Builds all packages and native server
-   - Registers native messaging host for both production and dev extension IDs  
+   - Registers native messaging host for both production and dev extension IDs
    - Starts WXT with persistent browser profile
    - Launches extension in Chrome with hot reload
    - Starts documentation website and all package watchers
 
 4. **Find your extension ID (if needed):**
+
    - Open Chrome at `chrome://extensions/`
    - Enable "Developer mode"
    - Find your MCP-B extension and copy the ID
@@ -150,7 +156,6 @@ If you want to contribute to MCP-B or run the examples locally:
    - Restart `pnpm dev`
 
 5. **Run examples** - See the [Run Examples Locally](#run-examples-locally) section above for detailed instructions.
-   
 
 ### Adding MCP-B to Your Existing Website
 
@@ -260,6 +265,9 @@ Run in dev mode for hot reloading: `pnpm --filter extension dev`.
 
 To connect MCP-B to local MCP clients (e.g., Claude Desktop, Cursor) via a native host, bridging the browser to local processes:
 
+> IMPORTANT: You will need to disable the chrome webstore version of the extension if you have it downloaded.
+> Failure to do so will cause port clashing when the dev and prod extension run
+
 1. Install globally: `npm install -g @mcp-b/native-host`.
 2. Run the host: `@mcp-b/native-host` (starts a server on port 12306 by default).
 
@@ -320,6 +328,7 @@ git pull origin main
 **Import resolution errors:**
 
 For monorepo development:
+
 ```bash
 # Ensure the workspace is properly built:
 pnpm build:packages
