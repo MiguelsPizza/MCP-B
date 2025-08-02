@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/global",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Global bundle for MCP-B with window.mcp API for script tag usage",
   "license": "MIT",
   "author": "Alex Nahas",
@@ -45,6 +45,7 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo",
     "prepublishOnly": "pnpm run build",
+    "prepare:publish": "node ../../scripts/replace-workspace-deps.cjs ./package.json",
     "publish:npm": "npm publish --access public --no-git-checks",
     "publish:dry": "pnpm publish --access public --no-git-checks --dry-run",
     "version:patch": "pnpm version patch --no-git-tag-version",

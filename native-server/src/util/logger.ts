@@ -3,7 +3,7 @@ import * as path from 'path';
 import { stderr } from 'process';
 
 // 设置日志文件路径
-const LOG_DIR = path.join('/Users/alxnahas/personal/B-MCP/native-server/src', '.debug-log'); // 使用不同目录区分
+const LOG_DIR = path.join(__dirname, '.debug-log'); // 使用不同目录区分
 const LOG_FILE = path.join(
   LOG_DIR,
   `native-host-${new Date().toISOString().replace(/:/g, '-')}.log`

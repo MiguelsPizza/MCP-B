@@ -386,11 +386,11 @@ importers:
         specifier: ^11.0.1
         version: 11.0.1
       '@mcp-b/transports':
-        specifier: workspace:*
+        specifier: ^1.0.1
         version: link:../packages/transports
       '@modelcontextprotocol/sdk':
-        specifier: 'catalog:'
-        version: 1.15.0
+        specifier: ^1.17.1
+        version: 1.17.1
       chalk:
         specifier: ^5.4.1
         version: 5.4.1
@@ -398,8 +398,8 @@ importers:
         specifier: ^13.1.0
         version: 13.1.0
       dotenv:
-        specifier: 'catalog:'
-        version: 16.5.0
+        specifier: ^17.2.1
+        version: 17.2.1
       fastify:
         specifier: ^5.3.2
         version: 5.4.0
@@ -2283,6 +2283,10 @@ packages:
 
   '@modelcontextprotocol/sdk@1.15.0':
     resolution: {integrity: sha512-67hnl/ROKdb03Vuu0YOr+baKTvf1/5YBHBm9KnZdjdAh8hjt4FRCPD5ucwxGB237sBpzlqQsLy1PFu7z/ekZ9Q==}
+    engines: {node: '>=18'}
+
+  '@modelcontextprotocol/sdk@1.17.1':
+    resolution: {integrity: sha512-CPle1OQehbWqd25La9Ack5B07StKIxh4+Bf19qnpZKJC1oI22Y0czZHbifjw1UoczIfKBwBDAp/dFxvHG13B5A==}
     engines: {node: '>=18'}
 
   '@nodelib/fs.scandir@2.1.5':
@@ -4540,6 +4544,10 @@ packages:
 
   dotenv@16.6.1:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
+    engines: {node: '>=12'}
+
+  dotenv@17.2.1:
+    resolution: {integrity: sha512-kQhDYKZecqnM0fCnzI5eIv5L4cAe/iRI+HqMbO/hbRdTAeXDG+M9FjipUxNfbARuEg4iHIbhnhs78BCHNbSxEQ==}
     engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
@@ -9777,6 +9785,23 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@modelcontextprotocol/sdk@1.17.1':
+    dependencies:
+      ajv: 6.12.6
+      content-type: 1.0.5
+      cors: 2.8.5
+      cross-spawn: 7.0.6
+      eventsource: 3.0.7
+      eventsource-parser: 3.0.2
+      express: 5.1.0
+      express-rate-limit: 7.5.0(express@5.1.0)
+      pkce-challenge: 5.0.0
+      raw-body: 3.0.0
+      zod: 3.25.74
+      zod-to-json-schema: 3.24.5(zod@3.25.74)
+    transitivePeerDependencies:
+      - supports-color
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -12065,6 +12090,8 @@ snapshots:
   dotenv@16.5.0: {}
 
   dotenv@16.6.1: {}
+
+  dotenv@17.2.1: {}
 
   dunder-proto@1.0.1:
     dependencies:

@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/extension-tools",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Chrome Extension API tools for Model Context Protocol (MCP) - provides MCP-compatible wrappers for browser extension APIs",
   "license": "MIT",
   "author": "Alex Nahas",
@@ -42,6 +42,7 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo",
     "prepublishOnly": "pnpm run build",
+    "prepare:publish": "node ../../scripts/replace-workspace-deps.cjs ./package.json",
     "generate-chrome-api-tools": "pnpx tsx src/aiScripts/generate-chrome-api-tools.ts",
     "publish:npm": "npm publish --access public --no-git-checks",
     "publish:dry": "pnpm publish --access public --no-git-checks --dry-run",
