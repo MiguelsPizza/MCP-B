@@ -119,6 +119,8 @@ export class ConsentManager {
           if (notificationId.startsWith(`mcp-consent-${domain}`) && byUser) {
             chrome.notifications.onButtonClicked.removeListener(handleButtonClick);
             chrome.notifications.onClosed.removeListener(handleClose);
+            // Save the denial decision when user dismisses the notification
+            this.saveConsentDecision(domain, false, false);
             resolve(false); // Default to deny if closed
           }
         };
