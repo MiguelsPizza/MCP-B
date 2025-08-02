@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/native-server",
-  "version": "1.0.42",
+  "version": "1.0.45",
   "description": "Chrome Native-Messaging host (Node)",
   "main": "dist/index.js",
   "bin": {
