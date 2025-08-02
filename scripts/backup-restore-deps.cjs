@@ -10,12 +10,12 @@ const path = require('path');
 
 function getPackageJsonPaths() {
   const paths = [];
-  
+
   // Find all package.json files in workspace packages
   const packagesDir = path.join(process.cwd(), 'packages');
   if (fs.existsSync(packagesDir)) {
     const packageDirs = fs.readdirSync(packagesDir);
-    
+
     for (const dir of packageDirs) {
       const packagePath = path.join(packagesDir, dir, 'package.json');
       if (fs.existsSync(packagePath)) {
@@ -23,19 +23,19 @@ function getPackageJsonPaths() {
       }
     }
   }
-  
+
   // Also check native-server
   const nativeServerPath = path.join(process.cwd(), 'native-server', 'package.json');
   if (fs.existsSync(nativeServerPath)) {
     paths.push(nativeServerPath);
   }
-  
+
   return paths;
 }
 
 function backup() {
   const paths = getPackageJsonPaths();
-  
+
   console.log('Backing up package.json files...');
   for (const packagePath of paths) {
     const backupPath = packagePath + '.backup';
@@ -47,7 +47,7 @@ function backup() {
 
 function restore() {
   const paths = getPackageJsonPaths();
-  
+
   console.log('Restoring package.json files...');
   for (const packagePath of paths) {
     const backupPath = packagePath + '.backup';
@@ -62,7 +62,7 @@ function restore() {
 
 function main() {
   const action = process.argv[2];
-  
+
   if (action === 'backup') {
     backup();
   } else if (action === 'restore') {
