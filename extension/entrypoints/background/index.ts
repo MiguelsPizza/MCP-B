@@ -10,7 +10,7 @@ export default defineBackground({
   async main() {
     const server = new McpServer({ name: 'Extension-Hub', version: '1.0.0' });
     const mcpHub = new McpHub(server);
-    
+
     chrome.runtime.onConnect.addListener((port) => {
       if (port.name === 'mcp') {
         console.log('[MCP Hub] UI client connected');
@@ -33,11 +33,11 @@ export default defineBackground({
 
       if (message.type === 'request-consent') {
         console.log(`[Background] Consent request for domain: ${message.domain}`);
-        
+
         // Extract domain from URL for consent check
         const domain = message.domain;
         const tabId = sender.tab?.id;
-        
+
         if (!tabId) {
           console.error('[Background] No tab ID available for consent request');
           return;
@@ -51,37 +51,41 @@ export default defineBackground({
             chrome.tabs.sendMessage(tabId, {
               type: 'consent-response',
               messageId: message.messageId,
-              granted: true
+              granted: true,
             });
             return;
           }
 
           // Request new consent
           const granted = await ConsentManager.requestConsent(domain, tabId, message.url);
-          console.log(`[Background] Consent ${granted ? 'granted' : 'denied'} for domain: ${domain}`);
-          
+          console.log(
+            `[Background] Consent ${granted ? 'granted' : 'denied'} for domain: ${domain}`
+          );
+
           // Notify UI that consent was updated with detailed information
-          chrome.runtime.sendMessage({ 
-            type: 'consent-updated',
-            domain: domain,
-            granted: granted,
-            isNewDecision: true
-          }).catch(() => {
-            // Ignore errors - UI might not be open
-          });
-          
+          chrome.runtime
+            .sendMessage({
+              type: 'consent-updated',
+              domain: domain,
+              granted: granted,
+              isNewDecision: true,
+            })
+            .catch(() => {
+              // Ignore errors - UI might not be open
+            });
+
           // Send response back to content script
           chrome.tabs.sendMessage(tabId, {
             type: 'consent-response',
             messageId: message.messageId,
-            granted
+            granted,
           });
         } catch (error) {
           console.error('[Background] Error handling consent request:', error);
           chrome.tabs.sendMessage(tabId, {
             type: 'consent-response',
             messageId: message.messageId,
-            granted: false
+            granted: false,
           });
         }
         return;
@@ -93,7 +97,7 @@ export default defineBackground({
           await ConsentManager.removeConsent(message.domain);
           // Directly disconnect servers
           mcpHub.disconnectDomainServers(message.domain);
-          
+
           // Notify UI that consent was updated
           chrome.runtime.sendMessage({ type: 'consent-updated' }).catch(() => {
             // Ignore errors - UI might not be open
@@ -108,15 +112,17 @@ export default defineBackground({
         console.log('[Background] Clearing all consent decisions');
         try {
           const decisions = await ConsentManager.getConsentDecisions();
-          const grantedDomains = Object.keys(decisions).filter(domain => decisions[domain].granted);
-          
+          const grantedDomains = Object.keys(decisions).filter(
+            (domain) => decisions[domain].granted
+          );
+
           await ConsentManager.clearAllConsent();
-          
+
           // Disconnect servers for all granted domains
           for (const domain of grantedDomains) {
             mcpHub.disconnectDomainServers(domain);
           }
-          
+
           // Notify UI that consent was updated
           chrome.runtime.sendMessage({ type: 'consent-updated' }).catch(() => {
             // Ignore errors - UI might not be open

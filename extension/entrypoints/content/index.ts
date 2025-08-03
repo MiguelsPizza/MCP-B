@@ -173,22 +173,22 @@ function extractDomainFromUrl(url: string): string {
 async function requestConsentFromBackground(domain: string, url: string): Promise<boolean> {
   return new Promise((resolve) => {
     const messageId = `consent-${Date.now()}-${Math.random()}`;
-    
+
     const handleMessage = (message: any) => {
       if (message.type === 'consent-response' && message.messageId === messageId) {
         chrome.runtime.onMessage.removeListener(handleMessage);
         resolve(message.granted);
       }
     };
-    
+
     chrome.runtime.onMessage.addListener(handleMessage);
-    
+
     chrome.runtime.sendMessage({
       type: 'request-consent',
       messageId,
       domain,
       url,
-      tabId: null // Will be set by background script
+      tabId: null, // Will be set by background script
     });
   });
 }
@@ -287,7 +287,7 @@ export default defineContentScript({
         // Quick check to see if there's an MCP server
         const quickCheckPromise = Promise.race([
           connectPromise,
-          timeoutPromise(5000, 'Quick MCP server check timeout')
+          timeoutPromise(5000, 'Quick MCP server check timeout'),
         ]);
 
         let mcpServerDetected = false;
@@ -307,15 +307,18 @@ export default defineContentScript({
         if (mcpServerDetected) {
           const currentDomain = extractDomainFromUrl(window.location.href);
           console.log(`[MCP Proxy] Requesting consent for domain: ${currentDomain}`);
-          const consentGranted = await requestConsentFromBackground(currentDomain, window.location.href);
-          
+          const consentGranted = await requestConsentFromBackground(
+            currentDomain,
+            window.location.href
+          );
+
           if (!consentGranted) {
             console.log('[MCP Proxy] Consent denied by user, aborting connection');
             transport.close();
             backgroundPort.disconnect();
             return;
           }
-          
+
           console.log('[MCP Proxy] Consent granted, proceeding with connection');
         }
 

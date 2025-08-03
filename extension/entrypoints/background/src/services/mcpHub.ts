@@ -409,15 +409,15 @@ export default class McpHub {
    */
   public disconnectDomainServers(domain: string) {
     console.log(`[MCP Hub] Disconnecting servers for domain: ${domain}`);
-    
+
     const domainData = this.getDomainData(domain);
     const tabsToDisconnect: number[] = [];
-    
+
     // Collect all active tabs for this domain
     for (const [dataId, tabData] of domainData.entries()) {
       if (!tabData.isClosed && tabData.port && tabData.tabId) {
         tabsToDisconnect.push(tabData.tabId);
-        
+
         // Disconnect the port to trigger cleanup
         try {
           tabData.port.disconnect();
@@ -426,13 +426,13 @@ export default class McpHub {
         }
       }
     }
-    
+
     // Unregister all tools for this domain
     this.unregisterDomainTools(domain);
-    
+
     // Clear domain data
     this.domains.delete(domain);
-    
+
     console.log(`[MCP Hub] Disconnected ${tabsToDisconnect.length} tabs for domain: ${domain}`);
   }
 
@@ -442,14 +442,14 @@ export default class McpHub {
   private unregisterDomainTools(domain: string) {
     const cleanedDomain = sanitizeToolName(domain);
     const toolsToRemove: string[] = [];
-    
+
     // Find all tools for this domain
     for (const [toolName, tool] of this.registeredTools.entries()) {
       if (toolName.includes(`website_tool_${cleanedDomain}_`)) {
         toolsToRemove.push(toolName);
       }
     }
-    
+
     // Remove the tools
     for (const toolName of toolsToRemove) {
       const tool = this.registeredTools.get(toolName);
@@ -458,7 +458,7 @@ export default class McpHub {
         this.registeredTools.delete(toolName);
       }
     }
-    
+
     console.log(`[MCP Hub] Unregistered ${toolsToRemove.length} tools for domain: ${domain}`);
   }
 

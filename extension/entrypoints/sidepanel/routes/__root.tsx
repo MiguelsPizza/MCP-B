@@ -47,7 +47,7 @@ function RootComponent() {
         // Only show global toasts for new consent decisions from website interactions
         // Not for manual user actions in settings (those show their own toasts)
         const { domain, granted } = message;
-        
+
         if (granted) {
           toast.success('Access granted', {
             description: `MCP-B Assistant can now access tools from ${domain} MCP Server`,
@@ -55,8 +55,8 @@ function RootComponent() {
               label: 'Review Settings',
               onClick: () => {
                 navigate({ to: '/settings' });
-              }
-            }
+              },
+            },
           });
         } else {
           toast.error('Access denied', {
@@ -65,8 +65,8 @@ function RootComponent() {
               label: 'Open Settings',
               onClick: () => {
                 navigate({ to: '/settings' });
-              }
-            }
+              },
+            },
           });
         }
       }
