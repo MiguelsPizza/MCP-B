@@ -261,15 +261,15 @@ For the latest features or custom modifications:
 
 Run in dev mode for hot reloading: `pnpm --filter extension dev`.
 
-## Hooking Up the Native Host
+## Hooking Up the Native Server
 
-To connect MCP-B to local MCP clients (e.g., Claude Desktop, Cursor) via a native host, bridging the browser to local processes:
+To connect MCP-B to local MCP clients (e.g., Claude Desktop, Cursor) via a native server, bridging the browser to local processes:
 
 > IMPORTANT: You will need to disable the chrome webstore version of the extension if you have it downloaded.
 > Failure to do so will cause port clashing when the dev and prod extension run
 
-1. Install globally: `npm install -g @mcp-b/native-host`.
-2. Run the host: `@mcp-b/native-host` (starts a server on port 12306 by default).
+1. Install globally: `npm install -g @mcp-b/native-server`.
+2. Run the host: `@mcp-b/native-server` (starts a server on port 12306 by default).
 
 Add this configuration to your MCP client (e.g., in Claude's config or Cursor's `.cursor/mcp.json`):
 
@@ -281,7 +281,7 @@ Add this configuration to your MCP client (e.g., in Claude's config or Cursor's 
 }
 ```
 
-- **What this does**: The native host proxies requests from local clients to the browser extension, allowing tools from your website to be called from desktop apps.
+- **What this does**: The native server proxies requests from local clients to the browser extension, allowing tools from your website to be called from desktop apps.
 - **Note**: The native server is based on [mcp-chrome](https://github.com/hangwin/mcp-chrome) by [hangwin](https://github.com/hangwin). Ensure the extension is running and tabs with your site are open.
 
 Test by running a local client (e.g., MCP Inspector) pointed at the URL, then calling tools from your site.
