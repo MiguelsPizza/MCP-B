@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/native-server",
-  "version": "1.0.29",
+  "version": "1.0.45",
   "description": "Chrome Native-Messaging host (Node)",
   "main": "dist/index.js",
   "bin": {
@@ -10,7 +10,14 @@
     "dev": "nodemon --watch src --ext ts,js,json --ignore dist/ --exec \"npm run build && npm run register:dev\"",
     "build": "ts-node src/scripts/build.ts",
     "register:dev": "node dist/scripts/register-dev.js",
-    "postinstall": "node dist/scripts/postinstall.js"
+    "postinstall": "node dist/scripts/postinstall.js",
+    "prepare:publish": "node ../scripts/replace-workspace-deps.cjs ./package.json",
+    "prepublishOnly": "pnpm run build",
+    "publish:npm": "npm publish --access public --no-git-checks",
+    "publish:dry": "pnpm publish --access public --no-git-checks --dry-run",
+    "version:patch": "pnpm version patch --no-git-tag-version",
+    "version:minor": "pnpm version minor --no-git-tag-version",
+    "version:major": "pnpm version major --no-git-tag-version"
   },
   "files": [
     "dist"
@@ -28,11 +35,11 @@
   "license": "MIT",
   "dependencies": {
     "@fastify/cors": "^11.0.1",
-    "@mcp-b/transports": "workspace:*",
-    "@modelcontextprotocol/sdk": "catalog:",
+    "@mcp-b/transports": "^1.0.1",
+    "@modelcontextprotocol/sdk": "^1.17.1",
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
-    "dotenv": "catalog:",
+    "dotenv": "^17.2.1",
     "fastify": "^5.3.2",
     "is-admin": "^4.0.0",
     "pino": "^9.6.0",
