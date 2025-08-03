@@ -19,6 +19,7 @@
     "test": "turbo run test --continue",
     "test:e2e": "turbo run test --filter=@mcp-b/e2e-tests",
     "clean": "git clean -xdf .cache .turbo node_modules",
+    "clear-configs": "node scripts/clear-native-configs.js",
     "typecheck": "turbo run typecheck",
     "check-all": "pnpm run typecheck && biome ci --linter-enabled --formatter-enabled .",
     "publish:packages": "turbo run publish:npm --filter='./packages/*'",
