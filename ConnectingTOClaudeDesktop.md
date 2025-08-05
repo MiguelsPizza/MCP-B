@@ -1,56 +1,37 @@
 ### Connecting to Claude Desktop (via Proxy)
 
-Claude Desktop primarily expects MCP servers via stdio transport. Since the native host exposes a Streamable HTTP endpoint (at `http://127.0.0.1:12306/mcp` by default), you'll need to use `mcp-proxy` to bridge this to stdio.
+Claude Desktop primarily expects MCP servers via stdio transport. Since the native host exposes a Streamable HTTP endpoint (at `http://127.0.0.1:12306/mcp` by default), you'll need to use `mcp-remote` to bridge this to stdio.
 
-#### Step 1: Install mcp-proxy
-Install `mcp-proxy` globally using a Python tool installer (requires Python 3.8+). Recommended: Use `uv` for speed (install via `brew install uv` on macOS or equivalent).
-
-```bash
-uv tool install mcp-proxy
-```
-
-Alternative (using `pipx`):
-```bash
-pipx install mcp-proxy
-```
+#### Step 1: Make sure npx/npm is installed
+Install npm if needed
 
 Verify installation:
 ```bash
-mcp-proxy --help
+npx --version
 ```
 
-#### Step 2: Find the Full Path to mcp-proxy
-Claude Desktop may not find `mcp-proxy` in your PATH, so use the full binary path in your config.
-
-Run:
-```bash
-which mcp-proxy
-```
-This typically outputs something like `/Users/yourusername/.local/bin/mcp-proxy`. Note this path.
-
-#### Step 3: Configure in Claude Desktop
+#### Step 2: Configure in Claude Desktop
 Open Claude Desktop > **Settings** > **Developer** > **Edit Config** (or manually edit `~/Library/Application Support/Claude/claude_desktop_config.json` on macOS).
 
-Add or merge this under `"mcpServers"` (replace `/path/to/mcp-proxy` with your full path from Step 2, and adjust the URL/port if your native host uses a custom one):
+Add or merge this under `"mcpServers"` (adjust the URL/port if your native host uses a custom one):
 
 ```json
 {
-  "mcpServers": {
-    "mcp-b-proxy": {
-      "command": "/path/to/mcp-proxy",
-      "args": [
-        "http://127.0.0.1:12306/mcp",
-        "--transport=streamablehttp"
-      ],
-      "env": {}
+    "mcpServers": {
+        "mcp-b-proxy": {
+            "command": "npx",
+            "args": [
+                "mcp-remote",
+                "http://127.0.0.1:12306/mcp"
+            ]
+        }
     }
-  }
 }
 ```
 
 Save and restart Claude Desktop. The proxy will start automatically when Claude needs it.
 
-#### Step 4: Test the Connection
+#### Step 3: Test the Connection
 - Ensure the native host is running (`@mcp-b/native-host`) and your MCP-enabled site is open in Chrome with the extension.
 - In Claude Desktop, open **Developer Tools** > **MCP Inspector** and test calling tools (they'll be prefixed with your site's domain).
 - Check Claude's logs for errors (via console or file). If you see "ENOENT", double-check the full path in your config.
