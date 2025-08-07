@@ -17,25 +17,14 @@
 [![Join Our Discord](https://img.shields.io/badge/Join%20Our%20Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/a9fBR6Bw)
 
 
-## Tutorial video
-
-[![Watch the video](./thumbnail.png)](https://www.youtube.com/watch?v=Obw7WE36D6s)
-
-> MCP-B lets your website become an MCP server, exposing functionality as tools that AI agents can call directly—using the browser's existing authentication and security model.
 
 ![](./FullArch.png)
 
-## From a User Perspective
+## WebMCP
 
-Install the MCP-B Chrome extension to enable AI interactions on MCP-enabled sites. It auto-detects tools from visited pages, allowing chat-based AI queries (e.g., "Add to cart") that execute tools across tabs. Actions use your browser sessions for auth, with visible UI updates and audits—no extra setup required.
+WebMCP is the underlying protocol which MCP-B uses. It is a protocol which exposes function in your browser javascript to LLM's as MCP tools.
 
-## From a Website Owner Perspective
-
-Install npm packages (`@mcp-b/transports`, `@modelcontextprotocol/sdk`, `zod`). Add an MCP server to your site, connect via TabServerTransport, and register tools wrapping existing logic (e.g., APIs or state). Tools can be dynamic/page-scoped; the extension auto-injects clients. This makes your site AI-ready securely within the browser sandbox.
-
-## From an AI's Perspective
-
-Receive domain-prefixed tools from open tabs; call them with JSON params for deterministic actions (e.g., `shop_addToCart`). Extension handles routing/navigation; responses enable chaining. Supports dynamic updates and auth via browser context, reducing errors vs. visual automation.
+For a more indepth understanding, refer here: https://mcp-b.ai/blogs
 
 ## Live Demo
 
@@ -384,6 +373,13 @@ Contributions welcome! Focus on transports, examples, or docs. See [CONTRIBUTING
 - Firefox/Safari support.
 - Full MCP spec (beyond tools).
 - Native host upstreaming.
+
+## Tutorial video
+
+[![Watch the video](./thumbnail.png)](https://www.youtube.com/watch?v=Obw7WE36D6s)
+
+> MCP-B lets your website become an MCP server, exposing functionality as tools that AI agents can call directly—using the browser's existing authentication and security model.
+
 
 ## License
 
