@@ -2,7 +2,7 @@
 > 🚨 Important Update: Please download version [1.0.0](https://www.npmjs.com/package/@mcp-b/transports/v/1.0.0?activeTab=readme) from NPM as this is a breaking change! 🚨
 
 
-# MCP-B:
+# WebMCP:
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/daohopfhkdelnpemnhlekblhnikhdhfa?style=flat-square&label=Chrome%20Extension)](https://chromewebstore.google.com/detail/mcp-b/daohopfhkdelnpemnhlekblhnikhdhfa)
 [![npm version](https://img.shields.io/npm/v/@mcp-b/transports?style=flat-square)](https://www.npmjs.com/package/@mcp-b/transports)
@@ -20,9 +20,9 @@
 
 ![](./FullArch.png)
 
-## WebMCP
+## The protocol
 
-WebMCP is the underlying protocol which MCP-B uses. It is a protocol which exposes function in your browser javascript to LLM's as MCP tools.
+WebMCP is the underlying protocol which MCP-B implements. It is a protocol which exposes function in your browser javascript to LLM's as MCP tools.
 
 For a more indepth understanding, refer here: https://mcp-b.ai/blogs
 
