@@ -1,38 +1,29 @@
-import { ExtensionServerTransport } from '@mcp-b/transports';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import McpHub from './src/services/mcpHub';
 import { initNativeHostListener } from './src/services/NativeHostManager';
+import { initExternalExtensionPortListener } from './src/services/ports/ExternalExtensionPortManager';
+import { initUiClientPortListener } from './src/services/ports/UiClientPortManager';
+import { initSidepanelHandlers } from './src/services/sidepanel';
 
 export default defineBackground({
   persistent: true,
   type: 'module',
-  async main() {
-    const server = new McpServer({ name: 'Extension-Hub', version: '1.0.0' });
-    new McpHub(server);
-    chrome.runtime.onConnect.addListener((port) => {
-      if (port.name === 'mcp') {
-        console.log('[MCP Hub] UI client connected');
-        const transport = new ExtensionServerTransport(port, {
-          keepAlive: true,
-          keepAliveInterval: 25000, // 25 seconds
-        });
-        server.connect(transport);
-      }
+  main() {
+    const sharedServer = new McpServer({ name: 'Extension-Hub', version: '1.0.0' });
+    new McpHub(sharedServer);
+
+    // Connect sidepanel UI clients to the shared server
+    initUiClientPortListener(sharedServer);
+
+    // Accept external extension connections. Each external extension gets its own server instance.
+    initExternalExtensionPortListener((extensionId) => {
+      const server = new McpServer({ name: extensionId, version: '1.0.0' });
+      new McpHub(server);
+      return server;
     });
 
+    // Native host and sidepanel behavior
     initNativeHostListener();
-
-    chrome.runtime.onMessage.addListener((message) => {
-      if (message.action === 'open-sidepanel') {
-        chrome.windows.getCurrent((window) => {
-          if (window?.id) {
-            chrome.sidePanel.open({ windowId: window.id });
-          }
-        });
-      }
-    });
-    chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => {
-      console.error('[Background] Failed to set side panel behavior:', error);
-    });
+    initSidepanelHandlers();
   },
 });
