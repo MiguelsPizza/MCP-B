@@ -3,6 +3,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 
 export const transport = new ExtensionClientTransport({
   portName: 'mcp',
+  autoReconnect: true,
 });
 
 export const client = new Client({

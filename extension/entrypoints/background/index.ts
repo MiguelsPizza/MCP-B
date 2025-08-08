@@ -12,7 +12,10 @@ export default defineBackground({
     chrome.runtime.onConnect.addListener((port) => {
       if (port.name === 'mcp') {
         console.log('[MCP Hub] UI client connected');
-        const transport = new ExtensionServerTransport(port);
+        const transport = new ExtensionServerTransport(port, {
+          keepAlive: true,
+          keepAliveInterval: 25000, // 25 seconds
+        });
         server.connect(transport);
       }
     });
