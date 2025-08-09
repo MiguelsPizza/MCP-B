@@ -1,7 +1,7 @@
 {
   "name": "@mcp-b/global",
   "version": "1.0.11",
-  "description": "Global bundle for MCP-B with window.mcp API for script tag usage",
+  "description": "ESM bundle for MCP-B browser injection via Chrome MV3 scripting",
   "license": "MIT",
   "author": "Alex Nahas",
   "repository": {
@@ -17,31 +17,24 @@
     "mcp",
     "model-context-protocol",
     "browser",
-    "global",
-    "script-tag",
-    "cdn",
-    "umd"
+    "chrome-extension",
+    "mv3",
+    "injection",
+    "esm"
   ],
   "type": "module",
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "browser": "./dist/index.umd.js",
-  "unpkg": "./dist/index.umd.js",
-  "types": "./dist/index.d.ts",
+  "browser": "./dist/index.js",
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "browser": "./dist/index.umd.js"
-    },
-    "./umd": "./dist/index.umd.js"
+    ".": "./dist/index.js"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "vite build",
+    "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .turbo",
     "prepublishOnly": "pnpm run build",
@@ -56,19 +49,20 @@
     "check": "biome check --write ."
   },
   "dependencies": {
-    "@mcp-b/transports": "^1.0.0",
-    "@modelcontextprotocol/sdk": "1.15.0"
+    "@mcp-b/transports": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.17.2"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "tsup": "catalog:",
+    "vite-plugin-monkey": "^6.0.1",
+    "vite": "^7.1.1",
     "typescript": "catalog:"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "sideEffects": false,
+  "sideEffects": true,
   "engines": {
     "node": ">=18"
   }

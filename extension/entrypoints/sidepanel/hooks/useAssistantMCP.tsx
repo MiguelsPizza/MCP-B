@@ -78,10 +78,14 @@ export function useAssistantMCP(mcpTools: McpTool[], client: Client, threadId: s
           execute: async (args: Record<string, unknown>) => {
             console.log(`[useAssistantMCP] Executing tool ${assistantToolName} with args:`, args);
             try {
-              // Use the clean name - background script now handles both prefixed and unprefixed
+              // Strip null/undefined so Chrome APIs receive only set values
+              const cleanedArgs = Object.fromEntries(
+                Object.entries(args).filter(([, v]) => v !== null && v !== undefined),
+              );
+
               const result = await client.callTool({
                 name: mcpT.name,
-                arguments: args,
+                arguments: cleanedArgs,
               });
               console.log(`[useAssistantMCP] Tool ${assistantToolName} succeeded`);
               return result;

@@ -8,9 +8,6 @@ importers:
 
   .:
     devDependencies:
-      '@mcp-b/global':
-        specifier: latest
-        version: 1.0.8
       '@modelcontextprotocol/sdk':
         specifier: 1.15.0
         version: 1.15.0
@@ -181,15 +178,6 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
-
-  '@mcp-b/global@1.0.8':
-    resolution: {integrity: sha512-e6TBYwGsYZhalTNnE9z4CJU26QG0x26Nf3UBr7Vp3E5YD8LeSi2O7tc0XHWbG/7C4xtpG0bJ6BijzwjqBNtqFQ==}
-    engines: {node: '>=18'}
-
-  '@mcp-b/transports@1.0.0':
-    resolution: {integrity: sha512-YGg/AYnGB2qKxJjpSK3ocyuLYBdTV9EV2K6Zs0t1XEOMofUMat1i4NH/6dFVwFn8oN0ofGcSTPuqDzfHIv8otA==}
-    peerDependencies:
-      '@modelcontextprotocol/sdk': ^1.15.0
 
   '@modelcontextprotocol/sdk@1.15.0':
     resolution: {integrity: sha512-67hnl/ROKdb03Vuu0YOr+baKTvf1/5YBHBm9KnZdjdAh8hjt4FRCPD5ucwxGB237sBpzlqQsLy1PFu7z/ekZ9Q==}
@@ -729,9 +717,6 @@ packages:
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
-
 snapshots:
 
   '@esbuild/aix-ppc64@0.25.8':
@@ -811,18 +796,6 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.8':
     optional: true
-
-  '@mcp-b/global@1.0.8':
-    dependencies:
-      '@mcp-b/transports': 1.0.0(@modelcontextprotocol/sdk@1.15.0)
-      '@modelcontextprotocol/sdk': 1.15.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@mcp-b/transports@1.0.0(@modelcontextprotocol/sdk@1.15.0)':
-    dependencies:
-      '@modelcontextprotocol/sdk': 1.15.0
-      zod: 3.25.76
 
   '@modelcontextprotocol/sdk@1.15.0':
     dependencies:
@@ -1357,5 +1330,3 @@ snapshots:
       zod: 3.23.8
 
   zod@3.23.8: {}
-
-  zod@3.25.76: {}

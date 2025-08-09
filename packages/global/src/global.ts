@@ -2,24 +2,22 @@
 
 import { TabServerTransport } from '@mcp-b/transports';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-
-let serverInstance: McpServer | null = null;
-let isInitialized = false;
+import './types.d.ts';
 
 /**
  * Internal initialization function that creates and configures the MCP server.
  * This function is idempotent and handles errors gracefully.
  * @throws {Error} If initialization fails
  */
-function initializeMCP(): void {
-  if (serverInstance) {
+function initializeMCP(isInitialized: boolean): void {
+  if (isInitialized) {
     return;
   }
 
   try {
     const hostname = window.location.hostname || 'localhost';
 
-    serverInstance = new McpServer(
+    window.mcp = new McpServer(
       {
         name: hostname,
         version: '1.0.0',
@@ -29,13 +27,12 @@ function initializeMCP(): void {
           tools: {
             listChanged: true,
           },
-          debouncedNotificationMethods: ['notifications/tools/list_changed'],
         },
       }
     );
 
     // Register default tool with proper error handling in the callback
-    serverInstance.registerTool(
+    window.mcp.registerTool(
       'get_current_website_title',
       {
         description: 'Get the title of the current website',
@@ -65,9 +62,8 @@ function initializeMCP(): void {
       allowedOrigins: ['*'],
     });
 
-    serverInstance.connect(transport);
+    window.mcp.connect(transport);
   } catch (error) {
-    serverInstance = null;
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     throw new Error(`Failed to initialize MCP server: ${errorMessage}`);
   }
@@ -78,22 +74,20 @@ function initializeMCP(): void {
  * This function is safe to call multiple times - it will only initialize once.
  * It performs environment checks and handles browser-only execution.
  */
-export function initializeGlobalMCP(): void {
+export function initializeGlobalMCP(isInitialized: boolean): void {
   if (typeof window === 'undefined') {
     console.warn('initializeGlobalMCP called in non-browser environment; skipping.');
     return;
   }
 
-  if (isInitialized && window.mcp && serverInstance) {
+  if (isInitialized && window.mcp) {
+    console.warn('MCP server already initialized; skipping.');
     return;
   }
 
   try {
-    initializeMCP();
-    if (serverInstance) {
-      window.mcp = serverInstance;
-      isInitialized = true;
-    }
+    initializeMCP(isInitialized);
+    isInitialized = true;
   } catch (error) {
     console.error('Failed to initialize global MCP:', error);
     throw error;
@@ -105,20 +99,20 @@ export function initializeGlobalMCP(): void {
  * This is useful for testing, hot module replacement, or resetting the state.
  * It handles errors during cleanup gracefully.
  */
-export function cleanupGlobalMCP(): void {
-  if (serverInstance) {
-    try {
-      serverInstance.close();
-    } catch (error) {
-      console.warn('Error closing MCP server:', error);
-    } finally {
-      serverInstance = null;
-    }
-  }
+// export function cleanupGlobalMCP(): void {
+//   if (serverInstance) {
+//     try {
+//       serverInstance.close();
+//     } catch (error) {
+//       console.warn('Error closing MCP server:', error);
+//     } finally {
+//       serverInstance = null;
+//     }
+//   }
 
-  if (typeof window !== 'undefined' && 'mcp' in window) {
-    delete (window as unknown as { mcp?: unknown }).mcp;
-  }
+//   if (typeof window !== 'undefined' && 'mcp' in window) {
+//     delete (window as unknown as { mcp?: unknown }).mcp;
+//   }
 
-  isInitialized = false;
-}
+//   isInitialized = false;
+// }

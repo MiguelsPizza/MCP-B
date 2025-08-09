@@ -1,9 +1,9 @@
 // content-scripts/content.ts
 
+import { defineContentScript } from '#imports';
 import { TabClientTransport } from '@mcp-b/transports';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { ToolListChangedNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
-import { defineContentScript } from '#imports';
 
 // Types
 
@@ -23,7 +23,7 @@ interface ToolResultMessage {
   };
 }
 
-let cachedToolHashes: Map<string, string> = new Map();
+// let cachedToolHashes: Map<string, string> = new Map();
 
 async function checkForToolUpdates(
   client: Client,
@@ -33,54 +33,35 @@ async function checkForToolUpdates(
   try {
     const pageTools = await client.listTools();
     const newTools = pageTools.tools;
-    const newHashes = new Map<string, string>();
-    let changed = false;
-    const seen = new Set<string>();
 
     for (const tool of newTools) {
       if (!tool.name) {
         console.error('Tool without name');
         continue;
       }
-      const json = JSON.stringify(tool);
-      newHashes.set(tool.name, json);
-      seen.add(tool.name);
-      if (!cachedToolHashes.has(tool.name) || cachedToolHashes.get(tool.name) !== json) {
-        changed = true;
-      }
     }
+    console.log('newTools', newTools);
 
-    // Check for removed tools
-    for (const name of cachedToolHashes.keys()) {
-      if (!seen.has(name)) {
-        changed = true;
-      }
-    }
-
-    if (changed || sendType === 'register-tools') {
       // Always send for initial registration if tools are fetched
       port.postMessage({
         type: sendType,
         tools: newTools,
       });
-      cachedToolHashes = newHashes;
+      // cachedToolHashes = newHashes;
       console.log(`[MCP Proxy] Sent ${sendType} with ${newTools.length} tools to hub.`);
-    } else {
-      console.log('[MCP Proxy] No changes in tool list, skipping update.');
-    }
+      console.log('newTools', newTools);
+
   } catch (error) {
     console.error('[MCP Proxy] Failed to check for tool updates:', error);
 
     // If we can't get tools (server might be disconnected), send empty tools list
     // but only if we previously had tools cached
-    if (cachedToolHashes.size > 0) {
       console.log('[MCP Proxy] Server appears disconnected, sending empty tools list');
       port.postMessage({
         type: 'tools-updated',
         tools: [],
       });
-      cachedToolHashes.clear();
-    }
+
   }
 }
 
@@ -136,6 +117,7 @@ export default defineContentScript({
   matches: ['<all_urls>'],
   async main() {
     console.log('[MCP Proxy] Initializing MCP proxy...');
+    // Note: WebMCP polyfill is now injected by the background script using chrome.scripting API
 
     let client: Client | null = null;
     let transport: TabClientTransport | null = null;
@@ -203,7 +185,7 @@ export default defineContentScript({
           type: 'tools-updated',
           tools: [],
         });
-        cachedToolHashes.clear();
+        // cachedToolHashes.clear();
         isConnected = false;
         client = null;
         transport = null;
@@ -243,10 +225,10 @@ export default defineContentScript({
         console.log('first tools', tools);
         console.log('[MCP Proxy] Tools:', tools);
 
-        backgroundPort.postMessage({
-          type: 'register-tools',
-          tools: tools.tools,
-        });
+        // backgroundPort.postMessage({
+        //   type: 'register-tools',
+        //   tools: tools.tools,
+        // });
 
         // Register tools with background (initial check and send)
         await checkForToolUpdates(client, backgroundPort, 'register-tools');
@@ -266,11 +248,11 @@ export default defineContentScript({
           console.log('[MCP Proxy] Server does not support tool list change notifications');
 
           // Fallback: periodically check for tool updates every 30 seconds
-          setInterval(async () => {
-            if (client && isConnected) {
-              await checkForToolUpdates(client!, backgroundPort);
-            }
-          }, 30000);
+          // setInterval(async () => {
+          //   if (client && isConnected) {
+          //     await checkForToolUpdates(client!, backgroundPort);
+          //   }
+          // }, 30000);
         }
 
         console.log('[MCP Proxy] Successfully connected to page server');
@@ -280,21 +262,21 @@ export default defineContentScript({
       }
     }
 
-    // Listen for MCP server ready events (including new servers starting)
-    window.addEventListener('message', (event) => {
-      // Check if this is an mcp-server-ready message
-      if (
-        event.origin === window.location.origin &&
-        event.data?.type === 'mcp' &&
-        event.data?.direction === 'server-to-client' &&
-        event.data?.payload === 'mcp-server-ready'
-      ) {
-        console.log('[MCP Proxy] Detected MCP server ready, attempting connection');
-        attemptConnection().catch((error) => {
-          console.error('[MCP Proxy] Failed to connect to new server:', error);
-        });
-      }
-    });
+    // // Listen for MCP server ready events (including new servers starting)
+    // window.addEventListener('message', (event) => {
+    //   // Check if this is an mcp-server-ready message
+    //   if (
+    //     event.origin === window.location.origin &&
+    //     event.data?.type === 'mcp' &&
+    //     event.data?.direction === 'server-to-client' &&
+    //     event.data?.payload === 'mcp-server-ready'
+    //   ) {
+    //     console.log('[MCP Proxy] Detected MCP server ready, attempting connection');
+    //     attemptConnection().catch((error) => {
+    //       console.error('[MCP Proxy] Failed to connect to new server:', error);
+    //     });
+    //   }
+    // });
 
     // Initial connection attempt
     await attemptConnection();

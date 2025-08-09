@@ -1,9 +1,9 @@
 packages:
   - extension
-  - web
   - packages/*
   - e2e-tests
   - native-server
+  - mcp-b-backend
   - "!examples/**"
 
 catalog:
