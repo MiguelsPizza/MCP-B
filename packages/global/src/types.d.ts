@@ -8,4 +8,3 @@ declare global {
   }
 }
 
-export type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';

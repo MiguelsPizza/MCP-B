@@ -1,12 +1,17 @@
 import { MarkdownText } from '@/entrypoints/sidepanel/components/assistant-ui/markdown-text';
 import { TooltipIconButton } from '@/entrypoints/sidepanel/components/assistant-ui/tooltip-icon-button';
+import { getCleanToolName, groupExtensionToolsByApi, groupToolsByType, groupWebsiteToolsByDomain, parseToolInfo } from '@/entrypoints/sidepanel/components/McpServer/utils';
+import { Badge } from '@/entrypoints/sidepanel/components/ui/badge';
 import { Button } from '@/entrypoints/sidepanel/components/ui/button';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/entrypoints/sidepanel/components/ui/collapsible';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/entrypoints/sidepanel/components/ui/tooltip';
 import { useAssistantMCP } from '@/entrypoints/sidepanel/hooks/useAssistantMCP';
+import { useStorageItem } from '@/entrypoints/sidepanel/hooks/wxtStorageHooks';
+import { TOOL_PREFERENCES_STORAGE_KEY, validateToolPreferences } from '@/entrypoints/sidepanel/lib/tool-preferences';
 import { cn } from '@/entrypoints/sidepanel/lib/utils';
 import {
   ActionBarPrimitive,
@@ -30,7 +35,7 @@ import {
   SendHorizontalIcon,
 } from 'lucide-react';
 import type { FC } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { McpToolUIRenderer } from './McpToolUIRenderer';
 import { ToolFallback } from './tool-fallback';
 
@@ -65,6 +70,8 @@ export const Thread: FC = () => {
 
       <div className="relative px-3 pb-3 pt-2">
         <ThreadScrollToBottom />
+        {/* Keep Manage section anchored near the input */}
+        <ActiveToolsBar />
         <Composer />
       </div>
     </ThreadPrimitive.Root>
@@ -345,6 +352,116 @@ const AssistantMessage: FC = () => (
     <BranchPicker className="mt-1 -ml-1" />
   </MessagePrimitive.Root>
 );
+
+const ActiveToolsBar: FC = () => {
+  const threadId = useThreadListItem((t) => t.id);
+  const { tools } = useMcpClient();
+  const { value: storedPreferences, loading: storageLoading } = useStorageItem(
+    TOOL_PREFERENCES_STORAGE_KEY,
+    { fallback: {} }
+  );
+
+  const selectedTools = useMemo(() => {
+    if (storageLoading) return tools;
+    const validated = validateToolPreferences(storedPreferences || {});
+    const names = validated[threadId];
+    if (!names || names.length === 0) return tools;
+    const set = new Set(names);
+    return tools.filter((t) => set.has(t.name));
+  }, [tools, storedPreferences, storageLoading, threadId]);
+
+  const { extensionTools, websiteTools } = useMemo(
+    () => groupToolsByType(selectedTools),
+    [selectedTools]
+  );
+
+  const websiteByDomain = useMemo(
+    () => groupWebsiteToolsByDomain(websiteTools),
+    [websiteTools]
+  );
+  const extensionByApi = useMemo(
+    () => groupExtensionToolsByApi(extensionTools),
+    [extensionTools]
+  );
+
+  const groups = useMemo(() => {
+    const domainGroups = Array.from(websiteByDomain.entries()).map(([domain, domainTools]) => {
+      const items = domainTools.map((t) => {
+        const info = parseToolInfo(t.name, t.description);
+        let status: 'active' | 'cached' | 'inactive' = 'inactive';
+        if (info.isActive) status = 'active';
+        else if ((info as any).isCached) status = 'cached';
+        return { name: info.cleanName, status };
+      });
+      const activeCount = items.filter((i) => i.status === 'active').length;
+      const otherCount = items.length - activeCount;
+      const label = otherCount > 0 ? `${domain} (${activeCount}+${otherCount})` : `${domain} (${activeCount})`;
+      return { key: `web-${domain}`, label, title: domain, items };
+    });
+    const apiGroups = Array.from(extensionByApi.entries()).map(([api, apiTools]) => {
+      const items = apiTools.map((t) => ({ name: getCleanToolName(t.name), status: undefined as undefined }));
+      return { key: `ext-${api}`, label: `${api} (${apiTools.length})`, title: api, items };
+    });
+    return [...domainGroups, ...apiGroups];
+  }, [websiteByDomain, extensionByApi]);
+
+  if (groups.length === 0) return null;
+
+  const MAX_SHOW = 8;
+  const visible = groups.slice(0, MAX_SHOW);
+  const extra = groups.length - visible.length;
+
+  return (
+    <div className="w-full max-w-[var(--thread-max-width)] px-1 mb-2">
+      <div className="flex items-center justify-between gap-2 bg-card/40 border rounded-xl px-3 py-2">
+        <div className="flex items-center gap-1 flex-wrap overflow-visible">
+          {visible.map((group) => (
+            <Tooltip key={group.key}>
+              <TooltipTrigger asChild>
+                <Badge variant="secondary" className="text-[10px] h-5 px-2 whitespace-nowrap">
+                  {group.label}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent sideOffset={6} className="max-w-72">
+                <div className="text-left">
+                  <div className="font-medium mb-1 text-xs">{group.title}</div>
+                  <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
+                    {group.items.map((item, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-[11px]">
+                        {item.status === 'active' && (
+                          <span className="inline-block size-2 rounded-full bg-green-500" />
+                        )}
+                        {item.status === 'cached' && (
+                          <span className="inline-block size-2 rounded-full bg-amber-500" />
+                        )}
+                        {item.status === 'inactive' && (
+                          <span className="inline-block size-2 rounded-full bg-slate-400" />
+                        )}
+                        {!item.status && <span className="inline-block size-2 rounded-full bg-slate-400" />}
+                        <span className="truncate">{item.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+          {extra > 0 && (
+            <Badge variant="outline" className="text-[10px] h-5 px-2">+{extra} more</Badge>
+          )}
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 px-3 text-xs rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 border border-primary/20 hover:shadow-sm transition-colors"
+          onClick={() => window.dispatchEvent(new CustomEvent('open-tool-selector'))}
+        >
+          Manage
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 const AssistantActionBar: FC = () => (
   <ActionBarPrimitive.Root

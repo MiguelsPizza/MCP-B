@@ -31,6 +31,7 @@ export default defineConfig({
       'windows',
       'history',
       'nativeMessaging', // Enable communication with native hosts
+      'scripting', // Enable scripting API for early injection
     ],
     content_security_policy: {
       extension_pages:
