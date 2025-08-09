@@ -1,3 +1,16 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/entrypoints/sidepanel/components/ui/accordion';
+import { Badge } from '@/entrypoints/sidepanel/components/ui/badge';
+import { Button } from '@/entrypoints/sidepanel/components/ui/button';
+import { Checkbox } from '@/entrypoints/sidepanel/components/ui/checkbox';
+import { Input } from '@/entrypoints/sidepanel/components/ui/input';
+import { Switch } from '@/entrypoints/sidepanel/components/ui/switch';
+import { Toggle } from '@/entrypoints/sidepanel/components/ui/toggle';
+import { cn } from '@/entrypoints/sidepanel/lib/utils';
 import { useThreadListItem } from '@assistant-ui/react';
 import { useMcpClient } from '@mcp-b/mcp-react-hooks';
 import type { Tool as McpTool } from '@modelcontextprotocol/sdk/types.js';
@@ -19,17 +32,6 @@ import {
   X,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/entrypoints/sidepanel/components/ui/accordion';
-import { Badge } from '@/entrypoints/sidepanel/components/ui/badge';
-import { Button } from '@/entrypoints/sidepanel/components/ui/button';
-import { Checkbox } from '@/entrypoints/sidepanel/components/ui/checkbox';
-import { Input } from '@/entrypoints/sidepanel/components/ui/input';
-import { cn } from '@/entrypoints/sidepanel/lib/utils';
 import { useStorageItem } from '../hooks/wxtStorageHooks';
 import {
   TOOL_PREFERENCES_STORAGE_KEY,
@@ -70,6 +72,8 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTools, setSelectedTools] = useState<Set<string>>(new Set());
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<'all' | 'extension' | 'website'>('all');
+  const [showSelectedOnly, setShowSelectedOnly] = useState(false);
 
   // Use WXT storage for tool preferences
   const {
@@ -148,6 +152,46 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
     });
     return filtered;
   }, [extensionToolsByApi, searchQuery]);
+
+  // Apply "show selected only" filter
+  const renderWebsiteTools = useMemo(() => {
+    if (!showSelectedOnly) return filteredWebsiteTools;
+    const filtered = new Map<string, McpTool[]>();
+    filteredWebsiteTools.forEach((domainTools, domain) => {
+      const matches = domainTools.filter((tool) => selectedTools.has(tool.name));
+      if (matches.length > 0) filtered.set(domain, matches);
+    });
+    return filtered;
+  }, [filteredWebsiteTools, showSelectedOnly, selectedTools]);
+
+  const renderExtensionTools = useMemo(() => {
+    if (!showSelectedOnly) return filteredExtensionTools;
+    const filtered = new Map<string, McpTool[]>();
+    filteredExtensionTools.forEach((apiTools, api) => {
+      const matches = apiTools.filter((tool) => selectedTools.has(tool.name));
+      if (matches.length > 0) filtered.set(api, matches);
+    });
+    return filtered;
+  }, [filteredExtensionTools, showSelectedOnly, selectedTools]);
+
+  // Compute all current accordion keys for expand/collapse
+  const allCurrentSectionKeys = useMemo(() => {
+    const keys: string[] = [];
+    if (activeTab !== 'website') {
+      Array.from(renderExtensionTools.keys())
+        .sort((a, b) => a.localeCompare(b))
+        .forEach((api) => keys.push(`ext-${api}`));
+    }
+    if (activeTab !== 'extension') {
+      Array.from(renderWebsiteTools.keys())
+        .sort((a, b) => a.localeCompare(b))
+        .forEach((domain) => keys.push(`web-${domain}`));
+    }
+    return keys;
+  }, [renderExtensionTools, renderWebsiteTools, activeTab]);
+
+  const expandAll = () => setExpandedSections(allCurrentSectionKeys);
+  const collapseAll = () => setExpandedSections([]);
 
   const handleToggleTool = (fullToolName: string) => {
     const newSelected = new Set(selectedTools);
@@ -310,16 +354,69 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
           />
         </div>
 
-        {/* Selection stats */}
-        <div className="flex items-center justify-between mt-3">
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-muted-foreground">
-              {selectedTools.size} of {tools.length} tools selected
-            </span>
-            <div className="h-4 w-px bg-border" />
-            <span className="text-xs text-muted-foreground">
-              {extensionTools.length} extension • {websiteTools.length} website
-            </span>
+        {/* Controls */}
+        <div className="mt-3 flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5 p-0.5 rounded-md border bg-background/60">
+              <Toggle
+                pressed={activeTab === 'all'}
+                onPressedChange={() => setActiveTab('all')}
+                variant="default"
+                size="sm"
+                className="px-2 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+              >
+                All
+              </Toggle>
+              <Toggle
+                pressed={activeTab === 'extension'}
+                onPressedChange={() => setActiveTab('extension')}
+                variant="default"
+                size="sm"
+                className="px-2 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+              >
+                Extension
+              </Toggle>
+              <Toggle
+                pressed={activeTab === 'website'}
+                onPressedChange={() => setActiveTab('website')}
+                variant="default"
+                size="sm"
+                className="px-2 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+              >
+                Website
+              </Toggle>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={showSelectedOnly}
+                  onCheckedChange={(v) => setShowSelectedOnly(Boolean(v))}
+                  aria-label="Show selected only"
+                />
+                <span className="text-xs text-muted-foreground">Show selected only</span>
+              </div>
+              <div className="h-4 w-px bg-border" />
+              <Button variant="ghost" size="sm" className="h-7 px-2" onClick={expandAll}>
+                Expand all
+              </Button>
+              <Button variant="ghost" size="sm" className="h-7 px-2" onClick={collapseAll}>
+                Collapse all
+              </Button>
+            </div>
+          </div>
+
+          {/* Selection stats */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 text-sm">
+              <span className="text-muted-foreground">
+                {selectedTools.size} of {tools.length} tools selected
+              </span>
+              <div className="h-4 w-px bg-border" />
+              <span className="text-xs text-muted-foreground">
+                {extensionTools.length} extension • {websiteTools.length} website
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -333,8 +430,16 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
             onValueChange={setExpandedSections}
             className="space-y-3"
           >
+            {/* Conditional empty state when nothing to show */}
+            {activeTab !== 'website' && renderExtensionTools.size === 0 &&
+              activeTab !== 'extension' && renderWebsiteTools.size === 0 && (
+                <div className="text-center py-12 text-sm text-muted-foreground">
+                  No tools found. Try adjusting your search or filters.
+                </div>
+              )}
+
             {/* Extension Tools */}
-            {filteredExtensionTools.size > 0 && (
+            {(activeTab !== 'website') && renderExtensionTools.size > 0 && (
               <div className="space-y-2">
                 <div className="flex items-center gap-2 mb-2">
                   <Puzzle className="h-4 w-4 text-muted-foreground" />
@@ -344,7 +449,9 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
                   </Badge>
                 </div>
 
-                {Array.from(filteredExtensionTools.entries()).map(([api, apiTools]) => {
+                {Array.from(renderExtensionTools.entries())
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .map(([api, apiTools]) => {
                   const Icon = CHROME_API_ICONS[api] || Puzzle;
                   const isSelected = isGroupSelectedExtension(api);
                   const isIndeterminate = isGroupIndeterminateExtension(api);
@@ -353,7 +460,7 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
                     <AccordionItem key={api} value={`ext-${api}`} className="border rounded-lg">
                       <div className="flex items-center gap-3 px-3 py-2">
                         <Checkbox
-                          checked={isIndeterminate || isSelected}
+                          checked={isSelected || isIndeterminate}
                           onCheckedChange={() => handleToggleGroupExtension(api)}
                         />
                         <AccordionTrigger className="flex-1 p-0 hover:no-underline">
@@ -376,12 +483,12 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
                                 className={cn(
                                   'flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors',
                                   'hover:bg-muted/50',
-                                  selectedTools.has(cleanName) && 'bg-primary/5'
+                                  selectedTools.has(tool.name) && 'bg-primary/5 ring-1 ring-primary/20'
                                 )}
                               >
                                 <Checkbox
-                                  checked={selectedTools.has(cleanName)}
-                                  onCheckedChange={() => handleToggleTool(cleanName)}
+                                  checked={selectedTools.has(tool.name)}
+                                  onCheckedChange={() => handleToggleTool(tool.name)}
                                 />
                                 <div className="flex-1">
                                   <span className="text-sm font-medium">{cleanName}</span>
@@ -403,7 +510,7 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
             )}
 
             {/* Website Tools */}
-            {filteredWebsiteTools.size > 0 && (
+            {(activeTab !== 'extension') && renderWebsiteTools.size > 0 && (
               <div className="space-y-2">
                 <div className="flex items-center gap-2 mb-2">
                   <Globe className="h-4 w-4 text-muted-foreground" />
@@ -413,7 +520,9 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
                   </Badge>
                 </div>
 
-                {Array.from(filteredWebsiteTools.entries()).map(([domain, domainTools]) => {
+                {Array.from(renderWebsiteTools.entries())
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .map(([domain, domainTools]) => {
                   const isSelected = isGroupSelectedWebsite(domain);
                   const isIndeterminate = isGroupIndeterminateWebsite(domain);
 
@@ -425,7 +534,7 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
                     >
                       <div className="flex items-center gap-3 px-3 py-2">
                         <Checkbox
-                          checked={isIndeterminate || isSelected}
+                          checked={isSelected || isIndeterminate}
                           onCheckedChange={() => handleToggleGroupWebsite(domain)}
                         />
                         <AccordionTrigger className="flex-1 p-0 hover:no-underline">
@@ -453,12 +562,12 @@ export const ToolSelector: React.FC<ToolSelectorProps> = ({ onClose }) => {
                                 className={cn(
                                   'flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors',
                                   'hover:bg-muted/50',
-                                  selectedTools.has(cleanName) && 'bg-primary/5'
+                                  selectedTools.has(tool.name) && 'bg-primary/5 ring-1 ring-primary/20'
                                 )}
                               >
                                 <Checkbox
-                                  checked={selectedTools.has(cleanName)}
-                                  onCheckedChange={() => handleToggleTool(cleanName)}
+                                  checked={selectedTools.has(tool.name)}
+                                  onCheckedChange={() => handleToggleTool(tool.name)}
                                 />
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2">

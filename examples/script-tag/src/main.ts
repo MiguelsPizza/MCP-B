@@ -3,7 +3,16 @@
 
 // The @mcp-b/global package is loaded via script tag in the HTML
 // This gives us window.mcp automatically when the page loads
-import '@mcp-b/global';
+// types.ts
+
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+
+declare global {
+  interface Window {
+    mcp: McpServer;
+  }
+}
+
 import { z } from 'zod';
 
 // Simple todo state
@@ -58,10 +67,8 @@ function deleteTodo(index: number) {
 
 // Wait for MCP then register tools
 function registerMCPTools() {
-  const mcp = window.mcp;
-
   // Add todo tool
-  mcp.registerTool(
+  const test = window.mcp.registerTool(
     'addTodo',
     {
       title: 'Add Todo',
@@ -74,9 +81,10 @@ function registerMCPTools() {
       return { content: [{ type: 'text', text: result ? `✅ Added: "${result}"` : '❌ Failed' }] };
     }
   );
+  console.log('test', test);
 
   // Get todos tool
-  mcp.registerTool(
+  window.mcp.registerTool(
     'getTodos',
     {
       title: 'Get Todos',
@@ -89,7 +97,7 @@ function registerMCPTools() {
   );
 
   // Delete todo tool
-  mcp.registerTool(
+  window.mcp.registerTool(
     'deleteTodo',
     {
       title: 'Delete Todo',
@@ -108,7 +116,7 @@ function registerMCPTools() {
   );
 
   // Simple calculator
-  mcp.registerTool(
+  window.mcp.registerTool(
     'calculate',
     {
       title: 'Calculator',
@@ -138,7 +146,8 @@ function registerMCPTools() {
 }
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   renderTodos();
   registerMCPTools();
 });

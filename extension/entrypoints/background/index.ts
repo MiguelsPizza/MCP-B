@@ -4,11 +4,13 @@ import { initNativeHostListener } from './src/services/NativeHostManager';
 import { initExternalExtensionPortListener } from './src/services/ports/ExternalExtensionPortManager';
 import { initUiClientPortListener } from './src/services/ports/UiClientPortManager';
 import { initSidepanelHandlers } from './src/services/sidepanel';
+import { initWebMCPInjector } from './src/services/WebMCPInjector';
 
 export default defineBackground({
   persistent: true,
   type: 'module',
   main() {
+    initWebMCPInjector();
     const sharedServer = new McpServer({ name: 'Extension-Hub', version: '1.0.0' });
     new McpHub(sharedServer);
 
@@ -21,6 +23,8 @@ export default defineBackground({
       new McpHub(server);
       return server;
     });
+
+    // Initialize WebMCP polyfill injection (runs very early in tabs)
 
     // Native host and sidepanel behavior
     initNativeHostListener();
