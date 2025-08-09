@@ -13,7 +13,6 @@ import {
   type WindowsApiToolsOptions,
 } from '@mcp-b/extension-tools';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { z } from 'zod';
 
 // I know this seems unMaintainable but having all the sub methods redefined is eaiser for AI
 export interface ExtensionToolsOptions {

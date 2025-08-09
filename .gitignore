@@ -45,3 +45,7 @@ web/src/routeTree.gen.ts
 web/src/routeTree.gen.ts
 packages/mcp-react-hook-form/tsconfig.tsbuildinfo
 extension/entrypoints/sidepanel/routeTree.gen.ts
+
+# Ignore coding tools
+.github/copilot-instructions.md
+.serena

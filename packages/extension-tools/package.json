@@ -55,15 +55,16 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.0",
-    "zod": "^3.25.74"
+    "zod": "^3.25.74",
+    "zod-to-json-schema": "^3.24.5"
   },
   "devDependencies": {
-    "playwright": "catalog:",
     "@anthropic-ai/sdk": "catalog:",
     "@types/chrome": "catalog:",
     "@types/node": "catalog:",
     "cheerio": "catalog:",
     "dotenv": "catalog:",
+    "playwright": "catalog:",
     "tsup": "catalog:",
     "typescript": "catalog:"
   },
