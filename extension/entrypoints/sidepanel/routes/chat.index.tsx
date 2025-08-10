@@ -21,7 +21,7 @@ const Chat = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
   const runtime = useChatRuntime({
-    api: 'http://localhost:8787/api/chat',
+    api: "http://localhost:5173/api/chat",
     maxSteps: 100,
     onError: (error) => {
       if (config.features.enableDebugLogging) {

@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from '@/entrypoints/sidepanel/components/ui/tooltip';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { AlertCircle, FileCode, Plus, Search, Trash2, X } from 'lucide-react';
+import { AlertCircle, Edit, FileCode, Plus, Search, Trash2, X } from 'lucide-react';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { trpc } from '../lib/trpc_client';
@@ -213,6 +213,24 @@ function UserScriptsListPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const base = chrome.runtime.getURL('/userscript-editor.html');
+                                const url = `${base}?id=${encodeURIComponent(script.id)}`;
+                                chrome.tabs.create({ url });
+                              }}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Edit Script</TooltipContent>
+                        </Tooltip>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
