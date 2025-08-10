@@ -37,31 +37,28 @@ async function checkForToolUpdates(
     for (const tool of newTools) {
       if (!tool.name) {
         console.error('Tool without name');
-        continue;
       }
     }
     console.log('newTools', newTools);
 
-      // Always send for initial registration if tools are fetched
-      port.postMessage({
-        type: sendType,
-        tools: newTools,
-      });
-      // cachedToolHashes = newHashes;
-      console.log(`[MCP Proxy] Sent ${sendType} with ${newTools.length} tools to hub.`);
-      console.log('newTools', newTools);
-
+    // Always send for initial registration if tools are fetched
+    port.postMessage({
+      type: sendType,
+      tools: newTools,
+    });
+    // cachedToolHashes = newHashes;
+    console.log(`[MCP Proxy] Sent ${sendType} with ${newTools.length} tools to hub.`);
+    console.log('newTools', newTools);
   } catch (error) {
     console.error('[MCP Proxy] Failed to check for tool updates:', error);
 
     // If we can't get tools (server might be disconnected), send empty tools list
     // but only if we previously had tools cached
-      console.log('[MCP Proxy] Server appears disconnected, sending empty tools list');
-      port.postMessage({
-        type: 'tools-updated',
-        tools: [],
-      });
-
+    console.log('[MCP Proxy] Server appears disconnected, sending empty tools list');
+    port.postMessage({
+      type: 'tools-updated',
+      tools: [],
+    });
   }
 }
 
@@ -198,7 +195,7 @@ export default defineContentScript({
         // Race with initial timeout for logging
         const racePromise = Promise.race([
           connectPromise,
-          timeoutPromise(30000, 'Server ready timeout after 30 seconds'),
+          // timeoutPromise(30000, 'Server ready timeout after 30 seconds'),
         ]);
 
         racePromise.catch((error) => {

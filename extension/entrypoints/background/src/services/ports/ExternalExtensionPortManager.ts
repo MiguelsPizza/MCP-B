@@ -11,7 +11,9 @@ interface ExternalConnection {
  * Manages connections from other extensions via onConnectExternal.
  * Persists connected external extension servers in WXT storage.
  */
-export function initExternalExtensionPortListener(serverFactory: (extensionId: string) => McpServer) {
+export function initExternalExtensionPortListener(
+  serverFactory: (extensionId: string) => McpServer
+) {
   const connectionsByExtensionId = new Map<string, ExternalConnection>();
 
   chrome.runtime.onConnectExternal.addListener((port) => {
@@ -60,4 +62,3 @@ export function initExternalExtensionPortListener(serverFactory: (extensionId: s
     });
   });
 }
-

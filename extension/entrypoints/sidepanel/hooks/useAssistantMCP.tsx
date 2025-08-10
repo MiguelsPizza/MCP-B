@@ -7,7 +7,7 @@ import {
   TOOL_PREFERENCES_STORAGE_KEY,
   validateToolPreferences,
 } from '../lib/tool-preferences';
-import { mcpToolToJSONSchema } from '../lib/utils';
+import { mcpToolToJSONSchema, getToolNameForUI } from '../lib/utils';
 import { useStorageItem } from './wxtStorageHooks';
 
 /**
@@ -64,13 +64,26 @@ export function useAssistantMCP(mcpTools: McpTool[], client: Client, threadId: s
       filteredTools.map((t) => t.name)
     );
 
+    // Create a mapping of hashed names to original names for tools that exceed 64 chars
+    const toolNameMapping = new Map<string, string>();
+
     // Always register a context provider, even if there are no tools
     const assistantTools = filteredTools.map((mcpT) => {
+      // Use hash if the name is too long (64 char limit)
+      const toolName = getToolNameForUI(mcpT.name);
+
+      // Store the mapping if we're using a hash
+      if (mcpT.name.length >= 64) {
+        toolNameMapping.set(toolName, mcpT.name);
+      }
+
       const match = mcpT.name.match(/^tab\d+_(.+)$/);
       const assistantToolName = match ? match[1] : mcpT.name;
-      // console.log({ mcpT, assistantToolName });
+      // console.log({ mcpT, assistantToolName, toolName });
+
       return {
-        name: mcpT.name,
+        name: toolName, // Use the potentially hashed name
+        originalName: mcpT.name, // Keep original for execution
         assistantTool: tool({
           type: 'frontend',
           description: mcpT.description,
@@ -80,11 +93,11 @@ export function useAssistantMCP(mcpTools: McpTool[], client: Client, threadId: s
             try {
               // Strip null/undefined so Chrome APIs receive only set values
               const cleanedArgs = Object.fromEntries(
-                Object.entries(args).filter(([, v]) => v !== null && v !== undefined),
+                Object.entries(args).filter(([, v]) => v !== null && v !== undefined)
               );
 
               const result = await client.callTool({
-                name: mcpT.name,
+                name: mcpT.name, // Always use original name for execution
                 arguments: cleanedArgs,
               });
               console.log(`[useAssistantMCP] Tool ${assistantToolName} succeeded`);

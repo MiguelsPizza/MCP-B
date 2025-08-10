@@ -17,4 +17,3 @@ export function initUiClientPortListener(server: McpServer): void {
     server.connect(transport);
   });
 }
-

@@ -145,9 +145,9 @@ export class ScriptingApiTools extends BaseApiTools {
                     const __result = (function() { ${codeToExecute} })();
                     window.__extensionScriptResult = { success: true, result: __result };
                   } catch (error) {
-                    window.__extensionScriptResult = { 
-                      success: false, 
-                      error: error.message || String(error) 
+                    window.__extensionScriptResult = {
+                      success: false,
+                      error: error.message || String(error)
                     };
                   }
                 })();

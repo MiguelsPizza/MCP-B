@@ -121,3 +121,160 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Reusable toolbar and badge component classes for the sidepanel */
+@layer components {
+  /* Full-width toolbar surface that sits at the bottom/top with subtle blur */
+  .toolbar-surface {
+    @apply border-t bg-gradient-to-r from-background via-background/95 to-background backdrop-blur-md supports-[backdrop-filter]:bg-background/80;
+  }
+
+  /* Toolbar surface for top headers */
+  .toolbar-surface-top {
+    @apply border-b bg-gradient-to-r from-background via-background/95 to-background backdrop-blur-md supports-[backdrop-filter]:bg-background/80;
+  }
+
+  /* Inner layout for toolbars */
+  .toolbar-inner {
+    @apply flex items-center justify-between px-3 py-2;
+  }
+
+  /* Card-like inline toolbar container used above composer */
+  .toolbar-card {
+    @apply flex items-center justify-between gap-2 bg-card/40 border rounded-xl px-3 py-2;
+  }
+
+  /* Grouping helper inside toolbars */
+  .toolbar-group {
+    @apply flex items-center gap-1;
+  }
+
+  /* Primary toolbar button with soft gradient and border */
+  .btn-toolbar-primary {
+    @apply h-9 px-3 flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-colors border border-primary/20;
+  }
+
+  /* Circular icon button variant for primary actions */
+  .btn-toolbar-icon-primary {
+    @apply h-8 w-8 p-0 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 hover:from-primary/20 hover:to-primary/30 transition-colors border border-primary/30 shadow-sm;
+  }
+
+  /* Circular icon button variant for secondary/accent actions */
+  .btn-toolbar-icon-secondary {
+    @apply h-8 w-8 p-0 rounded-full bg-gradient-to-br from-secondary/10 to-secondary/20 hover:from-secondary/20 hover:to-secondary/30 transition-colors border border-secondary/30 shadow-sm;
+  }
+
+  /* Compact badge style used in tool summaries */
+  .badge-compact {
+    @apply text-[10px] h-5 px-2;
+  }
+  /* Mini badge for tiny counters */
+  .badge-mini {
+    @apply text-[10px] h-4 px-1.5 py-0;
+  }
+
+  /* Tool selector specific animations */
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .shimmer {
+    animation: shimmer 3s linear infinite;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    background-size: 1000px 100%;
+  }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 20px rgba(var(--primary), 0.1);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(var(--primary), 0.2);
+    }
+  }
+
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Smooth horizontal gradient drift for borders/beams */
+  @keyframes gradient-x {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-gradient-x {
+    animation: gradient-x 8s ease-in-out infinite;
+  }
+
+  /* Gradient text effect */
+  .gradient-text {
+    @apply bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-background/50 backdrop-blur-md border border-border/50;
+  }
+
+  /* Tool card hover effect */
+  .tool-card {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .tool-card:hover {
+    @apply transform scale-[1.02] shadow-lg;
+  }
+
+  /* Smooth scrollbar */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thumb-primary\/20 {
+    scrollbar-color: rgba(var(--primary), 0.2) transparent;
+  }
+
+  .scrollbar-track-transparent {
+    scrollbar-color: rgba(var(--primary), 0.2) transparent;
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(var(--primary), 0.2);
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(var(--primary), 0.3);
+  }
+}
+
+/* Utility: hide scrollbar for scrollable nav strip */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

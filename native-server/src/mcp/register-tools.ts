@@ -4,9 +4,11 @@ import {
   CallToolRequestSchema,
   type CallToolResult,
   ListToolsRequestSchema,
-  ToolListChangedNotificationSchema,
+  Tool
 } from '@modelcontextprotocol/sdk/types.js';
+import * as fs from 'fs';
 import nativeMessagingHostInstance from '../native-messaging-host';
+import { executeScriptToolOverride } from './inject-user-mcp';
 
 export const setupTools = (server: McpServer) => {
   // List tools handler
@@ -15,7 +17,10 @@ export const setupTools = (server: McpServer) => {
       {},
       NativeMessageType.LIST_TOOLS,
       30000
-    );
+    ) as { data: Tool[] }
+
+    tools.data.filter(tool => tool.name === 'extension_tool_execute_user_script');
+    tools.data.push(executeScriptToolOverride);
     // @ts-ignore
     return { tools: tools.data };
   });
@@ -60,8 +65,31 @@ export const setupTools = (server: McpServer) => {
   // );
 
   // Call tool handler
-  server.server.setRequestHandler(CallToolRequestSchema, async (request) =>
-    handleToolCall(request.params.name, request.params.arguments || {})
+  server.server.setRequestHandler(CallToolRequestSchema, async (request) =>{
+    if(request.params.name === 'extension_tool_execute_user_script'){
+      if(!request.params.arguments?.filePath){
+        return {
+          content: [
+            {
+              type: 'text',
+              text:
+                'Missing required argument: filePath. Provide an absolute path to a local JavaScript userscript, e.g. /Users/yourname/project/scripts/example.user.js. The native host will read the file and the extension will inject it into the target tab.',
+            },
+          ],
+          isError: true,
+        };
+      }
+      const file = await fs.readFileSync(request.params.arguments.filePath as string, 'utf8')
+
+      return handleToolCall('extension_tool_execute_user_script', {
+        tabId: request.params.arguments?.tabId,
+        code: file,
+        allFrames: false,
+        world: 'MAIN',
+      })
+    }
+    return handleToolCall(request.params.name, request.params.arguments || {})
+  }
   );
 };
 

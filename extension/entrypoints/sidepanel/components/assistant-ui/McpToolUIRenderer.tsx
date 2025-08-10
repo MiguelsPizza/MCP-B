@@ -2,6 +2,7 @@ import { useAssistantToolUI } from '@assistant-ui/react';
 import { useMcpClient } from '@mcp-b/mcp-react-hooks';
 import type { Tool as McpTool } from '@modelcontextprotocol/sdk/types.js';
 import { useEffect } from 'react';
+import { getToolNameForUI } from '../../lib/utils';
 import { ToolErrorUI, ToolRunningUI, ToolSuccessUI } from './ToolUIs';
 
 const FancyToolRenderer = ({ tool }: { tool: McpTool }) => {
@@ -9,8 +10,11 @@ const FancyToolRenderer = ({ tool }: { tool: McpTool }) => {
   const match = tool.name.match(/^tab\d+_(.+)$/);
   const cleanToolName = match ? match[1] : tool.name;
 
+  // Use hash if the name is too long (64 char limit), matching useAssistantMCP logic
+  const toolName = getToolNameForUI(tool.name);
+
   useAssistantToolUI({
-    toolName: tool.name,
+    toolName: toolName,
     render: ({ args, status, result, addResult, toolCallId }) => {
       if (status.type === 'running' || status.type === 'requires-action') {
         return <ToolRunningUI tool={tool} args={args} />;
