@@ -3,9 +3,7 @@ import { ThreadList } from '@/entrypoints/sidepanel/components/assistant-ui/thre
 import { ToolSelector } from '@/entrypoints/sidepanel/components/tool-selector';
 import { Button } from '@/entrypoints/sidepanel/components/ui/button';
 import { AssistantRuntimeProvider } from '@assistant-ui/react';
-import {
-  useChatRuntime
-} from '@assistant-ui/react-ai-sdk';
+import { useChatRuntime } from '@assistant-ui/react-ai-sdk';
 import { McpClientProvider } from '@mcp-b/mcp-react-hooks';
 import { createFileRoute } from '@tanstack/react-router';
 import {
@@ -13,7 +11,7 @@ import {
   ChevronRightIcon,
   HelpCircleIcon,
   MenuIcon,
-  Settings2Icon
+  Settings2Icon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { client, transport } from '../lib/client';
@@ -23,7 +21,7 @@ const Chat = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isToolSelectorOpen, setIsToolSelectorOpen] = useState(false);
   const runtime = useChatRuntime({
-    api: "http://localhost:8787/api/chat",
+    api: 'http://localhost:8787/api/chat',
     maxSteps: 100,
     onError: (error) => {
       if (config.features.enableDebugLogging) {
@@ -55,8 +53,8 @@ const Chat = () => {
               </div>
             </div>
             {/* Bottom bar aligned with toolbar */}
-            <div className="border-t bg-gradient-to-r from-background via-background/95 to-background backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
-              <div className="flex items-center justify-between px-3 py-2">
+            <div className="toolbar-surface">
+              <div className="toolbar-inner">
                 <h2 className="font-semibold text-sm">Threads</h2>
                 <Button
                   variant="ghost"
@@ -77,13 +75,13 @@ const Chat = () => {
               <Thread />
             </div>
             {/* Enhanced Toolbar */}
-            <div className="border-t bg-gradient-to-r from-background via-background/95 to-background backdrop-blur-md supports-[backdrop-filter]:bg-background/80">
-              <div className="flex items-center justify-between px-3 py-2">
-                <div className="flex items-center gap-1">
+            <div className="toolbar-surface">
+              <div className="toolbar-inner">
+                <div className="toolbar-group">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-9 px-3 flex items-center gap-2 rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 transition-colors border border-primary/20"
+                    className="btn-toolbar-primary"
                     onClick={() => setIsSidebarOpen(true)}
                   >
                     <MenuIcon className="h-4 w-4" />
@@ -95,7 +93,7 @@ const Chat = () => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 w-8 p-0 rounded-full bg-gradient-to-br from-primary/10 to-primary/20 hover:from-primary/20 hover:to-primary/30 transition-colors border border-primary/30 shadow-sm"
+                    className="btn-toolbar-icon-primary"
                     onClick={() => setIsToolSelectorOpen(true)}
                     title="Select Tools"
                   >
@@ -113,11 +111,11 @@ const Chat = () => {
                   </Button>
                 </div>
 
-                <div className="flex items-center gap-1">
+                <div className="toolbar-group">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-8 w-8 p-0 rounded-full bg-gradient-to-br from-secondary/10 to-secondary/20 hover:from-secondary/20 hover:to-secondary/30 transition-colors border border-secondary/30 shadow-sm"
+                    className="btn-toolbar-icon-secondary"
                     disabled
                     title="Help (Coming Soon)"
                   >

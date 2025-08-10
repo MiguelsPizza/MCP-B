@@ -1,9 +1,9 @@
 // mcphub.ts
 
+import { sanitizeToolName } from '@/entrypoints/sidepanel/components/McpServer/utils';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { CallToolResult, Tool } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
-import { sanitizeToolName } from '@/entrypoints/sidepanel/components/McpServer/utils';
 import { RequestManager } from '../lib/utils'; // Assume this handles request IDs.
 import { ExtensionToolsService } from './ExtensionToolsService';
 
@@ -40,7 +40,20 @@ export default class McpHub {
   }
 
   private registerStaticTools() {
-    const extensionToolsService = new ExtensionToolsService(this.server);
+    const extensionToolsService = new ExtensionToolsService(this.server, {
+      tabs: {
+        getAllTabs: true,
+        createTab: true,
+        closeTabs: true,
+        updateTab: true,
+      },
+      scripting: {
+        executeScript: false,
+        executeUserScript: true,
+        insertCSS: false,
+        removeCSS: false,
+      },
+    });
     extensionToolsService.registerAllTools();
   }
 

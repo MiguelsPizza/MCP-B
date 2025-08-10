@@ -45,4 +45,3 @@ export async function removeExternalServer(extensionId: string): Promise<void> {
   const { [extensionId]: _, ...rest } = current;
   await externalServersItem.setValue(rest);
 }
-

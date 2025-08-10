@@ -4,9 +4,11 @@ import type { InputSchema, McpErrorInfo, ToolInfo } from './types';
 
 // Tool name prefixes
 // Extension tools: extension_tool_{toolName}
-// Website tools: website_tool_{cleanedDomain}_{toolName}
+// Website tools: website_tool_{cleanedDomain}_{tabPrefix}_{toolName}
+// Userscript tools: userscript_tool_{cleanedDomain}_{toolName}
 const EXTENSION_PREFIX = 'extension_tool_';
 const WEBSITE_PREFIX = 'website_tool_';
+const USERSCRIPT_PREFIX = 'userscript_tool_';
 
 /**
  * Sanitize a tool name to only include allowed characters (A-Z, a-z, 0-9, _)
@@ -30,6 +32,13 @@ export function isWebsiteTool(toolName: string): boolean {
 }
 
 /**
+ * Check if a tool is a userscript tool
+ */
+export function isUserscriptTool(toolName: string): boolean {
+  return toolName.startsWith(USERSCRIPT_PREFIX);
+}
+
+/**
  * Get the clean tool name without prefix
  */
 export function getCleanToolName(toolName: string): string {
@@ -43,6 +52,15 @@ export function getCleanToolName(toolName: string): string {
 
     if (firstUnderscore !== -1) {
       // Return everything after the domain part
+      return withoutPrefix.slice(firstUnderscore + 1);
+    }
+    return withoutPrefix;
+  }
+  if (isUserscriptTool(toolName)) {
+    // Format: userscript_tool_{cleanedDomain}_{toolName}
+    const withoutPrefix = toolName.slice(USERSCRIPT_PREFIX.length);
+    const firstUnderscore = withoutPrefix.indexOf('_');
+    if (firstUnderscore !== -1) {
       return withoutPrefix.slice(firstUnderscore + 1);
     }
     return withoutPrefix;
@@ -62,6 +80,29 @@ export function parseToolInfo(toolName: string, description?: string): ToolInfo 
       cleanName,
       tabId: null,
       isActive: false,
+      tabIndex: null,
+    };
+  }
+
+  // For userscript tools with format: userscript_tool_{cleanedDomain}_{toolName}
+  if (isUserscriptTool(toolName)) {
+    const withoutPrefix = toolName.slice(USERSCRIPT_PREFIX.length);
+    const firstUnderscore = withoutPrefix.indexOf('_');
+    let domain = 'unknown';
+    let cleanName = withoutPrefix;
+
+    if (firstUnderscore !== -1) {
+      const cleanedDomain = withoutPrefix.slice(0, firstUnderscore);
+      cleanName = withoutPrefix.slice(firstUnderscore + 1);
+      domain = cleanedDomain.replace(/^localhost_(\d+)$/, 'localhost:$1').replace(/_/g, '.');
+    }
+
+    return {
+      domain,
+      cleanName,
+      tabId: null,
+      isActive: false,
+      isCached: false,
       tabIndex: null,
     };
   }
@@ -168,16 +209,19 @@ export function parseToolInfo(toolName: string, description?: string): ToolInfo 
 export function groupToolsByType(tools: McpTool[]) {
   const extensionTools: McpTool[] = [];
   const websiteTools: McpTool[] = [];
+  const userscriptTools: McpTool[] = [];
 
   tools.forEach((tool) => {
     if (isExtensionTool(tool.name)) {
       extensionTools.push(tool);
     } else if (isWebsiteTool(tool.name)) {
       websiteTools.push(tool);
+    } else if (isUserscriptTool(tool.name)) {
+      userscriptTools.push(tool);
     }
   });
 
-  return { extensionTools, websiteTools };
+  return { extensionTools, websiteTools, userscriptTools };
 }
 
 /**
@@ -194,6 +238,23 @@ export function groupWebsiteToolsByDomain(tools: McpTool[]): Map<string, McpTool
   });
 
   // Sort domains alphabetically
+  const sortedEntries = Array.from(grouped.entries()).sort(([a], [b]) => a.localeCompare(b));
+  return new Map(sortedEntries);
+}
+
+/**
+ * Group userscript tools by domain
+ */
+export function groupUserScriptToolsByDomain(tools: McpTool[]): Map<string, McpTool[]> {
+  const grouped = new Map<string, McpTool[]>();
+
+  tools.forEach((tool) => {
+    const { domain } = parseToolInfo(tool.name, tool.description);
+    const domainTools = grouped.get(domain) || [];
+    domainTools.push(tool);
+    grouped.set(domain, domainTools);
+  });
+
   const sortedEntries = Array.from(grouped.entries()).sort(([a], [b]) => a.localeCompare(b));
   return new Map(sortedEntries);
 }

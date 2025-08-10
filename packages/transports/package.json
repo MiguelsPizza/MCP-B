@@ -1,6 +1,6 @@
 {
   "name": "@mcp-b/transports",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Transports for the in browser transport protocols",
   "license": "MIT",
   "author": "Alex Nahas",

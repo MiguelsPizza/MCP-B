@@ -7,7 +7,7 @@ async function injectWebMCPPolyfill(tabId: number) {
       target: { tabId, allFrames: false }, // Only inject in main frame
       world: 'MAIN', // Run in the main world, not isolated
       injectImmediately: true, // Inject as early as possible
-      files: ['polyfill.js'] // File from public directory
+      files: ['polyfill.js'], // File from public directory
     });
   } catch (error) {
     // This may fail for certain tabs (chrome:// pages, etc), which is expected

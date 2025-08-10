@@ -1,6 +1,12 @@
 import { MarkdownText } from '@/entrypoints/sidepanel/components/assistant-ui/markdown-text';
 import { TooltipIconButton } from '@/entrypoints/sidepanel/components/assistant-ui/tooltip-icon-button';
-import { getCleanToolName, groupExtensionToolsByApi, groupToolsByType, groupWebsiteToolsByDomain, parseToolInfo } from '@/entrypoints/sidepanel/components/McpServer/utils';
+import {
+  getCleanToolName,
+  groupExtensionToolsByApi,
+  groupToolsByType,
+  groupWebsiteToolsByDomain,
+  parseToolInfo,
+} from '@/entrypoints/sidepanel/components/McpServer/utils';
 import { Badge } from '@/entrypoints/sidepanel/components/ui/badge';
 import { Button } from '@/entrypoints/sidepanel/components/ui/button';
 import {
@@ -8,10 +14,17 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/entrypoints/sidepanel/components/ui/collapsible';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/entrypoints/sidepanel/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/entrypoints/sidepanel/components/ui/tooltip';
 import { useAssistantMCP } from '@/entrypoints/sidepanel/hooks/useAssistantMCP';
 import { useStorageItem } from '@/entrypoints/sidepanel/hooks/wxtStorageHooks';
-import { TOOL_PREFERENCES_STORAGE_KEY, validateToolPreferences } from '@/entrypoints/sidepanel/lib/tool-preferences';
+import {
+  TOOL_PREFERENCES_STORAGE_KEY,
+  validateToolPreferences,
+} from '@/entrypoints/sidepanel/lib/tool-preferences';
 import { cn } from '@/entrypoints/sidepanel/lib/utils';
 import {
   ActionBarPrimitive,
@@ -375,14 +388,8 @@ const ActiveToolsBar: FC = () => {
     [selectedTools]
   );
 
-  const websiteByDomain = useMemo(
-    () => groupWebsiteToolsByDomain(websiteTools),
-    [websiteTools]
-  );
-  const extensionByApi = useMemo(
-    () => groupExtensionToolsByApi(extensionTools),
-    [extensionTools]
-  );
+  const websiteByDomain = useMemo(() => groupWebsiteToolsByDomain(websiteTools), [websiteTools]);
+  const extensionByApi = useMemo(() => groupExtensionToolsByApi(extensionTools), [extensionTools]);
 
   const groups = useMemo(() => {
     const domainGroups = Array.from(websiteByDomain.entries()).map(([domain, domainTools]) => {
@@ -395,11 +402,15 @@ const ActiveToolsBar: FC = () => {
       });
       const activeCount = items.filter((i) => i.status === 'active').length;
       const otherCount = items.length - activeCount;
-      const label = otherCount > 0 ? `${domain} (${activeCount}+${otherCount})` : `${domain} (${activeCount})`;
+      const label =
+        otherCount > 0 ? `${domain} (${activeCount}+${otherCount})` : `${domain} (${activeCount})`;
       return { key: `web-${domain}`, label, title: domain, items };
     });
     const apiGroups = Array.from(extensionByApi.entries()).map(([api, apiTools]) => {
-      const items = apiTools.map((t) => ({ name: getCleanToolName(t.name), status: undefined as undefined }));
+      const items = apiTools.map((t) => ({
+        name: getCleanToolName(t.name),
+        status: undefined as undefined,
+      }));
       return { key: `ext-${api}`, label: `${api} (${apiTools.length})`, title: api, items };
     });
     return [...domainGroups, ...apiGroups];
@@ -413,12 +424,12 @@ const ActiveToolsBar: FC = () => {
 
   return (
     <div className="w-full max-w-[var(--thread-max-width)] px-1 mb-2">
-      <div className="flex items-center justify-between gap-2 bg-card/40 border rounded-xl px-3 py-2">
+      <div className="toolbar-card">
         <div className="flex items-center gap-1 flex-wrap overflow-visible">
           {visible.map((group) => (
             <Tooltip key={group.key}>
               <TooltipTrigger asChild>
-                <Badge variant="secondary" className="text-[10px] h-5 px-2 whitespace-nowrap">
+                <Badge variant="secondary" className="badge-compact whitespace-nowrap">
                   {group.label}
                 </Badge>
               </TooltipTrigger>
@@ -437,7 +448,9 @@ const ActiveToolsBar: FC = () => {
                         {item.status === 'inactive' && (
                           <span className="inline-block size-2 rounded-full bg-slate-400" />
                         )}
-                        {!item.status && <span className="inline-block size-2 rounded-full bg-slate-400" />}
+                        {!item.status && (
+                          <span className="inline-block size-2 rounded-full bg-slate-400" />
+                        )}
                         <span className="truncate">{item.name}</span>
                       </div>
                     ))}
@@ -447,13 +460,15 @@ const ActiveToolsBar: FC = () => {
             </Tooltip>
           ))}
           {extra > 0 && (
-            <Badge variant="outline" className="text-[10px] h-5 px-2">+{extra} more</Badge>
+            <Badge variant="outline" className="badge-compact">
+              +{extra} more
+            </Badge>
           )}
         </div>
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 px-3 text-xs rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/20 border border-primary/20 hover:shadow-sm transition-colors"
+          className="btn-toolbar-primary text-xs"
           onClick={() => window.dispatchEvent(new CustomEvent('open-tool-selector'))}
         >
           Manage
