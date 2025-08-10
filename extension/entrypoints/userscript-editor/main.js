@@ -1,6 +1,8 @@
 // entrypoints/userscript-editor/main.js
 import { lazy, Workspace } from 'modern-monaco';
 
+let currentDoc = null;
+
 // Get the userscript ID from URL parameters
 const params = new URLSearchParams(window.location.search);
 const scriptId = params.get('id');
@@ -28,7 +30,7 @@ if (!scriptId) {
 
 async function initializeEditor() {
   try {
-    // Load the userscript content (placeholder for now)
+    // Load the userscript content
     const scriptContent = await loadUserscript(scriptId);
 
     // Create a workspace with the userscript
@@ -61,7 +63,7 @@ async function initializeEditor() {
     // Initialize Monaco editor lazily
     await lazy({
       workspace,
-      theme: 'vs-dark',
+      theme: 'dark-plus',
       langs: ['javascript', 'typescript', 'json'],
       lsp: {
         typescript: {
@@ -77,6 +79,13 @@ async function initializeEditor() {
       },
     });
 
+    // Open the userscript file so a TextDocument exists
+    try {
+      currentDoc = await workspace.openTextDocument('userscript.js');
+    } catch (_) {
+      // ignore
+    }
+
     // Hide loading overlay
     loadingOverlay.style.display = 'none';
 
@@ -86,11 +95,13 @@ async function initializeEditor() {
     // Track changes
     let hasUnsavedChanges = false;
 
-    // Listen for changes in the workspace
-    workspace.onDidChangeTextDocument(() => {
-      hasUnsavedChanges = true;
-      saveBtn.textContent = 'Save*';
-    });
+    // Track changes via model's onDidChangeContent event
+    if (currentDoc && typeof currentDoc.onDidChangeContent === 'function') {
+      currentDoc.onDidChangeContent(() => {
+        hasUnsavedChanges = true;
+        saveBtn.textContent = 'Save*';
+      });
+    }
 
     // Handle save button
     saveBtn.addEventListener('click', async () => {
@@ -98,11 +109,24 @@ async function initializeEditor() {
       saveBtn.textContent = 'Saving...';
 
       try {
-        const content = workspace.getTextDocument('userscript.js')?.getText();
+        // Get content from the text model using getValue()
+        let content = currentDoc && typeof currentDoc.getValue === 'function' ? currentDoc.getValue() : undefined;
+        if (content == null) {
+          try {
+            // Re-open the document if needed
+            currentDoc = await workspace.openTextDocument('userscript.js');
+            content = currentDoc?.getValue?.();
+          } catch (_) {}
+        }
         if (content) {
           await saveUserscript(scriptId, content);
           hasUnsavedChanges = false;
           saveBtn.textContent = 'Saved!';
+          setTimeout(() => {
+            saveBtn.textContent = 'Save';
+          }, 2000);
+        } else {
+          saveBtn.textContent = 'No Content';
           setTimeout(() => {
             saveBtn.textContent = 'Save';
           }, 2000);
@@ -130,13 +154,16 @@ async function initializeEditor() {
 
       try {
         const content = await loadUserscript(scriptId);
-        const doc = workspace.getTextDocument('userscript.js');
-        if (doc) {
-          // Update the document content
-          workspace.updateTextDocument('userscript.js', content);
-          hasUnsavedChanges = false;
-          saveBtn.textContent = 'Save';
+        // Update the model content using setValue() instead of updateTextDocument
+        if (currentDoc && typeof currentDoc.setValue === 'function') {
+          currentDoc.setValue(content);
+        } else {
+          // If no current doc, write to filesystem and re-open
+          await workspace.fs.writeFile('userscript.js', content);
+          currentDoc = await workspace.openTextDocument('userscript.js');
         }
+        hasUnsavedChanges = false;
+        saveBtn.textContent = 'Save';
       } catch (error) {
         console.error('Failed to reload:', error);
         alert('Failed to reload the userscript');
@@ -164,40 +191,39 @@ async function initializeEditor() {
   }
 }
 
-// Placeholder function to load userscript
+// Load userscript content from chrome.storage.local if present, else template
 async function loadUserscript(id) {
-  // TODO: Implement actual loading logic
-  // This would typically fetch from storage.local or your backend
-
-  // For now, return a sample userscript
+  const storageKey = `webmcp:userscripts:${id}`;
+  try {
+    const stored = await chrome.storage.local.get(storageKey);
+    const payload = stored?.[storageKey];
+    if (typeof payload === 'string') return payload;
+    if (payload && typeof payload.content === 'string') return payload.content;
+  } catch (e) {
+    // ignore
+  }
   return `// ==UserScript==
 // @name         ${id}
-// @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  A sample userscript
-// @author       You
-// @match        https://*/*
+// @description  Userscript for ${id}
+// @match        *://*/*
 // @grant        none
 // ==/UserScript==
 
 (function() {
-    'use strict';
-
-    // Your userscript code here
-    console.log('Userscript loaded: ${id}');
-
+  'use strict';
+  console.log('Userscript loaded: ${id}');
 })();`;
 }
 
-// Placeholder function to save userscript
+// Save userscript content into chrome.storage.local
 async function saveUserscript(id, content) {
-  // TODO: Implement actual saving logic
-  // This would typically save to storage.local or your backend
-
-  console.log(`Saving userscript ${id}:`, content);
-
-  // Simulate async save
-  return new Promise((resolve) => {
-    setTimeout(resolve, 500);
-  });
+  const storageKey = `webmcp:userscripts:${id}`;
+  try {
+    await chrome.storage.local.set({ [storageKey]: content });
+    // Also persist a pointer to the last saved script for convenience
+    await chrome.storage.local.set({ 'webmcp:userscripts:last': { id, content, savedAt: Date.now() } });
+  } catch (e) {
+    console.error('Failed to persist userscript', e);
+    throw e;
+  }
 }
