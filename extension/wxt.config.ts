@@ -37,7 +37,7 @@ export default defineConfig({
     ],
     content_security_policy: {
       extension_pages:
-        "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; style-src 'self' 'unsafe-inline' https: http:; font-src 'self' https: data:; connect-src 'self' data: ws: wss: http: https:; img-src 'self' data: https: http:;",
+        "script-src 'self' 'wasm-unsafe-eval' http://localhost:3000 http://localhost:3001; object-src 'self'; style-src 'self' 'unsafe-inline' https: http:; font-src 'self' https: data:; connect-src 'self' data: ws: wss: http: https:; img-src 'self' data: https: http:;",
     },
     action: {
       default_title: 'Open Side Panel',

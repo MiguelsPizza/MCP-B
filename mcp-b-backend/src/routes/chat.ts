@@ -129,9 +129,11 @@ const chat = new Hono<{ Bindings: Env }>()
     const result = streamText({
       model: openai('gpt-5', {
         parallelToolCalls: false,
-        reasoningEffort: 'low'
+        reasoningEffort: 'low',
+        serviceTier: 'priority'
       }),
       messages,
+
       toolCallStreaming: true,
       system,
 
@@ -141,6 +143,7 @@ const chat = new Hono<{ Bindings: Env }>()
     });
 
     return result.toDataStreamResponse({
+      sendReasoning: true,
       getErrorMessage: (error) => {
         console.error('[Chat] Error:', error);
         return error instanceof Error ? error.message : 'Unknown error';

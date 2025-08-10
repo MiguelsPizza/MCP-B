@@ -138,6 +138,12 @@ export class UserScriptTools extends BaseApiTools {
 
           await chrome.userScripts.register([scriptConfig]);
 
+          // Save the script code to chrome.storage for persistence
+          if (params.js.length > 0 && params.js[0].code) {
+            const storageKey = `webmcp:userscripts:${params.id}`;
+            await chrome.storage.local.set({ [storageKey]: params.js[0].code });
+          }
+
           return this.formatSuccess('UserScript registered successfully', {
             id: params.id,
             matches: params.matches.length,
@@ -167,17 +173,39 @@ export class UserScriptTools extends BaseApiTools {
         try {
           if (params.ids && params.ids.length > 0) {
             await chrome.userScripts.unregister({ ids: params.ids });
+            
+            // Clean up stored code from chrome.storage
+            const storageKeys = params.ids.map((id: string) => `webmcp:userscripts:${id}`);
+            await chrome.storage.local.remove(storageKeys);
+            
             return this.formatSuccess('UserScripts unregistered successfully', {
               unregistered: params.ids,
             });
           } else if (params.filter) {
             await chrome.userScripts.unregister(params.filter);
+            
+            // If filter has specific IDs, clean those up
+            if (params.filter.ids) {
+              const storageKeys = params.filter.ids.map((id: string) => `webmcp:userscripts:${id}`);
+              await chrome.storage.local.remove(storageKeys);
+            }
+            
             return this.formatSuccess('UserScripts unregistered by filter', {
               filter: params.filter,
             });
           } else {
             // Unregister all scripts
             await chrome.userScripts.unregister();
+            
+            // Clean up all userscript code from storage
+            const allStorage = await chrome.storage.local.get();
+            const userscriptKeys = Object.keys(allStorage).filter(key => 
+              key.startsWith('webmcp:userscripts:')
+            );
+            if (userscriptKeys.length > 0) {
+              await chrome.storage.local.remove(userscriptKeys);
+            }
+            
             return this.formatSuccess('All userscripts unregistered');
           }
         } catch (error) {
@@ -210,16 +238,18 @@ export class UserScriptTools extends BaseApiTools {
       },
       async ({ scripts }) => {
         try {
-          const updateConfigs = scripts.map(script => {
+          const updateConfigs = scripts.map((script: any) => {
             const config: chrome.userScripts.RegisteredUserScript = {
               id: script.id,
+              js: [],
+              matches: []
             };
 
             if (script.matches) config.matches = script.matches;
             if (script.excludeMatches) config.excludeMatches = script.excludeMatches;
             if (script.allFrames !== undefined) config.allFrames = script.allFrames;
             if (script.js) {
-              config.js = script.js.map(item => {
+              config.js = script.js.map((item: any) => {
                 if (item.code) return { code: item.code };
                 if (item.file) return { file: item.file };
                 throw new Error('Each js item must have either code or file');
@@ -237,7 +267,7 @@ export class UserScriptTools extends BaseApiTools {
           await chrome.userScripts.update(updateConfigs);
 
           return this.formatSuccess('UserScripts updated successfully', {
-            updated: scripts.map(s => s.id),
+            updated: scripts.map((s: any) => s.id),
           });
         } catch (error) {
           return this.formatError(error);
