@@ -8,10 +8,7 @@ export function initSidepanelHandlers(): void {
     }
   });
 
-  chrome.sidePanel
-    .setPanelBehavior({ openPanelOnActionClick: true })
-    .catch((error) => {
-      console.error('[Background] Failed to set side panel behavior:', error);
-    });
+  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => {
+    console.error('[Background] Failed to set side panel behavior:', error);
+  });
 }
-

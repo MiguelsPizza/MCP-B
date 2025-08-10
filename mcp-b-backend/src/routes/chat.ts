@@ -114,10 +114,12 @@ const PostRequestBodySchema = z.object({
 const chat = new Hono<{ Bindings: Env }>()
   .post('/chat', zValidator('json', PostRequestBodySchema), async (c) => {
     const { messages, system, tools } = c.req.valid('json');
-    console.log({ tools, system, messages: JSON.stringify(messages, null, 3) });
     const newTools = frontendTools(tools)
-
-    console.log({ newTools: JSON.stringify(newTools, null, 3) })
+    Object.keys(newTools).forEach(key => {
+      if(key.length > 60){
+        console.log(JSON.stringify({ key, tool: newTools[key] }, null, 3))
+      }
+    })
 
     const openai = createOpenAI({
       // @ts-ignore
@@ -132,6 +134,7 @@ const chat = new Hono<{ Bindings: Env }>()
       messages,
       toolCallStreaming: true,
       system,
+
       tools: {
         ...newTools,
       },

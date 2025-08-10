@@ -20,6 +20,7 @@ export default defineConfig({
   }),
   manifestVersion: 3,
   manifest: {
+    minimum_chrome_version: '120',
     host_permissions: ['<all_urls>'],
     permissions: [
       'storage',
@@ -30,6 +31,7 @@ export default defineConfig({
       'bookmarks',
       'windows',
       'history',
+      'userScripts',
       'nativeMessaging', // Enable communication with native hosts
       'scripting', // Enable scripting API for early injection
     ],
@@ -60,6 +62,6 @@ export default defineConfig({
   runner: {
     openConsole: true,
     openDevtools: true,
-    startUrls: ['http://localhost:5173'],
+    startUrls: ['http://gmail.com'],
   },
 });

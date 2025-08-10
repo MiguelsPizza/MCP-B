@@ -1,4 +1,3 @@
-import { ZodProvider } from '@autoform/zod';
 import { useMcpClient } from '@mcp-b/mcp-react-hooks';
 import type { Tool as McpTool } from '@modelcontextprotocol/sdk/types.js';
 import {
@@ -16,20 +15,18 @@ import {
   Server,
   Settings,
   Square,
-  Wifi,
   Wrench,
   XCircle,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { z } from 'zod';
 import { mcpToolsToZodSchemas } from '../../lib/mcpToZod';
 import { cn } from '../../lib/utils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Card } from '../ui/card';
 import { Skeleton } from '../ui/skeleton';
 import { CompactJsonViewer } from './CompactJsonViewer';
 import { ToolCard } from './ToolCard';
@@ -38,7 +35,9 @@ import {
   formatMcpError,
   groupExtensionToolsByApi,
   groupToolsByDomain,
+  groupUserScriptToolsByDomain,
   isExtensionTool,
+  isUserscriptTool,
   parseToolInfo,
 } from './utils';
 
@@ -77,25 +76,31 @@ export default function McpServer(): React.ReactElement {
   const [expandedDomain, setExpandedDomain] = useState<string>('');
   const [expandedTabGroup, setExpandedTabGroup] = useState<string>('');
 
-  // Separate extension tools from web tools
-  const { extensionTools, webTools } = useMemo(() => {
+  // Separate extension, website, and userscript tools
+  const { extensionTools, webTools, userscriptTools } = useMemo(() => {
     const extension: McpTool[] = [];
     const web: McpTool[] = [];
+    const userscripts: McpTool[] = [];
 
     mcpTools.forEach((tool: McpTool) => {
-      const { domain } = parseToolInfo(tool.name, tool.description);
       if (isExtensionTool(tool.name)) {
         extension.push(tool);
+      } else if (isUserscriptTool(tool.name)) {
+        userscripts.push(tool);
       } else {
         web.push(tool);
       }
     });
 
-    return { extensionTools: extension, webTools: web };
+    return { extensionTools: extension, webTools: web, userscriptTools: userscripts };
   }, [mcpTools]);
 
   // Group tools by domain
   const toolsByDomain = useMemo(() => groupToolsByDomain(webTools), [webTools]);
+  const userscriptToolsByDomain = useMemo(
+    () => groupUserScriptToolsByDomain(userscriptTools),
+    [userscriptTools]
+  );
 
   // Group extension tools by Chrome API
   const extensionToolsByApi = useMemo(
@@ -319,6 +324,22 @@ export default function McpServer(): React.ReactElement {
 
   return (
     <div className="h-full overflow-y-auto overflow-x-hidden">
+      <div className="toolbar-surface-top">
+        <div className="toolbar-inner px-4">
+          <div className="flex items-center justify-between w-full">
+            <h2 className="text-sm font-semibold">MCP Tools</h2>
+            <div className={cn('flex items-center gap-1.5')}>
+              <div
+                className={cn(
+                  'h-2 w-2 rounded-full',
+                  isConnected ? 'bg-green-500' : 'bg-muted-foreground'
+                )}
+              />
+              <span className="text-xs text-muted-foreground">{mcpTools.length} available</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="p-2">
         <Accordion
           type="single"
@@ -719,6 +740,80 @@ export default function McpServer(): React.ReactElement {
                         </Accordion>
                       </>
                     )}
+                  </div>
+                </AccordionContent>
+              </Card>
+            </AccordionItem>
+          )}
+
+          {capabilities?.tools && userscriptTools.length > 0 && (
+            <AccordionItem value="userscripts" className="border-none">
+              <Card className="overflow-hidden mb-1.5">
+                <AccordionTrigger className="w-full px-0 py-0 hover:no-underline">
+                  <div className="px-2.5 py-2 flex items-center justify-between hover:bg-muted/30 transition-colors">
+                    <div className="flex items-center gap-2">
+                      <Wrench className="h-3 w-3 text-muted-foreground" />
+                      <span className="font-medium text-xs">Userscripts</span>
+                      {expandedSection !== 'userscripts' && (
+                        <div className="flex items-center gap-1">
+                          <Badge variant="secondary" className="text-[9px] px-1 py-0 h-3">
+                            {userscriptTools.length}
+                          </Badge>
+                          <span className="text-[10px] text-muted-foreground">
+                            • {userscriptToolsByDomain.size} sites
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="px-0 pb-0">
+                  <div className="px-2.5 pb-2">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Badge variant="secondary" className="text-[9px] px-1 py-0 h-3">
+                        {userscriptTools.length} tools
+                      </Badge>
+                      <Badge variant="outline" className="text-[9px] px-1 py-0 h-3">
+                        {userscriptToolsByDomain.size}{' '}
+                        {userscriptToolsByDomain.size === 1 ? 'site' : 'sites'}
+                      </Badge>
+                    </div>
+                    <Accordion type="single" collapsible>
+                      {Array.from(userscriptToolsByDomain.entries()).map(
+                        ([domain, domainTools]) => (
+                          <AccordionItem key={domain} value={domain} className="border-none">
+                            <AccordionTrigger className="w-full px-0 py-0 hover:no-underline">
+                              <div className="flex items-center justify-between gap-2 py-1 px-1.5 rounded hover:bg-muted/30 transition-colors">
+                                <div className="flex items-center gap-1.5">
+                                  <Globe className="h-2.5 w-2.5 text-muted-foreground" />
+                                  <span className="text-[11px] font-medium truncate max-w-[120px]">
+                                    {domain}
+                                  </span>
+                                  <Badge variant="secondary" className="text-[9px] px-0.5 py-0 h-3">
+                                    {domainTools.length}
+                                  </Badge>
+                                </div>
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="p-0">
+                              <div className="pl-3 space-y-1 mt-0.5">
+                                {domainTools.map((tool) => (
+                                  <ToolCard
+                                    key={tool.name}
+                                    tool={tool}
+                                    isExpanded={expandedTools.has(tool.name)}
+                                    onToggle={() => toggleToolExpanded(tool.name)}
+                                    onCall={callTool}
+                                    isCalling={callingTools.has(tool.name)}
+                                    schema={toolSchemas[tool.name]}
+                                  />
+                                ))}
+                              </div>
+                            </AccordionContent>
+                          </AccordionItem>
+                        )
+                      )}
+                    </Accordion>
                   </div>
                 </AccordionContent>
               </Card>

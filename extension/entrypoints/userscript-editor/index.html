@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Userscript Editor</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background: #1e1e1e;
+        color: #cccccc;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        background: #252526;
+        padding: 12px 20px;
+        border-bottom: 1px solid #3e3e42;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+
+      .header h1 {
+        font-size: 16px;
+        font-weight: 500;
+        color: #cccccc;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .script-id {
+        color: #569cd6;
+        font-family: "Consolas", "Courier New", monospace;
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .action-btn {
+        background: #0e639c;
+        color: white;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: background 0.2s;
+      }
+
+      .action-btn:hover {
+        background: #1177bb;
+      }
+
+      .action-btn:disabled {
+        background: #3e3e42;
+        color: #6e6e6e;
+        cursor: not-allowed;
+      }
+
+      .action-btn.secondary {
+        background: #3e3e42;
+      }
+
+      .action-btn.secondary:hover {
+        background: #4e4e52;
+      }
+
+      .editor-container {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+      }
+
+      monaco-editor {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #1e1e1e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+      }
+
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #3e3e42;
+        border-top-color: #0e639c;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .error-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #5a1d1d;
+        border: 1px solid #8b3a3a;
+        padding: 20px;
+        border-radius: 4px;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      .error-message h2 {
+        color: #f48771;
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+
+      .error-message p {
+        color: #cccccc;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>
+        <span>Userscript Editor</span>
+        <span class="script-id" id="script-id"></span>
+      </h1>
+      <div class="actions">
+        <button class="action-btn secondary" id="reload-btn">Reload</button>
+        <button class="action-btn" id="save-btn" disabled>Save</button>
+      </div>
+    </div>
+
+    <div class="editor-container">
+      <div class="loading-overlay" id="loading">
+        <div class="loading-spinner"></div>
+      </div>
+      <monaco-editor
+        theme="vs-dark"
+        language="javascript"
+        fontSize="14"
+        fontFamily="'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace"
+        automaticLayout="true"
+        minimap.enabled="false"
+        wordWrap="on"
+      ></monaco-editor>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

@@ -1,13 +1,16 @@
 import {
   type BookmarksApiToolsOptions,
   type HistoryApiToolsOptions,
+  ScriptingApiTools,
+  type ScriptingApiToolsOptions,
   type StorageApiToolsOptions,
   type TabGroupsApiToolsOptions,
   TabsApiTools,
   type TabsApiToolsOptions,
-  type WindowsApiToolsOptions
+  type WindowsApiToolsOptions,
 } from '@mcp-b/extension-tools';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { UserScriptTools, UserScriptToolsOptions } from '../models/aiCRUD/UserScriptTools';
 
 // I know this seems unMaintainable but having all the sub methods redefined is eaiser for AI
 export interface ExtensionToolsOptions {
@@ -16,7 +19,9 @@ export interface ExtensionToolsOptions {
   storage?: StorageApiToolsOptions;
   tabs?: TabsApiToolsOptions;
   windows?: WindowsApiToolsOptions;
+  scripting?: ScriptingApiToolsOptions;
   tabGroups?: TabGroupsApiToolsOptions;
+  userScriptTools?: UserScriptToolsOptions;
 }
 
 /**
@@ -41,7 +46,9 @@ export class ExtensionToolsService {
       // new HistoryApiTools(this.server, this.options.history),
       // new TabGroupsApiTools(this.server, this.options.tabGroups),
       new TabsApiTools(this.server, this.options.tabs),
+      new UserScriptTools(this.server, this.options.userScriptTools),
       // new WindowsApiTools(this.server, this.options.windows),
+      new ScriptingApiTools(this.server, this.options.scripting),
     ];
   }
 
