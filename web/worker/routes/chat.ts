@@ -3,7 +3,6 @@ import { zValidator } from '@hono/zod-validator';
 import { streamText } from 'ai';
 import { Hono } from 'hono';
 import { z } from 'zod';
-import '../../worker-configuration.d.ts';
 
 import { jsonSchema } from "ai";
 

@@ -1,0 +1,23 @@
+{
+  "name": "@webmcp-userscripts/google-injector",
+  "version": "1.0.0",
+  "description": "Google.com MCP-B injection script",
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8",
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "@mcp-b/transports": "^1.0.2"
+  },
+  "devDependencies": {
+    "vite": "^5.1.6",
+    "vite-plugin-monkey": "^4.0.6",
+    "typescript": "^5.4.3",
+    "@types/tampermonkey": "^5.0.3"
+  }
+}
+
