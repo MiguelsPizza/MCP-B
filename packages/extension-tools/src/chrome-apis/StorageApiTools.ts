@@ -1,6 +1,7 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import { type ApiAvailability, BaseApiTools } from '../BaseApiTools';
+import zodToJsonSchema from 'zod-to-json-schema';
 
 export interface StorageApiToolsOptions {
   getStorage?: boolean;
@@ -9,6 +10,18 @@ export interface StorageApiToolsOptions {
   clearStorage?: boolean;
   getBytesInUse?: boolean;
 }
+
+export const STORAGE_ACTIONS = [
+  'getStorage',
+  'setStorage',
+  'removeStorage',
+  'clearStorage',
+  'getBytesInUse',
+] as const;
+
+type StorageAction = (typeof STORAGE_ACTIONS)[number];
+
+const storageActionSchema = z.enum(STORAGE_ACTIONS);
 
 export class StorageApiTools extends BaseApiTools {
   protected apiName = 'Storage';
@@ -65,25 +78,109 @@ export class StorageApiTools extends BaseApiTools {
   }
 
   registerTools(): void {
-    if (this.shouldRegisterTool('getStorage')) {
-      this.registerGetStorage();
-    }
+    this.server.registerTool(
+      'extension_tool_storage_operations',
+      {
+        description: 'Perform operations on Chrome storage API',
+        inputSchema: {
+          action: storageActionSchema,
+          params: z.record(z.any()).optional().describe('Parameters for the chosen action'),
+        },
+      },
+      async ({ action, params = {} }) => {
+        try {
+          if (!this.shouldRegisterTool(action)) {
+            return this.formatError(new Error(`Action "${action}" is not supported`));
+          }
 
-    if (this.shouldRegisterTool('setStorage')) {
-      this.registerSetStorage();
-    }
+          switch (action as StorageAction) {
+            case 'getStorage':
+              return await this.handleGetStorage(params);
+            case 'setStorage':
+              return await this.handleSetStorage(params);
+            case 'removeStorage':
+              return await this.handleRemoveStorage(params);
+            case 'clearStorage':
+              return await this.handleClearStorage(params);
+            case 'getBytesInUse':
+              return await this.handleGetBytesInUse(params);
+            default:
+              return this.formatError(new Error(`Action "${action}" is not supported`));
+          }
+        } catch (error) {
+          return this.formatError(error);
+        }
+      }
+    );
 
-    if (this.shouldRegisterTool('removeStorage')) {
-      this.registerRemoveStorage();
-    }
+    this.server.registerTool(
+      'extension_tool_storage_parameters_description',
+      {
+        description:
+          'Get the parameters for extension_tool_storage_operations tool and the description for the associated action, this tool should be used first before extension_tool_storage_operations',
+        inputSchema: {
+          action: storageActionSchema,
+        },
+      },
+      async ({ action }) => {
+        try {
+          if (!this.shouldRegisterTool(action)) {
+            return this.formatError(new Error(`Action "${action}" is not supported`));
+          }
 
-    if (this.shouldRegisterTool('clearStorage')) {
-      this.registerClearStorage();
-    }
+          const toJson = (schema: z.ZodTypeAny, name: string) =>
+            zodToJsonSchema(schema, { name, $refStrategy: 'none' });
 
-    if (this.shouldRegisterTool('getBytesInUse')) {
-      this.registerGetBytesInUse();
-    }
+          const payloadBase = {
+            tool: 'extension_tool_storage_operations',
+            action,
+            note: 'Use the description to double check if the correct action is chosen. Use this JSON Schema for the params field when calling the tool. The top-level tool input is { action, params }.',
+          } as const;
+
+          switch (action as StorageAction) {
+            case 'getStorage': {
+              const paramsAndDescription = {
+                params: toJson(this.getStorageSchema, 'GetStorageParams'),
+                description: 'Get data from extension storage',
+              };
+              return this.formatJson({ ...payloadBase, ...paramsAndDescription });
+            }
+            case 'setStorage': {
+              const paramsAndDescription = {
+                params: toJson(this.setStorageSchema, 'SetStorageParams'),
+                description: 'Set data in extension storage',
+              };
+              return this.formatJson({ ...payloadBase, ...paramsAndDescription });
+            }
+            case 'removeStorage': {
+              const paramsAndDescription = {
+                params: toJson(this.removeStorageSchema, 'RemoveStorageParams'),
+                description: 'Remove specific keys from extension storage',
+              };
+              return this.formatJson({ ...payloadBase, ...paramsAndDescription });
+            }
+            case 'clearStorage': {
+              const paramsAndDescription = {
+                params: toJson(this.clearStorageSchema, 'ClearStorageParams'),
+                description: 'Clear all data from a storage area',
+              };
+              return this.formatJson({ ...payloadBase, ...paramsAndDescription });
+            }
+            case 'getBytesInUse': {
+              const paramsAndDescription = {
+                params: toJson(this.getBytesInUseSchema, 'GetBytesInUseParams'),
+                description: 'Get the amount of storage space used',
+              };
+              return this.formatJson({ ...payloadBase, ...paramsAndDescription });
+            }
+            default:
+              return this.formatError(new Error(`Action "${action}" is not supported`));
+          }
+        } catch (error) {
+          return this.formatError(error);
+        }
+      }
+    );
   }
 
   private getAvailableAreas(): string[] {
@@ -94,219 +191,158 @@ export class StorageApiTools extends BaseApiTools {
     return areas;
   }
 
-  private registerGetStorage(): void {
-    const availableAreas = this.getAvailableAreas();
+  // ===== Action handlers =====
+  private async handleGetStorage(raw: unknown) {
+    const { keys, area = 'local' } = this.getStorageSchema.parse(raw);
+    const storage = chrome.storage[area as keyof typeof chrome.storage] as any;
+    if (!storage || typeof storage.get !== 'function') {
+      return this.formatError(new Error(`Storage area '${area}' is not available`));
+    }
 
-    this.server.registerTool(
-      'extension_tool_get_storage',
-      {
-        description: 'Get data from extension storage',
-        inputSchema: {
-          keys: z.array(z.string()).optional().describe('Specific keys to retrieve (omit for all)'),
-          area: z
-            .enum(availableAreas as any)
-            .optional()
-            .describe(
-              `Storage area to use. Available: ${availableAreas.join(', ')} (default: local)`
-            ),
-        },
-      },
-      async ({ keys, area = 'local' }) => {
-        try {
-          const storage = chrome.storage[area as keyof typeof chrome.storage] as any;
-          if (!storage || typeof storage.get !== 'function') {
-            return this.formatError(new Error(`Storage area '${area}' is not available`));
-          }
+    const data = await storage.get(keys || null);
 
-          const data = await storage.get(keys || null);
+    // Format the response with metadata
+    const response = {
+      area,
+      data,
+      keyCount: Object.keys(data).length,
+    };
 
-          // Format the response with metadata
-          const response = {
-            area,
-            data,
-            keyCount: Object.keys(data).length,
-          };
-
-          return this.formatJson(response);
-        } catch (error) {
-          return this.formatError(error);
-        }
-      }
-    );
+    return this.formatJson(response);
   }
 
-  private registerSetStorage(): void {
-    const availableAreas = this.getAvailableAreas();
+  private async handleSetStorage(raw: unknown) {
+    const { data, area = 'local' } = this.setStorageSchema.parse(raw);
+    const storage = chrome.storage[area as keyof typeof chrome.storage] as any;
+    if (!storage || typeof storage.set !== 'function') {
+      return this.formatError(new Error(`Storage area '${area}' is not available`));
+    }
 
-    this.server.registerTool(
-      'extension_tool_set_storage',
-      {
-        description: 'Set data in extension storage',
-        inputSchema: {
-          data: z.record(z.any()).describe('Key-value pairs to store'),
-          area: z
-            .enum(availableAreas as any)
-            .optional()
-            .describe(
-              `Storage area to use. Available: ${availableAreas.join(', ')} (default: local)`
-            ),
-        },
-      },
-      async ({ data, area = 'local' }) => {
-        try {
-          const storage = chrome.storage[area as keyof typeof chrome.storage] as any;
-          if (!storage || typeof storage.set !== 'function') {
-            return this.formatError(new Error(`Storage area '${area}' is not available`));
-          }
+    await storage.set(data);
 
-          await storage.set(data);
-
-          return this.formatSuccess(
-            `Stored ${Object.keys(data).length} key(s) in ${area} storage`,
-            { keys: Object.keys(data) }
-          );
-        } catch (error) {
-          return this.formatError(error);
-        }
-      }
-    );
+    return this.formatSuccess(`Stored ${Object.keys(data).length} key(s) in ${area} storage`, {
+      keys: Object.keys(data),
+    });
   }
 
-  private registerRemoveStorage(): void {
-    const availableAreas = this.getAvailableAreas();
+  private async handleRemoveStorage(raw: unknown) {
+    const { keys, area = 'local' } = this.removeStorageSchema.parse(raw);
+    const storage = chrome.storage[area as keyof typeof chrome.storage] as any;
+    if (!storage || typeof storage.remove !== 'function') {
+      return this.formatError(new Error(`Storage area '${area}' is not available`));
+    }
 
-    this.server.registerTool(
-      'extension_tool_remove_storage',
-      {
-        description: 'Remove specific keys from extension storage',
-        inputSchema: {
-          keys: z.array(z.string()).describe('Keys to remove from storage'),
-          area: z
-            .enum(availableAreas as any)
-            .optional()
-            .describe(
-              `Storage area to use. Available: ${availableAreas.join(', ')} (default: local)`
-            ),
-        },
-      },
-      async ({ keys, area = 'local' }) => {
-        try {
-          const storage = chrome.storage[area as keyof typeof chrome.storage] as any;
-          if (!storage || typeof storage.remove !== 'function') {
-            return this.formatError(new Error(`Storage area '${area}' is not available`));
-          }
+    await storage.remove(keys);
 
-          await storage.remove(keys);
-
-          return this.formatSuccess(`Removed ${keys.length} key(s) from ${area} storage`, { keys });
-        } catch (error) {
-          return this.formatError(error);
-        }
-      }
-    );
+    return this.formatSuccess(`Removed ${keys.length} key(s) from ${area} storage`, { keys });
   }
 
-  private registerClearStorage(): void {
-    const availableAreas = this.getAvailableAreas();
+  private async handleClearStorage(raw: unknown) {
+    const { area, confirm } = this.clearStorageSchema.parse(raw);
+    if (!confirm) {
+      return this.formatError(
+        new Error('Clear operation requires confirm=true to prevent accidental data loss')
+      );
+    }
 
-    this.server.registerTool(
-      'extension_tool_clear_storage',
-      {
-        description: 'Clear all data from a storage area',
-        inputSchema: {
-          area: z
-            .enum(availableAreas as any)
-            .describe(`Storage area to clear. Available: ${availableAreas.join(', ')}`),
-          confirm: z.boolean().describe('Confirmation flag - must be true to clear storage'),
-        },
-      },
-      async ({ area, confirm }) => {
-        try {
-          if (!confirm) {
-            return this.formatError(
-              new Error('Clear operation requires confirm=true to prevent accidental data loss')
-            );
-          }
+    const storage = chrome.storage[area as keyof typeof chrome.storage] as any;
+    if (!storage || typeof storage.clear !== 'function') {
+      return this.formatError(new Error(`Storage area '${area}' is not available`));
+    }
 
-          const storage = chrome.storage[area as keyof typeof chrome.storage] as any;
-          if (!storage || typeof storage.clear !== 'function') {
-            return this.formatError(new Error(`Storage area '${area}' is not available`));
-          }
+    await storage.clear();
 
-          await storage.clear();
-
-          return this.formatSuccess(`Cleared all data from ${area} storage`);
-        } catch (error) {
-          return this.formatError(error);
-        }
-      }
-    );
+    return this.formatSuccess(`Cleared all data from ${area} storage`);
   }
 
-  private registerGetBytesInUse(): void {
-    const availableAreas = this.getAvailableAreas();
+  private async handleGetBytesInUse(raw: unknown) {
+    const { keys, area = 'local' } = this.getBytesInUseSchema.parse(raw);
+    const storage = chrome.storage[area as keyof typeof chrome.storage] as any;
+    if (!storage) {
+      return this.formatError(new Error(`Storage area '${area}' is not available`));
+    }
 
-    this.server.registerTool(
-      'extension_tool_get_storage_bytes_in_use',
-      {
-        description: 'Get the amount of storage space used',
-        inputSchema: {
-          keys: z.array(z.string()).optional().describe('Specific keys to check (omit for total)'),
-          area: z
-            .enum(availableAreas as any)
-            .optional()
-            .describe(
-              `Storage area to check. Available: ${availableAreas.join(', ')} (default: local)`
-            ),
-        },
-      },
-      async ({ keys, area = 'local' }) => {
-        try {
-          const storage = chrome.storage[area as keyof typeof chrome.storage] as any;
-          if (!storage) {
-            return this.formatError(new Error(`Storage area '${area}' is not available`));
-          }
+    // Not all storage areas support getBytesInUse
+    if (typeof storage.getBytesInUse !== 'function') {
+      return this.formatError(new Error(`getBytesInUse is not supported for ${area} storage area`));
+    }
 
-          // Not all storage areas support getBytesInUse
-          if (typeof storage.getBytesInUse !== 'function') {
-            return this.formatError(
-              new Error(`getBytesInUse is not supported for ${area} storage area`)
-            );
-          }
+    const bytesInUse = await storage.getBytesInUse(keys || null);
 
-          const bytesInUse = await storage.getBytesInUse(keys || null);
+    // Get quota info if available
+    let quotaInfo = null;
+    if (area === 'sync' && chrome.storage.sync.QUOTA_BYTES) {
+      quotaInfo = {
+        quotaBytes: chrome.storage.sync.QUOTA_BYTES,
+        quotaBytesPerItem: chrome.storage.sync.QUOTA_BYTES_PER_ITEM,
+        maxItems: chrome.storage.sync.MAX_ITEMS,
+        maxWriteOperationsPerHour: chrome.storage.sync.MAX_WRITE_OPERATIONS_PER_HOUR,
+        maxWriteOperationsPerMinute: chrome.storage.sync.MAX_WRITE_OPERATIONS_PER_MINUTE,
+      };
+    } else if (area === 'local' && chrome.storage.local.QUOTA_BYTES) {
+      quotaInfo = {
+        quotaBytes: chrome.storage.local.QUOTA_BYTES,
+      };
+    }
 
-          // Get quota info if available
-          let quotaInfo = null;
-          if (area === 'sync' && chrome.storage.sync.QUOTA_BYTES) {
-            quotaInfo = {
-              quotaBytes: chrome.storage.sync.QUOTA_BYTES,
-              quotaBytesPerItem: chrome.storage.sync.QUOTA_BYTES_PER_ITEM,
-              maxItems: chrome.storage.sync.MAX_ITEMS,
-              maxWriteOperationsPerHour: chrome.storage.sync.MAX_WRITE_OPERATIONS_PER_HOUR,
-              maxWriteOperationsPerMinute: chrome.storage.sync.MAX_WRITE_OPERATIONS_PER_MINUTE,
-            };
-          } else if (area === 'local' && chrome.storage.local.QUOTA_BYTES) {
-            quotaInfo = {
-              quotaBytes: chrome.storage.local.QUOTA_BYTES,
-            };
-          }
-
-          return this.formatJson({
-            area,
-            bytesInUse,
-            humanReadable: this.formatBytes(bytesInUse),
-            quota: quotaInfo,
-            percentageUsed: quotaInfo?.quotaBytes
-              ? ((bytesInUse / quotaInfo.quotaBytes) * 100).toFixed(2) + '%'
-              : null,
-          });
-        } catch (error) {
-          return this.formatError(error);
-        }
-      }
-    );
+    return this.formatJson({
+      area,
+      bytesInUse,
+      humanReadable: this.formatBytes(bytesInUse),
+      quota: quotaInfo,
+      percentageUsed: quotaInfo?.quotaBytes
+        ? ((bytesInUse / quotaInfo.quotaBytes) * 100).toFixed(2) + '%'
+        : null,
+    });
   }
+
+  // ===== Validation Schemas per action =====
+  private getStorageSchema = z.object({
+    keys: z.array(z.string()).optional().describe('Specific keys to retrieve (omit for all)'),
+    area: z
+      .enum(this.getAvailableAreas() as any)
+      .optional()
+      .describe(
+        `Storage area to use. Available: ${this.getAvailableAreas().join(', ')} (default: local)`
+      ),
+  });
+
+  private setStorageSchema = z.object({
+    data: z.record(z.any()).describe('Key-value pairs to store'),
+    area: z
+      .enum(this.getAvailableAreas() as any)
+      .optional()
+      .describe(
+        `Storage area to use. Available: ${this.getAvailableAreas().join(', ')} (default: local)`
+      ),
+  });
+
+  private removeStorageSchema = z.object({
+    keys: z.array(z.string()).describe('Keys to remove from storage'),
+    area: z
+      .enum(this.getAvailableAreas() as any)
+      .optional()
+      .describe(
+        `Storage area to use. Available: ${this.getAvailableAreas().join(', ')} (default: local)`
+      ),
+  });
+
+  private clearStorageSchema = z.object({
+    area: z
+      .enum(this.getAvailableAreas() as any)
+      .describe(`Storage area to clear. Available: ${this.getAvailableAreas().join(', ')}`),
+    confirm: z.boolean().describe('Confirmation flag - must be true to clear storage'),
+  });
+
+  private getBytesInUseSchema = z.object({
+    keys: z.array(z.string()).optional().describe('Specific keys to check (omit for total)'),
+    area: z
+      .enum(this.getAvailableAreas() as any)
+      .optional()
+      .describe(
+        `Storage area to check. Available: ${this.getAvailableAreas().join(', ')} (default: local)`
+      ),
+  });
 
   private formatBytes(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
