@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "esModuleInterop": true,
+    "types": ["vite/client", "tampermonkey", "vite-plugin-monkey/client"]
+  },
+  "include": ["src/**/*", "vite.config.ts"],
+  "exclude": ["dist"]
+}
+
+
+

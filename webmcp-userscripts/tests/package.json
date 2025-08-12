@@ -1,0 +1,22 @@
+{
+  "name": "@webmcp-userscripts/tests",
+  "version": "1.0.0",
+  "description": "Puppeteer tests for Tampermonkey MCP-B scripts",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:gmail": "jest gmail.test.ts"
+  },
+  "dependencies": {
+    "puppeteer": "^22.5.0",
+    "@webmcp-userscripts": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/puppeteer": "^5.4.7",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.4.3"
+  }
+}

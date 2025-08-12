@@ -1,0 +1,27 @@
+{
+  "name": "@webmcp-userscripts/shared",
+  "version": "1.0.0",
+  "description": "Shared types and utilities for MCP-B injection scripts",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.3",
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "@types/tampermonkey": "^5.0.3"
+  }
+}
