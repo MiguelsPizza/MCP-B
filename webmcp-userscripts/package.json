@@ -1,0 +1,34 @@
+{
+  "name": "webmcp-userscripts",
+  "version": "1.0.0",
+  "description": "TypeScript monorepo for building and testing Tampermonkey scripts which give websites WebMCP capabilities",
+  "type": "module",
+  
+  "scripts": {
+    "build": "tsx tools/build-all.ts",
+    "build:scripts": "pnpm -r run build",
+    "test": "tsx tools/test-runner.ts",
+    "test:runner": "tsx tools/test-runner.ts",
+    "test:gmail": "tsx tools/test-runner.ts --script gmail",
+    "test:headless": "tsx tools/test-runner.ts --headless",
+    "dev": "pnpm -r run dev",
+    "dev:gmail": "cd scripts/gmail && pnpm run dev",
+    "type-check": "pnpm -r run type-check",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --apply .",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --apply .",
+    "clean": "pnpm -r exec rm -rf dist node_modules",
+    "install:all": "pnpm install && pnpm -r install"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@biomejs/biome": "^1.5.3",
+    "typescript": "^5.4.3",
+    "puppeteer": "^22.5.0",
+    "@types/puppeteer": "^5.4.7",
+    "tsx": "^4.7.1"
+  },
+  "packageManager": "pnpm@10.12.1"
+}

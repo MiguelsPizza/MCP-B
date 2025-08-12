@@ -3,8 +3,8 @@ packages:
   - packages/*
   - e2e-tests
   - native-server
-  - web
-  # - mcp-b-backend
+  # - web
+  - mcp-b-backend
   - "!examples/**"
 
 catalog:
