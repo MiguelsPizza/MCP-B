@@ -18,10 +18,10 @@ interface TestOptions {
 function parseArgs(): TestOptions {
   const args = process.argv.slice(2);
   const options: TestOptions = {};
-  
+
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    
+
     switch (arg) {
       case '--script':
         options.script = args[++i];
@@ -51,60 +51,60 @@ Examples:
         break;
     }
   }
-  
+
   return options;
 }
 
 async function main() {
   const options = parseArgs();
-  
+
   console.log('🧪 Running Tampermonkey MCP-B tests...\n');
-  
+
   // Set environment variables
   const env = {
     ...process.env,
     CI: options.headless ? 'true' : 'false',
   };
-  
+
   // Build test command
   let testCommand = 'pnpm test';
-  
+
   if (options.script) {
     testCommand += `:${options.script}`;
   }
-  
+
   if (options.watch) {
     testCommand += ':watch';
   }
-  
+
   console.log(`📋 Command: ${testCommand}`);
   console.log(`🖥️  Mode: ${options.headless ? 'Headless' : 'UI'}`);
-  
+
   if (options.script) {
     console.log(`📁 Script: ${options.script}`);
   }
-  
+
   console.log('');
-  
+
   try {
     // First ensure dependencies are installed
     console.log('📦 Installing test dependencies...');
-    execSync('pnpm install', { 
+    execSync('pnpm install', {
       cwd: join(projectRoot, 'tests'),
-      stdio: 'pipe'
+      stdio: 'pipe',
     });
-    
+
     // Run the tests
     execSync(testCommand, {
       cwd: join(projectRoot, 'tests'),
       stdio: 'inherit',
       env,
     });
-    
+
     console.log('\n✅ All tests passed!');
   } catch (error) {
     console.error('\n❌ Tests failed');
-    
+
     if (error instanceof Error && 'status' in error) {
       process.exit(error.status as number);
     } else {
@@ -113,7 +113,7 @@ async function main() {
   }
 }
 
-main().catch((error) => {
+main().catch(error => {
   console.error('Unexpected error:', error);
   process.exit(1);
 });

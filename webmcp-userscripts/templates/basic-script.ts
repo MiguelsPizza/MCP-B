@@ -1,17 +1,17 @@
 /// <reference types="vite-plugin-monkey/client" />
 
 import { z } from 'zod';
-import { 
+import {
   initializeMCPGlobal,
   waitForElement,
   safelyManipulateDOM,
   log,
-  type MCPTool
+  type MCPTool,
 } from '@webmcp-userscripts';
 
 /**
  * Template for creating new Tampermonkey MCP-B injection scripts
- * 
+ *
  * Instructions:
  * 1. Replace SITE_NAME with your target site name
  * 2. Update SITE_SELECTORS with your site's DOM selectors
@@ -41,16 +41,16 @@ class SiteMCPTools {
   private async init(): Promise<void> {
     try {
       log('info', 'Initializing SITE_NAME MCP-B tools...');
-      
+
       // Initialize MCP-B global interface
       initializeMCPGlobal();
-      
+
       // Wait for site to load
       await this.waitForSiteReady();
-      
+
       // Register tools
       this.registerTools();
-      
+
       this.initialized = true;
       log('info', 'SITE_NAME MCP-B tools initialized successfully');
     } catch (error) {
@@ -71,10 +71,12 @@ class SiteMCPTools {
       description: 'Perform an example action on SITE_NAME',
       inputSchema: z.object({
         message: z.string().min(1),
-        options: z.object({
-          param1: z.string().optional(),
-          param2: z.boolean().default(false),
-        }).optional(),
+        options: z
+          .object({
+            param1: z.string().optional(),
+            param2: z.boolean().default(false),
+          })
+          .optional(),
       }),
       handler: this.performExampleAction.bind(this),
     });
@@ -107,7 +109,7 @@ class SiteMCPTools {
 
       // Example: Find and interact with DOM elements
       const actionButton = await waitForElement(SITE_SELECTORS.actionButton);
-      
+
       // Example: Safe DOM manipulation
       const result = safelyManipulateDOM(() => {
         // Your DOM manipulation logic here
@@ -116,7 +118,7 @@ class SiteMCPTools {
       });
 
       log('info', 'Example action completed successfully');
-      
+
       return {
         success: true,
         message: 'Action completed successfully',

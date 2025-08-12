@@ -22,18 +22,18 @@ function transformToolName(originalName: string): string {
   if (originalName.startsWith('website_tool_')) {
     // Remove the prefix
     const withoutPrefix = originalName.substring('website_tool_'.length);
-    
+
     // Find the tab pattern (tab followed by numbers)
     const tabMatch = withoutPrefix.match(/_tab\d+_/);
     if (!tabMatch) return originalName; // Shouldn't happen
-    
+
     const tabPattern = tabMatch[0];
     const tabIndex = withoutPrefix.indexOf(tabPattern);
-    
+
     // Extract domain (everything before tab pattern) and action (everything after)
     const domain = withoutPrefix.substring(0, tabIndex).replace(/[.:]/g, '');
     const action = withoutPrefix.substring(tabIndex + tabPattern.length);
-    
+
     return `${domain}_tabActive_${action}`;
   }
 
@@ -84,7 +84,7 @@ function transformToolName(originalName: string): string {
  * // }
  */
 export const conciseFrontendTools = (
-  tools: Record<string, { description?: string; parameters: JSONSchema7 }>,
+  tools: Record<string, { description?: string; parameters: JSONSchema7 }>
 ) => {
   // Get the transformed tools from the original frontendTools
   const originalTransformed = frontendTools(tools);

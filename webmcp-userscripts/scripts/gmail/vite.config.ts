@@ -3,7 +3,7 @@ import monkey from 'vite-plugin-monkey';
 
 export default defineConfig({
   optimizeDeps: {
-    include: ['gmail-js']
+    include: ['gmail-js'],
   },
   plugins: [
     monkey({
@@ -15,7 +15,14 @@ export default defineConfig({
         version: '1.0.0',
         description: 'Injects MCP-B server into Gmail for AI assistant integration',
         author: 'Alex Nahas',
-        grant: ['GM.info', 'GM.setValue', 'GM.getValue', 'GM.listValues', 'GM.deleteValue', 'unsafeWindow'],
+        grant: [
+          'GM.info',
+          'GM.setValue',
+          'GM.getValue',
+          'GM.listValues',
+          'GM.deleteValue',
+          'unsafeWindow',
+        ],
         license: 'MIT',
         homepageURL: 'https://github.com/miguelspizza/mcp-b-user-scripts',
         supportURL: 'https://github.com/miguelspizza/mcp-b-user-scripts/issues',

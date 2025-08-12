@@ -21,10 +21,7 @@ describe('Gmail MCP-B Integration Tests', () => {
 
     // Load the built userscript
     try {
-      scriptContent = readFileSync(
-        join(__dirname, '../scripts/gmail/dist/gmail.user.js'),
-        'utf8'
-      );
+      scriptContent = readFileSync(join(__dirname, '../scripts/gmail/dist/gmail.user.js'), 'utf8');
     } catch (error) {
       // If dist doesn't exist, try to use source with a mock
       console.warn('Built script not found, using mock for testing');
@@ -48,12 +45,12 @@ describe('Gmail MCP-B Integration Tests', () => {
 
   beforeEach(async () => {
     page = await browser.newPage();
-    
+
     // Set viewport
     await page.setViewport({ width: 1280, height: 720 });
-    
+
     // Enable console logging
-    page.on('console', (msg) => {
+    page.on('console', msg => {
       if (msg.type() === 'log' && msg.text().includes('[MCP-B]')) {
         console.log('Browser:', msg.text());
       }
@@ -97,18 +94,18 @@ describe('Gmail MCP-B Integration Tests', () => {
     `;
 
     await page.setContent(htmlContent);
-    
+
     // Inject our userscript
     await page.evaluate(scriptContent);
-    
+
     // Wait for MCP to be initialized
     await page.waitForFunction(() => window.mcp?.isInitialized?.(), { timeout: 5000 });
-    
+
     // Verify MCP-B is initialized
     const mcpInitialized = await page.evaluate(() => {
       return window.mcp?.isInitialized() || false;
     });
-    
+
     expect(mcpInitialized).toBe(true);
   });
 
@@ -128,16 +125,19 @@ describe('Gmail MCP-B Integration Tests', () => {
 
     await page.setContent(htmlContent);
     await page.evaluate(scriptContent);
-    
+
     // Wait for tools to be registered
-    await page.waitForFunction(() => {
-      return window.mcp?.listTools().length > 0;
-    }, { timeout: 10000 });
-    
+    await page.waitForFunction(
+      () => {
+        return window.mcp?.listTools().length > 0;
+      },
+      { timeout: 10000 }
+    );
+
     const tools = await page.evaluate(() => {
       return window.mcp?.listTools() || [];
     });
-    
+
     expect(tools).toContain('compose_email');
     expect(tools).toContain('list_inbox_emails');
     expect(tools).toContain('read_current_email');
@@ -171,22 +171,22 @@ describe('Gmail MCP-B Integration Tests', () => {
 
     await page.setContent(htmlContent);
     await page.evaluate(scriptContent);
-    
+
     // Wait for MCP to be ready
     await page.waitForFunction(() => window.mcp?.isInitialized(), { timeout: 5000 });
-    
+
     // Test compose email tool
     const result = await page.evaluate(async () => {
       const tool = window.mcp?.getTool('compose_email');
       if (!tool) return { error: 'Tool not found' };
-      
+
       return await tool.handler({
         to: ['test@example.com'],
         subject: 'Test Subject',
         body: 'Test body content',
       });
     });
-    
+
     expect(result).toHaveProperty('success');
     expect(result.success).toBe(true);
   });
@@ -215,19 +215,19 @@ describe('Gmail MCP-B Integration Tests', () => {
 
     await page.setContent(htmlContent);
     await page.evaluate(scriptContent);
-    
+
     await page.waitForFunction(() => window.mcp?.isInitialized(), { timeout: 5000 });
-    
+
     const emails = await page.evaluate(async () => {
       const tool = window.mcp?.getTool('list_inbox_emails');
       if (!tool) return [];
-      
+
       return await tool.handler({ limit: 5 });
     });
-    
+
     expect(Array.isArray(emails)).toBe(true);
     expect(emails.length).toBeGreaterThan(0);
-    
+
     if (emails.length > 0) {
       expect(emails[0]).toHaveProperty('subject');
       expect(emails[0]).toHaveProperty('from');
@@ -250,7 +250,7 @@ describe('Gmail MCP-B Integration Tests', () => {
 
     await page.setContent(htmlContent);
     await page.evaluate(scriptContent);
-    
+
     // Simulate DOM changes (like Gmail navigation)
     await page.evaluate(() => {
       const main = document.querySelector('[role="main"]');
@@ -261,14 +261,14 @@ describe('Gmail MCP-B Integration Tests', () => {
         `;
       }
     });
-    
+
     // Wait a bit for any re-initialization
     await page.waitForTimeout(2000);
-    
+
     const mcpStillWorking = await page.evaluate(() => {
       return window.mcp?.isInitialized() || false;
     });
-    
+
     expect(mcpStillWorking).toBe(true);
   });
 });

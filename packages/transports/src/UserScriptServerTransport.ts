@@ -232,5 +232,3 @@ export class UserScriptServerTransport implements Transport {
     };
   }
 }
-
-

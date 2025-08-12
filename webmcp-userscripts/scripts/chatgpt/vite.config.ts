@@ -12,25 +12,30 @@ export default defineConfig({
         version: '1.0.0',
         description: 'Injects an MCP-B server into ChatGPT.com pages for simple page tools',
         author: 'Alex Nahas',
-        grant: ['GM.info', 'GM.setValue', 'GM.getValue', 'GM.listValues', 'GM.deleteValue', 'unsafeWindow'],
+        grant: [
+          'GM.info',
+          'GM.setValue',
+          'GM.getValue',
+          'GM.listValues',
+          'GM.deleteValue',
+          'unsafeWindow',
+        ],
         license: 'MIT',
         homepageURL: 'https://github.com/WebMCP-org/webmcp-userscripts',
-        supportURL: 'https://github.com/WebMCP-org/webmcp-userscripts/issues'
+        supportURL: 'https://github.com/WebMCP-org/webmcp-userscripts/issues',
       },
       build: {
         fileName: 'chatgpt.user.js',
         metaFileName: true,
-        autoGrant: true
+        autoGrant: true,
       },
       server: {
         open: true,
-        prefix: 'dev:'
-      }
-    })
+        prefix: 'dev:',
+      },
+    }),
   ],
   build: {
-    minify: false
-  }
+    minify: false,
+  },
 });
-
-

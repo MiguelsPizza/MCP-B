@@ -319,5 +319,3 @@ export class UserScriptClientTransport implements Transport {
     }
   }
 }
-
-

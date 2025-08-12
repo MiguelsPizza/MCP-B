@@ -23,7 +23,9 @@ const app = new Hono<{ Bindings: Env }>()
         // Also allow localhost for local development
         if (
           origin &&
-          (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:') || origin.startsWith('chrome-extension://'))
+          (origin.startsWith('http://localhost:') ||
+            origin.startsWith('http://127.0.0.1:') ||
+            origin.startsWith('chrome-extension://'))
         ) {
           return origin;
         }

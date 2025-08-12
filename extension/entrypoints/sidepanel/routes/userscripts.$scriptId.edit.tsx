@@ -203,7 +203,7 @@ function EditUserScriptPage() {
           setHasCodeSaved(true);
           toast.success('Code saved in editor', {
             description: 'You can now update the script',
-            duration: 2000
+            duration: 2000,
           });
         }
       }
@@ -266,7 +266,9 @@ function EditUserScriptPage() {
                 </div>
                 <div className="flex flex-col leading-tight">
                   <span className="text-sm font-medium">Edit userscript</span>
-                  <span className="text-[11px] text-muted-foreground">Update configuration and code</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Update configuration and code
+                  </span>
                 </div>
               </div>
             </div>
@@ -276,9 +278,16 @@ function EditUserScriptPage() {
                   <Check className="h-3 w-3 mr-1" /> Code saved
                 </Badge>
               ) : (
-                <Badge variant="outline" className="badge-compact">Editor not saved</Badge>
+                <Badge variant="outline" className="badge-compact">
+                  Editor not saved
+                </Badge>
               )}
-              <Button type="button" size="sm" className="btn-toolbar-primary h-8" onClick={openEditor}>
+              <Button
+                type="button"
+                size="sm"
+                className="btn-toolbar-primary h-8"
+                onClick={openEditor}
+              >
                 Open Editor
               </Button>
             </div>
@@ -304,7 +313,12 @@ function EditUserScriptPage() {
                         <FormItem>
                           <FormLabel>Script ID</FormLabel>
                           <FormControl>
-                            <Input className="h-8" placeholder="my-userscript" {...field} readOnly />
+                            <Input
+                              className="h-8"
+                              placeholder="my-userscript"
+                              {...field}
+                              readOnly
+                            />
                           </FormControl>
                           <FormDescription>
                             Script ID cannot be changed after creation
@@ -325,7 +339,8 @@ function EditUserScriptPage() {
                     <div>
                       <Label>Matches</Label>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Use URL patterns like <code>*://example.com/*</code> or <code>&lt;all_urls&gt;</code>
+                        Use URL patterns like <code>*://example.com/*</code> or{' '}
+                        <code>&lt;all_urls&gt;</code>
                       </p>
                       <div className="space-y-2 mt-1.5">
                         {matchFields.map((mf, index) => (
@@ -334,7 +349,11 @@ function EditUserScriptPage() {
                               control={form.control}
                               name={`matches.${index}`}
                               render={({ field }) => (
-                                <Input className="h-8" placeholder="https://example.com/*" {...field} />
+                                <Input
+                                  className="h-8"
+                                  placeholder="https://example.com/*"
+                                  {...field}
+                                />
                               )}
                             />
                             {matchFields.length > 1 && (
@@ -386,7 +405,11 @@ function EditUserScriptPage() {
                                       control={form.control}
                                       name={`excludeMatches.${index}`}
                                       render={({ field }) => (
-                                        <Input className="h-8" placeholder="https://example.com/admin/*" {...field} />
+                                        <Input
+                                          className="h-8"
+                                          placeholder="https://example.com/admin/*"
+                                          {...field}
+                                        />
                                       )}
                                     />
                                     <Button
@@ -425,9 +448,13 @@ function EditUserScriptPage() {
                                           <SelectValue placeholder="Select when to run" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                          <SelectItem value="document_start">document_start</SelectItem>
+                                          <SelectItem value="document_start">
+                                            document_start
+                                          </SelectItem>
                                           <SelectItem value="document_end">document_end</SelectItem>
-                                          <SelectItem value="document_idle">document_idle</SelectItem>
+                                          <SelectItem value="document_idle">
+                                            document_idle
+                                          </SelectItem>
                                         </SelectContent>
                                       </Select>
                                     </FormControl>
@@ -480,9 +507,7 @@ function EditUserScriptPage() {
                 <div className="mt-2 flex items-center justify-between">
                   <Badge variant="outline" className="badge-compact">
                     ID
-                    <span className="ml-1 font-medium">
-                      {form.watch('id') || '—'}
-                    </span>
+                    <span className="ml-1 font-medium">{form.watch('id') || '—'}</span>
                   </Badge>
                   <div className="flex items-center gap-2">
                     <Button
@@ -494,7 +519,12 @@ function EditUserScriptPage() {
                     >
                       Cancel
                     </Button>
-                    <Button type="submit" size="sm" className="h-8" disabled={updateScript.isPending}>
+                    <Button
+                      type="submit"
+                      size="sm"
+                      className="h-8"
+                      disabled={updateScript.isPending}
+                    >
                       {updateScript.isPending ? 'Updating…' : 'Update'}
                     </Button>
                   </div>

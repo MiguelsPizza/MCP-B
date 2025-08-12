@@ -46,7 +46,9 @@ export class UserScriptTools extends BaseApiTools {
       return {
         available: true,
         message: 'Chrome userScripts API is fully available',
-        details: hasExecute ? 'Including execute() for Chrome 135+' : 'Register/unregister only (Chrome 120+)',
+        details: hasExecute
+          ? 'Including execute() for Chrome 135+'
+          : 'Register/unregister only (Chrome 120+)',
       };
     } catch (error) {
       return {
@@ -101,16 +103,23 @@ export class UserScriptTools extends BaseApiTools {
           matches: z.array(z.string()).describe('URL match patterns where script runs'),
           excludeMatches: z.array(z.string()).optional().describe('URL patterns to exclude'),
           allFrames: z.boolean().optional().describe('Run in all frames (default: false)'),
-          js: z.array(z.object({
-            code: z.string().optional().describe('JavaScript code to inject'),
-            file: z.string().optional().describe('Path to JavaScript file'),
-          })).describe('JavaScript to inject (code or file)'),
-          runAt: z.enum(['document_start', 'document_end', 'document_idle']).optional()
+          js: z
+            .array(
+              z.object({
+                code: z.string().optional().describe('JavaScript code to inject'),
+                file: z.string().optional().describe('Path to JavaScript file'),
+              })
+            )
+            .describe('JavaScript to inject (code or file)'),
+          runAt: z
+            .enum(['document_start', 'document_end', 'document_idle'])
+            .optional()
             .describe('When to inject the script'),
-          world: z.enum(['MAIN', 'USER_SCRIPT']).optional()
+          world: z
+            .enum(['MAIN', 'USER_SCRIPT'])
+            .optional()
             .describe('Execution world (default: USER_SCRIPT)'),
-          worldId: z.string().optional()
-            .describe('Unique ID for USER_SCRIPT world isolation'),
+          worldId: z.string().optional().describe('Unique ID for USER_SCRIPT world isolation'),
         },
       },
       async (params) => {
@@ -120,7 +129,7 @@ export class UserScriptTools extends BaseApiTools {
             matches: params.matches,
             excludeMatches: params.excludeMatches,
             allFrames: params.allFrames,
-            js: params.js.map(item => {
+            js: params.js.map((item) => {
               if (item.code) {
                 return { code: item.code };
               } else if (item.file) {
@@ -162,50 +171,52 @@ export class UserScriptTools extends BaseApiTools {
       {
         description: 'Unregister userscripts by ID or filter',
         inputSchema: {
-          ids: z.array(z.string()).optional()
-            .describe('Script IDs to unregister'),
-          filter: z.object({
-            ids: z.array(z.string()).optional(),
-          }).optional().describe('Filter for scripts to unregister'),
+          ids: z.array(z.string()).optional().describe('Script IDs to unregister'),
+          filter: z
+            .object({
+              ids: z.array(z.string()).optional(),
+            })
+            .optional()
+            .describe('Filter for scripts to unregister'),
         },
       },
       async (params) => {
         try {
           if (params.ids && params.ids.length > 0) {
             await chrome.userScripts.unregister({ ids: params.ids });
-            
+
             // Clean up stored code from chrome.storage
             const storageKeys = params.ids.map((id: string) => `webmcp:userscripts:${id}`);
             await chrome.storage.local.remove(storageKeys);
-            
+
             return this.formatSuccess('UserScripts unregistered successfully', {
               unregistered: params.ids,
             });
           } else if (params.filter) {
             await chrome.userScripts.unregister(params.filter);
-            
+
             // If filter has specific IDs, clean those up
             if (params.filter.ids) {
               const storageKeys = params.filter.ids.map((id: string) => `webmcp:userscripts:${id}`);
               await chrome.storage.local.remove(storageKeys);
             }
-            
+
             return this.formatSuccess('UserScripts unregistered by filter', {
               filter: params.filter,
             });
           } else {
             // Unregister all scripts
             await chrome.userScripts.unregister();
-            
+
             // Clean up all userscript code from storage
             const allStorage = await chrome.storage.local.get();
-            const userscriptKeys = Object.keys(allStorage).filter(key => 
+            const userscriptKeys = Object.keys(allStorage).filter((key) =>
               key.startsWith('webmcp:userscripts:')
             );
             if (userscriptKeys.length > 0) {
               await chrome.storage.local.remove(userscriptKeys);
             }
-            
+
             return this.formatSuccess('All userscripts unregistered');
           }
         } catch (error) {
@@ -221,19 +232,27 @@ export class UserScriptTools extends BaseApiTools {
       {
         description: 'Update existing userscripts',
         inputSchema: {
-          scripts: z.array(z.object({
-            id: z.string().describe('Script ID to update'),
-            matches: z.array(z.string()).optional(),
-            excludeMatches: z.array(z.string()).optional(),
-            allFrames: z.boolean().optional(),
-            js: z.array(z.object({
-              code: z.string().optional(),
-              file: z.string().optional(),
-            })).optional(),
-            runAt: z.enum(['document_start', 'document_end', 'document_idle']).optional(),
-            world: z.enum(['MAIN', 'USER_SCRIPT']).optional(),
-            worldId: z.string().optional(),
-          })).describe('Scripts to update'),
+          scripts: z
+            .array(
+              z.object({
+                id: z.string().describe('Script ID to update'),
+                matches: z.array(z.string()).optional(),
+                excludeMatches: z.array(z.string()).optional(),
+                allFrames: z.boolean().optional(),
+                js: z
+                  .array(
+                    z.object({
+                      code: z.string().optional(),
+                      file: z.string().optional(),
+                    })
+                  )
+                  .optional(),
+                runAt: z.enum(['document_start', 'document_end', 'document_idle']).optional(),
+                world: z.enum(['MAIN', 'USER_SCRIPT']).optional(),
+                worldId: z.string().optional(),
+              })
+            )
+            .describe('Scripts to update'),
         },
       },
       async ({ scripts }) => {
@@ -242,7 +261,7 @@ export class UserScriptTools extends BaseApiTools {
             const config: chrome.userScripts.RegisteredUserScript = {
               id: script.id,
               js: [],
-              matches: []
+              matches: [],
             };
 
             if (script.matches) config.matches = script.matches;
@@ -289,7 +308,7 @@ export class UserScriptTools extends BaseApiTools {
 
           return this.formatJson({
             count: scripts.length,
-            scripts: scripts.map(script => ({
+            scripts: scripts.map((script) => ({
               id: script.id,
               matches: script.matches,
               excludeMatches: script.excludeMatches,
@@ -313,8 +332,7 @@ export class UserScriptTools extends BaseApiTools {
       {
         description: 'Get specific registered userscripts by filter',
         inputSchema: {
-          ids: z.array(z.string()).optional()
-            .describe('Get scripts with these IDs'),
+          ids: z.array(z.string()).optional().describe('Get scripts with these IDs'),
         },
       },
       async ({ ids }) => {
@@ -324,7 +342,7 @@ export class UserScriptTools extends BaseApiTools {
 
           return this.formatJson({
             count: scripts.length,
-            scripts: scripts.map(script => ({
+            scripts: scripts.map((script) => ({
               id: script.id,
               matches: script.matches,
               excludeMatches: script.excludeMatches,
@@ -332,7 +350,7 @@ export class UserScriptTools extends BaseApiTools {
               runAt: script.runAt,
               world: script.world,
               worldId: script.worldId,
-              js: script.js?.map(item => ({
+              js: script.js?.map((item) => ({
                 hasCode: 'code' in item,
                 hasFile: 'file' in item,
                 codeLength: 'code' in item ? item.code?.length : undefined,
@@ -355,17 +373,17 @@ export class UserScriptTools extends BaseApiTools {
         inputSchema: {
           code: z.string().describe('JavaScript code to execute'),
           tabId: z.number().describe('Tab ID where to execute'),
-          frameIds: z.array(z.number()).optional()
-            .describe('Specific frame IDs to target'),
-          allFrames: z.boolean().optional()
-            .describe('Execute in all frames'),
-          documentIds: z.array(z.string()).optional()
-            .describe('Specific document IDs to target'),
-          world: z.enum(['MAIN', 'USER_SCRIPT']).optional()
+          frameIds: z.array(z.number()).optional().describe('Specific frame IDs to target'),
+          allFrames: z.boolean().optional().describe('Execute in all frames'),
+          documentIds: z.array(z.string()).optional().describe('Specific document IDs to target'),
+          world: z
+            .enum(['MAIN', 'USER_SCRIPT'])
+            .optional()
             .describe('Execution world (default: USER_SCRIPT)'),
-          worldId: z.string().optional()
-            .describe('Unique ID for USER_SCRIPT world isolation'),
-          injectImmediately: z.boolean().optional()
+          worldId: z.string().optional().describe('Unique ID for USER_SCRIPT world isolation'),
+          injectImmediately: z
+            .boolean()
+            .optional()
             .describe('Inject immediately without waiting for document'),
         },
       },
@@ -401,7 +419,7 @@ export class UserScriptTools extends BaseApiTools {
           const results = await chrome.userScripts.execute(executeParams);
 
           return this.formatSuccess('Script executed successfully', {
-            results: results.map(result => ({
+            results: results.map((result) => ({
               frameId: result.frameId,
               documentId: result.documentId,
               result: result.result,
@@ -422,10 +440,8 @@ export class UserScriptTools extends BaseApiTools {
         description: 'Configure USER_SCRIPT world properties',
         inputSchema: {
           worldId: z.string().describe('World ID to configure'),
-          csp: z.string().optional()
-            .describe('Content Security Policy for the world'),
-          messaging: z.boolean().optional()
-            .describe('Enable messaging between worlds'),
+          csp: z.string().optional().describe('Content Security Policy for the world'),
+          messaging: z.boolean().optional().describe('Enable messaging between worlds'),
         },
       },
       async ({ worldId, csp, messaging }) => {

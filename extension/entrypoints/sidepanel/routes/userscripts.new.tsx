@@ -6,7 +6,14 @@ import {
 } from '@/entrypoints/sidepanel/components/ui/accordion';
 import { Badge } from '@/entrypoints/sidepanel/components/ui/badge';
 import { Button } from '@/entrypoints/sidepanel/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/entrypoints/sidepanel/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/entrypoints/sidepanel/components/ui/form';
 import { Input } from '@/entrypoints/sidepanel/components/ui/input';
 import { Label } from '@/entrypoints/sidepanel/components/ui/label';
 import {
@@ -191,7 +198,7 @@ function AddUserScriptPage() {
           setHasCodeSaved(true);
           toast.success('Code saved in editor', {
             description: 'You can now register the script',
-            duration: 2000
+            duration: 2000,
           });
         }
       }
@@ -264,7 +271,9 @@ function AddUserScriptPage() {
                 </div>
                 <div className="flex flex-col leading-tight">
                   <span className="text-sm font-medium">Create userscript</span>
-                  <span className="text-[11px] text-muted-foreground">Register and scope your script</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    Register and scope your script
+                  </span>
                 </div>
               </div>
             </div>
@@ -274,9 +283,16 @@ function AddUserScriptPage() {
                   <Check className="h-3 w-3 mr-1" /> Code saved
                 </Badge>
               ) : (
-                <Badge variant="outline" className="badge-compact">Editor not saved</Badge>
+                <Badge variant="outline" className="badge-compact">
+                  Editor not saved
+                </Badge>
               )}
-              <Button type="button" size="sm" className="btn-toolbar-primary h-8" onClick={openEditor}>
+              <Button
+                type="button"
+                size="sm"
+                className="btn-toolbar-primary h-8"
+                onClick={openEditor}
+              >
                 Open Editor
               </Button>
             </div>
@@ -298,7 +314,8 @@ function AddUserScriptPage() {
                     <div>
                       <Label>Matches</Label>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Use URL patterns like <code>*://example.com/*</code> or <code>&lt;all_urls&gt;</code>
+                        Use URL patterns like <code>*://example.com/*</code> or{' '}
+                        <code>&lt;all_urls&gt;</code>
                       </p>
                       <div className="space-y-2 mt-1.5">
                         {matchFields.map((mf, index) => (
@@ -307,7 +324,11 @@ function AddUserScriptPage() {
                               control={form.control}
                               name={`matches.${index}`}
                               render={({ field }) => (
-                                <Input className="h-8" placeholder="https://example.com/*" {...field} />
+                                <Input
+                                  className="h-8"
+                                  placeholder="https://example.com/*"
+                                  {...field}
+                                />
                               )}
                             />
                             {matchFields.length > 1 && (
@@ -359,7 +380,11 @@ function AddUserScriptPage() {
                                       control={form.control}
                                       name={`excludeMatches.${index}`}
                                       render={({ field }) => (
-                                        <Input className="h-8" placeholder="https://example.com/admin/*" {...field} />
+                                        <Input
+                                          className="h-8"
+                                          placeholder="https://example.com/admin/*"
+                                          {...field}
+                                        />
                                       )}
                                     />
                                     <Button
@@ -398,9 +423,13 @@ function AddUserScriptPage() {
                                           <SelectValue placeholder="Select when to run" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                          <SelectItem value="document_start">document_start</SelectItem>
+                                          <SelectItem value="document_start">
+                                            document_start
+                                          </SelectItem>
                                           <SelectItem value="document_end">document_end</SelectItem>
-                                          <SelectItem value="document_idle">document_idle</SelectItem>
+                                          <SelectItem value="document_idle">
+                                            document_idle
+                                          </SelectItem>
                                         </SelectContent>
                                       </Select>
                                     </FormControl>
@@ -470,7 +499,12 @@ function AddUserScriptPage() {
                     >
                       Cancel
                     </Button>
-                    <Button type="submit" size="sm" className="h-8" disabled={registerScript.isPending}>
+                    <Button
+                      type="submit"
+                      size="sm"
+                      className="h-8"
+                      disabled={registerScript.isPending}
+                    >
                       {registerScript.isPending ? 'Registering…' : 'Register'}
                     </Button>
                   </div>

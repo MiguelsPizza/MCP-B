@@ -1,10 +1,10 @@
 /**
  * Type Definitions for MCP Connector Extension
- * 
+ *
  * This file contains all TypeScript interfaces and types used throughout
  * the extension. These types ensure type safety when communicating between
  * the popup UI and background service worker.
- * 
+ *
  * @module types
  */
 
@@ -13,18 +13,18 @@
  * Tools can be from Chrome Extension APIs or website-registered tools
  */
 export interface Tool {
-  /** 
+  /**
    * Unique tool identifier
-   * Format: 
+   * Format:
    * - Extension tools: `extension_<api>_<method>`
    * - Website tools: `website_tool_<domain>_<tab>_<toolname>`
    */
   name: string;
-  
+
   /** Human-readable description of what the tool does */
   description?: string;
-  
-  /** 
+
+  /**
    * JSON Schema defining the tool's input parameters
    * Used for validation and documentation
    */
@@ -33,8 +33,8 @@ export interface Tool {
     properties?: Record<string, any>;
     required?: string[];
   };
-  
-  /** 
+
+  /**
    * JSON Schema defining the tool's output format
    * Optional - not all tools define output schemas
    */
@@ -42,10 +42,10 @@ export interface Tool {
     type: 'object';
     properties?: Record<string, any>;
   };
-  
+
   /** Tool title for display purposes */
   title?: string;
-  
+
   /** Additional metadata about the tool */
   annotations?: {
     /** Whether the tool results should be cached */
@@ -62,16 +62,16 @@ export interface Tool {
 export interface ConnectionStatus {
   /** Whether currently connected to MCP-B extension */
   connected: boolean;
-  
+
   /** The ID of the target MCP-B extension */
   extensionId: string;
-  
+
   /** Error message if connection failed */
   error?: string;
-  
+
   /** Timestamp of last connection attempt */
   lastAttempt?: number;
-  
+
   /** Timestamp of successful connection */
   connectedAt?: number;
 }
@@ -82,13 +82,13 @@ export interface ConnectionStatus {
 export interface ToolResult {
   /** Whether the tool execution succeeded */
   type: 'success' | 'error';
-  
+
   /** The tool's return data (for successful executions) */
   data?: any;
-  
+
   /** Error message (for failed executions) */
   error?: string;
-  
+
   /** Execution timestamp */
   timestamp?: number;
 }
@@ -96,7 +96,7 @@ export interface ToolResult {
 /**
  * Message types for communication between popup and background
  */
-export type MessageType = 
+export type MessageType =
   | 'CONNECT'
   | 'DISCONNECT'
   | 'LIST_TOOLS'
@@ -111,7 +111,7 @@ export type MessageType =
 export interface BaseMessage {
   /** The type of message being sent */
   type: MessageType;
-  
+
   /** Unique ID for tracking request/response pairs */
   id?: string;
 }
@@ -176,7 +176,7 @@ export interface ToolsUpdatedMessage extends BaseMessage {
 /**
  * Union type of all message types
  */
-export type Message = 
+export type Message =
   | ConnectMessage
   | DisconnectMessage
   | ListToolsMessage
@@ -191,16 +191,16 @@ export type Message =
 export interface MessageResponse {
   /** Whether the operation succeeded */
   success?: boolean;
-  
+
   /** Error message if operation failed */
   error?: string;
-  
+
   /** Tools list (for LIST_TOOLS responses) */
   tools?: Tool[];
-  
+
   /** Tool execution result (for CALL_TOOL responses) */
   result?: any;
-  
+
   /** Request ID for matching responses */
   id?: string;
 }
@@ -211,16 +211,16 @@ export interface MessageResponse {
 export interface StorageData {
   /** Current connection status */
   connectionStatus?: ConnectionStatus;
-  
+
   /** List of available tools */
   availableTools?: Tool[];
-  
+
   /** User's favorite tools */
   favorites?: string[];
-  
+
   /** Tool execution history */
   history?: HistoryEntry[];
-  
+
   /** User preferences */
   preferences?: UserPreferences;
 }
@@ -231,19 +231,19 @@ export interface StorageData {
 export interface HistoryEntry {
   /** Name of the executed tool */
   toolName: string;
-  
+
   /** Arguments passed to the tool */
   arguments: Record<string, any>;
-  
+
   /** Result of the execution */
   result: any;
-  
+
   /** Execution timestamp */
   timestamp: number;
-  
+
   /** Whether execution succeeded */
   success: boolean;
-  
+
   /** Execution duration in milliseconds */
   duration?: number;
 }
@@ -254,16 +254,16 @@ export interface HistoryEntry {
 export interface UserPreferences {
   /** Theme preference */
   theme?: 'light' | 'dark' | 'system';
-  
+
   /** Whether to show tool descriptions */
   showDescriptions?: boolean;
-  
+
   /** Whether to auto-connect on startup */
   autoConnect?: boolean;
-  
+
   /** Maximum history entries to keep */
   maxHistoryEntries?: number;
-  
+
   /** Default JSON formatting for arguments */
   jsonFormatting?: {
     indent?: number;
@@ -282,25 +282,25 @@ export type ToolCategory = 'all' | 'extension' | 'website';
 export interface ToolMetadata {
   /** Tool identifier */
   name: string;
-  
+
   /** Category the tool belongs to */
   category: ToolCategory;
-  
+
   /** API group (for extension tools) */
   apiGroup?: string;
-  
+
   /** Domain (for website tools) */
   domain?: string;
-  
+
   /** Tab ID (for website tools) */
   tabId?: number;
-  
+
   /** Whether tool is cached */
   isCached?: boolean;
-  
+
   /** Last execution time */
   lastExecuted?: number;
-  
+
   /** Execution count */
   executionCount?: number;
 }
@@ -311,18 +311,18 @@ export interface ToolMetadata {
 export enum ConnectionState {
   /** Not connected */
   DISCONNECTED = 'disconnected',
-  
+
   /** Currently connecting */
   CONNECTING = 'connecting',
-  
+
   /** Successfully connected */
   CONNECTED = 'connected',
-  
+
   /** Connection error */
   ERROR = 'error',
-  
+
   /** Reconnecting after disconnect */
-  RECONNECTING = 'reconnecting'
+  RECONNECTING = 'reconnecting',
 }
 
 /**
@@ -331,18 +331,18 @@ export enum ConnectionState {
 export enum ErrorType {
   /** Connection-related errors */
   CONNECTION = 'connection',
-  
+
   /** Tool execution errors */
   EXECUTION = 'execution',
-  
+
   /** Invalid input/arguments */
   VALIDATION = 'validation',
-  
+
   /** Permission-related errors */
   PERMISSION = 'permission',
-  
+
   /** Unknown/unexpected errors */
-  UNKNOWN = 'unknown'
+  UNKNOWN = 'unknown',
 }
 
 /**
@@ -351,19 +351,19 @@ export enum ErrorType {
 export interface ExtendedError {
   /** Error type category */
   type: ErrorType;
-  
+
   /** Error message */
   message: string;
-  
+
   /** Optional error code */
   code?: string;
-  
+
   /** Stack trace (for debugging) */
   stack?: string;
-  
+
   /** Additional context */
   context?: Record<string, any>;
-  
+
   /** Timestamp when error occurred */
   timestamp: number;
 }
@@ -372,20 +372,15 @@ export interface ExtendedError {
  * Type guards for message type checking
  */
 export const MessageTypeGuards = {
-  isConnectMessage: (msg: Message): msg is ConnectMessage => 
-    msg.type === 'CONNECT',
-  
-  isDisconnectMessage: (msg: Message): msg is DisconnectMessage => 
-    msg.type === 'DISCONNECT',
-  
-  isListToolsMessage: (msg: Message): msg is ListToolsMessage => 
-    msg.type === 'LIST_TOOLS',
-  
-  isCallToolMessage: (msg: Message): msg is CallToolMessage => 
-    msg.type === 'CALL_TOOL',
-  
-  isToolsUpdatedMessage: (msg: Message): msg is ToolsUpdatedMessage => 
-    msg.type === 'TOOLS_UPDATED'
+  isConnectMessage: (msg: Message): msg is ConnectMessage => msg.type === 'CONNECT',
+
+  isDisconnectMessage: (msg: Message): msg is DisconnectMessage => msg.type === 'DISCONNECT',
+
+  isListToolsMessage: (msg: Message): msg is ListToolsMessage => msg.type === 'LIST_TOOLS',
+
+  isCallToolMessage: (msg: Message): msg is CallToolMessage => msg.type === 'CALL_TOOL',
+
+  isToolsUpdatedMessage: (msg: Message): msg is ToolsUpdatedMessage => msg.type === 'TOOLS_UPDATED',
 };
 
 /**
@@ -394,24 +389,24 @@ export const MessageTypeGuards = {
 export interface ParsedToolName {
   /** Full tool name */
   full: string;
-  
+
   /** Tool type (extension/website) */
   type: 'extension' | 'website';
-  
+
   /** Specific parts based on type */
   parts: {
     /** For extension tools: API name */
     api?: string;
-    
+
     /** For extension tools: Method name */
     method?: string;
-    
+
     /** For website tools: Domain */
     domain?: string;
-    
+
     /** For website tools: Tab identifier */
     tab?: string;
-    
+
     /** For website tools: Tool name */
     tool?: string;
   };
@@ -422,15 +417,15 @@ export interface ParsedToolName {
  */
 export function parseToolName(name: string): ParsedToolName {
   const parts = name.split('_');
-  
+
   if (name.startsWith('extension_')) {
     return {
       full: name,
       type: 'extension',
       parts: {
         api: parts[1],
-        method: parts.slice(2).join('_')
-      }
+        method: parts.slice(2).join('_'),
+      },
     };
   } else if (name.startsWith('website_tool_')) {
     return {
@@ -439,15 +434,15 @@ export function parseToolName(name: string): ParsedToolName {
       parts: {
         domain: parts[2],
         tab: parts[3],
-        tool: parts.slice(4).join('_')
-      }
+        tool: parts.slice(4).join('_'),
+      },
     };
   }
-  
+
   // Default fallback
   return {
     full: name,
     type: 'extension',
-    parts: {}
+    parts: {},
   };
 }

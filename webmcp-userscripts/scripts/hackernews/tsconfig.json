@@ -10,6 +10,3 @@
   "include": ["src/**/*", "vite.config.ts"],
   "exclude": ["dist"]
 }
-
-
-

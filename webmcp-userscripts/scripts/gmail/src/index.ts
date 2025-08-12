@@ -2,12 +2,12 @@
 
 const log = (level: 'info' | 'warn' | 'error', message: string, ...args: any[]) => {
   console.log(`[Gmail MCP Server] ${level}: ${message}`, ...args);
-}
+};
 import { TabServerTransport } from '@mcp-b/transports';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types.js';
-import "gmail-js";
-import $ from "jquery";
+import 'gmail-js';
+import $ from 'jquery';
 import { z } from 'zod';
 
 /**
@@ -38,22 +38,27 @@ class GmailMCPServer {
         version: '2.1.0',
       },
       {
-        instructions: 'Simplified Gmail integration server using Gmail.js API. Focuses on essential email operations: reading emails, listing inbox content, and composing new emails. All write operations are enabled by default. Tools return structured data for AI agent use.',
+        instructions:
+          'Simplified Gmail integration server using Gmail.js API. Focuses on essential email operations: reading emails, listing inbox content, and composing new emails. All write operations are enabled by default. Tools return structured data for AI agent use.',
       }
     );
 
-    this.server.registerTool('ping', {
-      title: 'Ping',
-      description: 'Ping the server',
-      inputSchema: {},
-      annotations: {
-        readOnlyHint: false,
-        idempotentHint: true,
-        openWorldHint: false
+    this.server.registerTool(
+      'ping',
+      {
+        title: 'Ping',
+        description: 'Ping the server',
+        inputSchema: {},
+        annotations: {
+          readOnlyHint: false,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
+      },
+      async () => {
+        return this.formatSuccess('Pong');
       }
-    }, async () => {
-      return this.formatSuccess('Pong');
-    });
+    );
 
     this.transport = new TabServerTransport({
       allowedOrigins: ['*'],
@@ -64,7 +69,20 @@ class GmailMCPServer {
   /**
    * Safely register a tool, avoiding duplicates and allowing disable/enable
    */
-  private safeRegisterTool(name: string, definition: { title?: string; description?: string; inputSchema?: z.ZodRawShape | undefined; outputSchema?: z.ZodRawShape | undefined; annotations?: ToolAnnotations; }, handler: (params?: any) => Promise<{ content: Array<{ type: 'text'; text: string }>; isError?: boolean }>, enabled = true): void {
+  private safeRegisterTool(
+    name: string,
+    definition: {
+      title?: string;
+      description?: string;
+      inputSchema?: z.ZodRawShape | undefined;
+      outputSchema?: z.ZodRawShape | undefined;
+      annotations?: ToolAnnotations;
+    },
+    handler: (
+      params?: any
+    ) => Promise<{ content: Array<{ type: 'text'; text: string }>; isError?: boolean }>,
+    enabled = true
+  ): void {
     if (!this.registeredTools.has(name)) {
       this.server.registerTool(name, definition, handler);
       this.registeredTools.set(name, { enabled });
@@ -90,24 +108,31 @@ class GmailMCPServer {
    */
   private formatSuccess(data: unknown): { content: Array<{ type: 'text'; text: string }> } {
     return {
-      content: [{
-        type: 'text',
-        text: typeof data === 'string' ? data : JSON.stringify(data, null, 2)
-      }]
+      content: [
+        {
+          type: 'text',
+          text: typeof data === 'string' ? data : JSON.stringify(data, null, 2),
+        },
+      ],
     };
   }
 
   /**
    * Format error response
    */
-  private formatError(error: unknown): { content: Array<{ type: 'text'; text: string }>; isError: boolean } {
+  private formatError(error: unknown): {
+    content: Array<{ type: 'text'; text: string }>;
+    isError: boolean;
+  } {
     const message = error instanceof Error ? error.message : String(error);
     return {
-      content: [{
-        type: 'text',
-        text: `Error: ${message}`
-      }],
-      isError: true
+      content: [
+        {
+          type: 'text',
+          text: `Error: ${message}`,
+        },
+      ],
+      isError: true,
     };
   }
 
@@ -149,12 +174,14 @@ class GmailMCPServer {
         this.setupGmailObservers();
 
         log('info', 'Enhanced Gmail MCP Server fully initialized');
-        log('info', `Current context: ${this.currentPage}, In email: ${this.isInEmail}, Composing: ${this.isComposing}`);
+        log(
+          'info',
+          `Current context: ${this.currentPage}, In email: ${this.isInEmail}, Composing: ${this.isComposing}`
+        );
       });
 
       this.initialized = true;
       log('info', 'Enhanced Gmail MCP Server initialized successfully');
-
     } catch (error) {
       log('error', 'Failed to initialize Enhanced Gmail MCP Server:', error);
       throw error;
@@ -170,7 +197,10 @@ class GmailMCPServer {
       this.isInEmail = this.gmail.check.is_inside_email();
       this.isComposing = this.gmail.dom.composes().length > 0;
 
-      log('info', `Gmail state updated - Page: ${this.currentPage}, In email: ${this.isInEmail}, Composing: ${this.isComposing}`);
+      log(
+        'info',
+        `Gmail state updated - Page: ${this.currentPage}, In email: ${this.isInEmail}, Composing: ${this.isComposing}`
+      );
     } catch (error) {
       log('error', 'Failed to update Gmail state:', error);
     }
@@ -181,67 +211,81 @@ class GmailMCPServer {
    */
   private registerCoreTools(): void {
     // Simple unread count tool (useful for context)
-    this.safeRegisterTool('get_unread_counts', {
-      title: 'Get Unread Email Counts',
-      description: 'Get unread email counts for Gmail inbox and main categories',
-      inputSchema: {},
-      annotations: {
-        readOnlyHint: true,
-        idempotentHint: true,
-        openWorldHint: false
+    this.safeRegisterTool(
+      'get_unread_counts',
+      {
+        title: 'Get Unread Email Counts',
+        description: 'Get unread email counts for Gmail inbox and main categories',
+        inputSchema: {},
+        annotations: {
+          readOnlyHint: true,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
+      },
+      async () => {
+        try {
+          const data = {
+            total: this.gmail.get.unread_emails(),
+            inbox: this.gmail.get.unread_inbox_emails(),
+            drafts: this.gmail.get.unread_draft_emails(),
+          };
+          return this.formatSuccess(data);
+        } catch (error) {
+          return this.formatError(error);
+        }
       }
-    }, async () => {
-      try {
-        const data = {
-          total: this.gmail.get.unread_emails(),
-          inbox: this.gmail.get.unread_inbox_emails(),
-          drafts: this.gmail.get.unread_draft_emails()
-        };
-        return this.formatSuccess(data);
-      } catch (error) {
-        return this.formatError(error);
-      }
-    });
+    );
 
     // Navigation tools (always useful)
-    this.safeRegisterTool('navigate_to_page', {
-      title: 'Navigate to Gmail Page',
-      description: 'Navigate to different Gmail pages/views like inbox, sent, drafts, etc. Updates state and tools.',
-      inputSchema: {
-        page: z.enum(['inbox', 'sent', 'drafts', 'starred', 'spam', 'trash', 'all', 'important']).describe('Gmail page to navigate to')
+    this.safeRegisterTool(
+      'navigate_to_page',
+      {
+        title: 'Navigate to Gmail Page',
+        description:
+          'Navigate to different Gmail pages/views like inbox, sent, drafts, etc. Updates state and tools.',
+        inputSchema: {
+          page: z
+            .enum(['inbox', 'sent', 'drafts', 'starred', 'spam', 'trash', 'all', 'important'])
+            .describe('Gmail page to navigate to'),
+        },
+        annotations: {
+          readOnlyHint: false,
+          destructiveHint: false,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
       },
-      annotations: {
-        readOnlyHint: false,
-        destructiveHint: false,
-        idempotentHint: true,
-        openWorldHint: false
+      async ({ page }: { page: string }) => {
+        try {
+          const pageUrls: Record<string, string> = {
+            inbox: '#inbox',
+            sent: '#sent',
+            drafts: '#drafts',
+            starred: '#starred',
+            spam: '#spam',
+            trash: '#trash',
+            all: '#all',
+            important: '#imp',
+          };
+
+          window.location.hash = pageUrls[page] || '#inbox';
+
+          // Update state after navigation
+          setTimeout(() => {
+            this.updateGmailState();
+            this.registerContextAwareTools();
+          }, 1000);
+
+          return this.formatSuccess({
+            navigatedTo: page,
+            message: 'Navigated successfully. State updated.',
+          });
+        } catch (error) {
+          return this.formatError(error);
+        }
       }
-    }, async ({ page }: { page: string }) => {
-      try {
-        const pageUrls: Record<string, string> = {
-          inbox: '#inbox',
-          sent: '#sent',
-          drafts: '#drafts',
-          starred: '#starred',
-          spam: '#spam',
-          trash: '#trash',
-          all: '#all',
-          important: '#imp'
-        };
-
-        window.location.hash = pageUrls[page] || '#inbox';
-
-        // Update state after navigation
-        setTimeout(() => {
-          this.updateGmailState();
-          this.registerContextAwareTools();
-        }, 1000);
-
-        return this.formatSuccess({ navigatedTo: page, message: 'Navigated successfully. State updated.' });
-      } catch (error) {
-        return this.formatError(error);
-      }
-    });
+    );
 
     log('info', 'Core tools registered');
   }
@@ -270,463 +314,549 @@ class GmailMCPServer {
       this.disableTool('send_compose');
     }
 
-    log('info', `Context-aware tools registered for state: page=${this.currentPage}, inEmail=${this.isInEmail}, composing=${this.isComposing}`);
+    log(
+      'info',
+      `Context-aware tools registered for state: page=${this.currentPage}, inEmail=${this.isInEmail}, composing=${this.isComposing}`
+    );
   }
 
   /**
    * Register tools for email list views (inbox, sent, starred, etc.)
    */
   private registerEmailListTools(): void {
-    this.safeRegisterTool('list_visible_emails', {
-      title: 'List Visible Emails',
-      description: `List visible emails/threads from the current Gmail view (${this.currentPage}). Shows email summaries including sender, subject, and thread ID.`,
-      inputSchema: {
-        limit: z.number().min(1).max(50).default(20).describe('Maximum number of emails/threads to return')
+    this.safeRegisterTool(
+      'list_visible_emails',
+      {
+        title: 'List Visible Emails',
+        description: `List visible emails/threads from the current Gmail view (${this.currentPage}). Shows email summaries including sender, subject, and thread ID.`,
+        inputSchema: {
+          limit: z
+            .number()
+            .min(1)
+            .max(50)
+            .default(20)
+            .describe('Maximum number of emails/threads to return'),
+        },
+        annotations: {
+          readOnlyHint: true,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
       },
-      annotations: {
-        readOnlyHint: true,
-        idempotentHint: true,
-        openWorldHint: false
+      async ({ limit }: { limit: number }) => {
+        try {
+          const visibleMessages = this.gmail.dom.visible_messages().slice(0, limit);
+          const data = visibleMessages.map(msg => ({
+            threadId: msg.thread_id,
+            subject: msg.summary,
+            from: {
+              email: msg.from.email,
+              name: msg.from.name,
+            },
+            summary: msg.summary,
+          }));
+          return this.formatSuccess(data);
+        } catch (error) {
+          return this.formatError(error);
+        }
       }
-    }, async ({ limit }: { limit: number }) => {
-      try {
-        const visibleMessages = this.gmail.dom.visible_messages().slice(0, limit);
-        const data = visibleMessages.map((msg) => ({
-          threadId: msg.thread_id,
-          subject: msg.summary,
-          from: {
-            email: msg.from.email,
-            name: msg.from.name
-          },
-          summary: msg.summary
-        }));
-        return this.formatSuccess(data);
-      } catch (error) {
-        return this.formatError(error);
-      }
-    });
+    );
 
-    this.safeRegisterTool('get_selected_emails', {
-      title: 'Get Selected Emails',
-      description: 'Get information about currently selected emails in the Gmail interface',
-      inputSchema: {},
-      annotations: {
-        readOnlyHint: true,
-        idempotentHint: true,
-        openWorldHint: false
+    this.safeRegisterTool(
+      'get_selected_emails',
+      {
+        title: 'Get Selected Emails',
+        description: 'Get information about currently selected emails in the Gmail interface',
+        inputSchema: {},
+        annotations: {
+          readOnlyHint: true,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
+      },
+      async () => {
+        try {
+          const selectedElements = document.querySelectorAll(
+            'tr.zA.zE[role="row"][tabindex="0"]:checked, tr.zA.zE[role="row"].x7'
+          );
+          const data = {
+            selectedCount: selectedElements.length,
+            emails: Array.from(selectedElements).map((el: Element) => {
+              const threadIdAttr = el.getAttribute('id');
+              const subjectEl = el.querySelector('[data-thread-perm-id]');
+              return {
+                threadId: threadIdAttr || 'unknown',
+                subject: subjectEl?.textContent?.trim() || 'No subject',
+                element: 'Selected via DOM',
+              };
+            }),
+          };
+          return this.formatSuccess(data);
+        } catch (error) {
+          return this.formatError(error);
+        }
       }
-    }, async () => {
-      try {
-        const selectedElements = document.querySelectorAll('tr.zA.zE[role="row"][tabindex="0"]:checked, tr.zA.zE[role="row"].x7');
-        const data = {
-          selectedCount: selectedElements.length,
-          emails: Array.from(selectedElements).map((el: Element) => {
-            const threadIdAttr = el.getAttribute('id');
-            const subjectEl = el.querySelector('[data-thread-perm-id]');
-            return {
-              threadId: threadIdAttr || 'unknown',
-              subject: subjectEl?.textContent?.trim() || 'No subject',
-              element: 'Selected via DOM'
-            };
-          })
-        };
-        return this.formatSuccess(data);
-      } catch (error) {
-        return this.formatError(error);
-      }
-    });
+    );
   }
 
   /**
    * Register tools for when viewing an individual email
    */
   private registerEmailViewTools(): void {
-    this.safeRegisterTool('read_current_email', {
-      title: 'Read Current Email',
-      description: 'Read the currently open email with full content, metadata, and attachments',
-      inputSchema: {},
-      annotations: {
-        readOnlyHint: true,
-        idempotentHint: true,
-        openWorldHint: false
-      }
-    }, async () => {
-      try {
-        if (!this.isInEmail) {
-          throw new Error('Not currently viewing an email. Use navigate_to_page or open_email first.');
+    this.safeRegisterTool(
+      'read_current_email',
+      {
+        title: 'Read Current Email',
+        description: 'Read the currently open email with full content, metadata, and attachments',
+        inputSchema: {},
+        annotations: {
+          readOnlyHint: true,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
+      },
+      async () => {
+        try {
+          if (!this.isInEmail) {
+            throw new Error(
+              'Not currently viewing an email. Use navigate_to_page or open_email first.'
+            );
+          }
+
+          const emailId = this.gmail.new.get.email_id();
+          if (!emailId) {
+            throw new Error('Could not determine current email ID. Try refreshing the page.');
+          }
+
+          const emailData = this.gmail.new.get.email_data(emailId);
+          if (!emailData) {
+            throw new Error(
+              'No email data found in cache. Try reopening the email or waiting for cache population.'
+            );
+          }
+
+          const data = {
+            id: emailData.id,
+            subject: emailData.subject,
+            from: emailData.from,
+            to: emailData.to,
+            cc: emailData.cc || [],
+            bcc: emailData.bcc || [],
+            date: emailData.date,
+            timestamp: emailData.timestamp,
+            contentHtml: emailData.content_html,
+            attachments: emailData.attachments || [],
+          };
+          return this.formatSuccess(data);
+        } catch (error) {
+          return this.formatError(error);
         }
-
-        const emailId = this.gmail.new.get.email_id();
-        if (!emailId) {
-          throw new Error('Could not determine current email ID. Try refreshing the page.');
-        }
-
-        const emailData = this.gmail.new.get.email_data(emailId);
-        if (!emailData) {
-          throw new Error('No email data found in cache. Try reopening the email or waiting for cache population.');
-        }
-
-        const data = {
-          id: emailData.id,
-          subject: emailData.subject,
-          from: emailData.from,
-          to: emailData.to,
-          cc: emailData.cc || [],
-          bcc: emailData.bcc || [],
-          date: emailData.date,
-          timestamp: emailData.timestamp,
-          contentHtml: emailData.content_html,
-          attachments: emailData.attachments || []
-        };
-        return this.formatSuccess(data);
-      } catch (error) {
-        return this.formatError(error);
       }
-    });
+    );
 
-    this.safeRegisterTool('get_email_thread', {
-      title: 'Get Full Email Thread',
-      description: 'Get the complete thread/conversation containing the current email',
-      inputSchema: {},
-      annotations: {
-        readOnlyHint: true,
-        idempotentHint: true,
-        openWorldHint: false
-      }
-    }, async () => {
-      try {
-        const threadId = this.gmail.new.get.thread_id();
-        const threadData = this.gmail.new.get.thread_data(threadId);
+    this.safeRegisterTool(
+      'get_email_thread',
+      {
+        title: 'Get Full Email Thread',
+        description: 'Get the complete thread/conversation containing the current email',
+        inputSchema: {},
+        annotations: {
+          readOnlyHint: true,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
+      },
+      async () => {
+        try {
+          const threadId = this.gmail.new.get.thread_id();
+          const threadData = this.gmail.new.get.thread_data(threadId);
 
-        if (!threadData) {
-          throw new Error('No thread data found in cache.');
+          if (!threadData) {
+            throw new Error('No thread data found in cache.');
+          }
+
+          const data = {
+            threadId: threadData.thread_id,
+            totalEmails: threadData.emails.length,
+            emails: threadData.emails.map(email => ({
+              id: email.id,
+              subject: email.subject,
+              from: email.from,
+              timestamp: email.timestamp,
+              snippet: email.content_html ? `${email.content_html.substring(0, 200)}...` : '',
+            })),
+          };
+          return this.formatSuccess(data);
+        } catch (error) {
+          return this.formatError(error);
         }
-
-        const data = {
-          threadId: threadData.thread_id,
-          totalEmails: threadData.emails.length,
-          emails: threadData.emails.map((email) => ({
-            id: email.id,
-            subject: email.subject,
-            from: email.from,
-            timestamp: email.timestamp,
-            snippet: email.content_html ? `${email.content_html.substring(0, 200)}...` : ''
-          }))
-        };
-        return this.formatSuccess(data);
-      } catch (error) {
-        return this.formatError(error);
       }
-    });
-
-
+    );
   }
-
-
 
   /**
    * Register tools for compose mode
    */
   private registerComposeTools(): void {
-    this.safeRegisterTool('get_compose_data', {
-      title: 'Get Compose Data',
-      description: 'Get information about the current compose window(s) including recipients, subject, and body. Supports multiple composes.',
-      inputSchema: {
-        composeId: z.string().optional().describe('Specific compose ID to target (from get_compose_ids)')
+    this.safeRegisterTool(
+      'get_compose_data',
+      {
+        title: 'Get Compose Data',
+        description:
+          'Get information about the current compose window(s) including recipients, subject, and body. Supports multiple composes.',
+        inputSchema: {
+          composeId: z
+            .string()
+            .optional()
+            .describe('Specific compose ID to target (from get_compose_ids)'),
+        },
+        annotations: {
+          readOnlyHint: true,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
       },
-      annotations: {
-        readOnlyHint: true,
-        idempotentHint: true,
-        openWorldHint: false
-      }
-    }, async ({ composeId }: { composeId?: string }) => {
-      try {
-        const composes = this.gmail.dom.composes();
-        let targetComposes = composes;
-        if (composeId) {
-          targetComposes = composes.filter(c => c.id() === composeId);
-          if (targetComposes.length === 0) {
-            throw new Error(`Compose window ${composeId} not found.`);
+      async ({ composeId }: { composeId?: string }) => {
+        try {
+          const composes = this.gmail.dom.composes();
+          let targetComposes = composes;
+          if (composeId) {
+            targetComposes = composes.filter(c => c.id() === composeId);
+            if (targetComposes.length === 0) {
+              throw new Error(`Compose window ${composeId} not found.`);
+            }
           }
+          const data = {
+            activeComposes: composes.length,
+            composeData: targetComposes.map(compose => ({
+              id: compose.id(),
+              type: compose.type(),
+              isInline: compose.is_inline(),
+              to: compose.to().val() as string,
+              cc: compose.cc().val() as string,
+              bcc: compose.bcc().val() as string,
+              subject: compose.subject(),
+              from: compose.from(),
+              body: compose.body(),
+            })),
+          };
+          return this.formatSuccess(data);
+        } catch (error) {
+          return this.formatError(error);
         }
-        const data = {
-          activeComposes: composes.length,
-          composeData: targetComposes.map((compose) => ({
-            id: compose.id(),
-            type: compose.type(),
-            isInline: compose.is_inline(),
-            to: compose.to().val() as string,
-            cc: compose.cc().val() as string,
-            bcc: compose.bcc().val() as string,
-            subject: compose.subject(),
-            from: compose.from(),
-            body: compose.body()
-          }))
-        };
-        return this.formatSuccess(data);
-      } catch (error) {
-        return this.formatError(error);
       }
-    });
+    );
 
-    this.safeRegisterTool('update_compose', {
-      title: 'Update Compose Fields',
-      description: 'Update recipients, subject, or body of a compose window.',
-      inputSchema: {
-        composeId: z.string().optional().describe('Specific compose ID to target'),
-        to: z.array(z.string().email()).optional().describe('Update TO recipients'),
-        cc: z.array(z.string().email()).optional().describe('Update CC recipients'),
-        bcc: z.array(z.string().email()).optional().describe('Update BCC recipients'),
-        subject: z.string().optional().describe('Update email subject'),
-        body: z.string().optional().describe('Update email body content')
+    this.safeRegisterTool(
+      'update_compose',
+      {
+        title: 'Update Compose Fields',
+        description: 'Update recipients, subject, or body of a compose window.',
+        inputSchema: {
+          composeId: z.string().optional().describe('Specific compose ID to target'),
+          to: z.array(z.string().email()).optional().describe('Update TO recipients'),
+          cc: z.array(z.string().email()).optional().describe('Update CC recipients'),
+          bcc: z.array(z.string().email()).optional().describe('Update BCC recipients'),
+          subject: z.string().optional().describe('Update email subject'),
+          body: z.string().optional().describe('Update email body content'),
+        },
+        annotations: {
+          readOnlyHint: false,
+          destructiveHint: false,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
       },
-      annotations: {
-        readOnlyHint: false,
-        destructiveHint: false,
-        idempotentHint: true,
-        openWorldHint: false
+      async (params: {
+        composeId?: string;
+        to?: string[];
+        cc?: string[];
+        bcc?: string[];
+        subject?: string;
+        body?: string;
+      }) => {
+        try {
+          const composes = this.gmail.dom.composes();
+          let compose;
+          if (params.composeId) {
+            compose = composes.find(c => c.id() === params.composeId);
+            if (!compose) throw new Error(`Compose ${params.composeId} not found.`);
+          } else if (composes.length > 0) {
+            compose = composes[0]; // Default to first
+          } else {
+            throw new Error('No compose window found.');
+          }
+
+          const updates: string[] = [];
+
+          if (params.to) {
+            compose.to(params.to.join(', '));
+            updates.push(`TO: ${params.to.join(', ')}`);
+          }
+          if (params.cc) {
+            compose.cc(params.cc.join(', '));
+            updates.push(`CC: ${params.cc.join(', ')}`);
+          }
+          if (params.bcc) {
+            compose.bcc(params.bcc.join(', '));
+            updates.push(`BCC: ${params.bcc.join(', ')}`);
+          }
+          if (params.subject) {
+            compose.subject(params.subject);
+            updates.push(`Subject: ${params.subject}`);
+          }
+          if (params.body) {
+            compose.body(params.body);
+            updates.push('Body updated');
+          }
+
+          return this.formatSuccess(
+            `Updated compose fields: ${updates.join(', ')}. State: Composing updated.`
+          );
+        } catch (error) {
+          return this.formatError(error);
+        }
       }
-    }, async (params: { composeId?: string; to?: string[]; cc?: string[]; bcc?: string[]; subject?: string; body?: string }) => {
-      try {
-        const composes = this.gmail.dom.composes();
-        let compose;
-        if (params.composeId) {
-          compose = composes.find(c => c.id() === params.composeId);
-          if (!compose) throw new Error(`Compose ${params.composeId} not found.`);
-        } else if (composes.length > 0) {
-          compose = composes[0]; // Default to first
-        } else {
-          throw new Error('No compose window found.');
-        }
+    );
 
-        const updates: string[] = [];
-
-        if (params.to) {
-          compose.to(params.to.join(', '));
-          updates.push(`TO: ${params.to.join(', ')}`);
-        }
-        if (params.cc) {
-          compose.cc(params.cc.join(', '));
-          updates.push(`CC: ${params.cc.join(', ')}`);
-        }
-        if (params.bcc) {
-          compose.bcc(params.bcc.join(', '));
-          updates.push(`BCC: ${params.bcc.join(', ')}`);
-        }
-        if (params.subject) {
-          compose.subject(params.subject);
-          updates.push(`Subject: ${params.subject}`);
-        }
-        if (params.body) {
-          compose.body(params.body);
-          updates.push('Body updated');
-        }
-
-        return this.formatSuccess(`Updated compose fields: ${updates.join(', ')}. State: Composing updated.`);
-      } catch (error) {
-        return this.formatError(error);
-      }
-    });
-
-    this.safeRegisterTool('send_compose', {
-      title: 'Send Email',
-      description: 'Send a compose email.',
-      inputSchema: {
-        composeId: z.string().optional().describe('Specific compose ID to send')
+    this.safeRegisterTool(
+      'send_compose',
+      {
+        title: 'Send Email',
+        description: 'Send a compose email.',
+        inputSchema: {
+          composeId: z.string().optional().describe('Specific compose ID to send'),
+        },
+        annotations: {
+          readOnlyHint: false,
+          destructiveHint: false,
+          idempotentHint: false,
+          openWorldHint: true,
+        },
       },
-      annotations: {
-        readOnlyHint: false,
-        destructiveHint: false,
-        idempotentHint: false,
-        openWorldHint: true
-      }
-    }, async ({ composeId }: { composeId?: string }) => {
-      try {
-        const composes = this.gmail.dom.composes();
-        let compose;
-        if (composeId) {
-          compose = composes.find(c => c.id() === composeId);
-          if (!compose) throw new Error(`Compose ${composeId} not found.`);
-        } else if (composes.length > 0) {
-          compose = composes[0];
-        } else {
-          throw new Error('No compose window found');
+      async ({ composeId }: { composeId?: string }) => {
+        try {
+          const composes = this.gmail.dom.composes();
+          let compose;
+          if (composeId) {
+            compose = composes.find(c => c.id() === composeId);
+            if (!compose) throw new Error(`Compose ${composeId} not found.`);
+          } else if (composes.length > 0) {
+            compose = composes[0];
+          } else {
+            throw new Error('No compose window found');
+          }
+
+          compose.send();
+
+          // Update state
+          setTimeout(() => this.updateGmailState(), 500);
+
+          return this.formatSuccess('Email sent successfully. State: Compose closed.');
+        } catch (error) {
+          return this.formatError(error);
         }
-
-        compose.send();
-
-        // Update state
-        setTimeout(() => this.updateGmailState(), 500);
-
-        return this.formatSuccess('Email sent successfully. State: Compose closed.');
-      } catch (error) {
-        return this.formatError(error);
       }
-    });
+    );
   }
 
   /**
    * Register write tools (only when write permissions enabled)
    */
   private registerWriteTools(): void {
-    this.safeRegisterTool('compose_new_email', {
-      title: 'Compose New Email',
-      description: 'Create and compose a complete new email with recipients, subject, and body. Opens a compose window, fills fields, and optionally sends.',
-      inputSchema: {
-        to: z.array(z.string().email()).min(1).describe('Email recipients (required)'),
-        subject: z.string().min(1).describe('Email subject line'),
-        body: z.string().describe('Email body content (supports HTML)'),
-        cc: z.array(z.string().email()).optional().describe('CC recipients'),
-        bcc: z.array(z.string().email()).optional().describe('BCC recipients'),
-        send: z.boolean().default(false).describe('Whether to send immediately after composing')
+    this.safeRegisterTool(
+      'compose_new_email',
+      {
+        title: 'Compose New Email',
+        description:
+          'Create and compose a complete new email with recipients, subject, and body. Opens a compose window, fills fields, and optionally sends.',
+        inputSchema: {
+          to: z.array(z.string().email()).min(1).describe('Email recipients (required)'),
+          subject: z.string().min(1).describe('Email subject line'),
+          body: z.string().describe('Email body content (supports HTML)'),
+          cc: z.array(z.string().email()).optional().describe('CC recipients'),
+          bcc: z.array(z.string().email()).optional().describe('BCC recipients'),
+          send: z.boolean().default(false).describe('Whether to send immediately after composing'),
+        },
+        annotations: {
+          readOnlyHint: false,
+          destructiveHint: false,
+          idempotentHint: false,
+          openWorldHint: true,
+        },
       },
-      annotations: {
-        readOnlyHint: false,
-        destructiveHint: false,
-        idempotentHint: false,
-        openWorldHint: true
-      }
-    }, async (params: { to: string[]; subject: string; body: string; cc?: string[]; bcc?: string[]; send?: boolean }) => {
-      try {
-        // Start compose
-        this.gmail.compose.start_compose();
+      async (params: {
+        to: string[];
+        subject: string;
+        body: string;
+        cc?: string[];
+        bcc?: string[];
+        send?: boolean;
+      }) => {
+        try {
+          // Start compose
+          this.gmail.compose.start_compose();
 
-        return await new Promise((resolve, reject) => {
-          const timeout = setTimeout(() => reject(new Error('Timeout waiting for compose')), 5000);
+          return await new Promise((resolve, reject) => {
+            const timeout = setTimeout(
+              () => reject(new Error('Timeout waiting for compose')),
+              5000
+            );
 
-          const handler = (compose: any, type: string) => {
-            if (type === 'compose') {
-              clearTimeout(timeout);
-              this.gmail.observe.off('compose', 'after');
+            const handler = (compose: any, type: string) => {
+              if (type === 'compose') {
+                clearTimeout(timeout);
+                this.gmail.observe.off('compose', 'after');
 
-              try {
-                setTimeout(() => {
-                  compose.to(params.to.join(', '));
-                  if (params.cc) compose.cc(params.cc.join(', '));
-                  if (params.bcc) compose.bcc(params.bcc.join(', '));
-                  compose.subject(params.subject);
-                  compose.body(params.body);
+                try {
+                  setTimeout(() => {
+                    compose.to(params.to.join(', '));
+                    if (params.cc) compose.cc(params.cc.join(', '));
+                    if (params.bcc) compose.bcc(params.bcc.join(', '));
+                    compose.subject(params.subject);
+                    compose.body(params.body);
 
-                  this.isComposing = true;
-                  this.registerContextAwareTools();
+                    this.isComposing = true;
+                    this.registerContextAwareTools();
 
-                  const result = {
-                    composed: true,
-                    to: params.to,
-                    subject: params.subject,
-                    cc: params.cc || [],
-                    bcc: params.bcc || [],
-                    status: params.send ? 'Sent' : 'Draft saved (use send_compose to send)'
-                  };
+                    const result = {
+                      composed: true,
+                      to: params.to,
+                      subject: params.subject,
+                      cc: params.cc || [],
+                      bcc: params.bcc || [],
+                      status: params.send ? 'Sent' : 'Draft saved (use send_compose to send)',
+                    };
 
-                  if (params.send) {
-                    setTimeout(() => compose.send(), 300);
-                  }
+                    if (params.send) {
+                      setTimeout(() => compose.send(), 300);
+                    }
 
-                  resolve(this.formatSuccess(result));
-                }, 200);
-              } catch (error) {
-                reject(error);
+                    resolve(this.formatSuccess(result));
+                  }, 200);
+                } catch (error) {
+                  reject(error);
+                }
               }
+            };
+
+            this.gmail.observe.on('compose', handler);
+          });
+        } catch (error) {
+          return this.formatError(error);
+        }
+      }
+    );
+
+    this.safeRegisterTool(
+      'start_compose',
+      {
+        title: 'Start New Compose',
+        description: 'Open a new empty email compose window. Use update_compose to fill fields.',
+        inputSchema: {},
+        annotations: {
+          readOnlyHint: false,
+          destructiveHint: false,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
+      },
+      async () => {
+        try {
+          this.gmail.compose.start_compose();
+
+          setTimeout(() => {
+            this.isComposing = this.gmail.dom.composes().length > 0;
+            if (this.isComposing) {
+              this.registerContextAwareTools();
             }
-          };
+          }, 1000);
 
-          this.gmail.observe.on('compose', handler);
-        });
-      } catch (error) {
-        return this.formatError(error);
+          return this.formatSuccess({
+            message: 'New compose window opened.',
+            composeIds: this.gmail.get.compose_ids(),
+          });
+        } catch (error) {
+          return this.formatError(error);
+        }
       }
-    });
-
-    this.safeRegisterTool('start_compose', {
-      title: 'Start New Compose',
-      description: 'Open a new empty email compose window. Use update_compose to fill fields.',
-      inputSchema: {},
-      annotations: {
-        readOnlyHint: false,
-        destructiveHint: false,
-        idempotentHint: true,
-        openWorldHint: false
-      }
-    }, async () => {
-      try {
-        this.gmail.compose.start_compose();
-
-        setTimeout(() => {
-          this.isComposing = this.gmail.dom.composes().length > 0;
-          if (this.isComposing) {
-            this.registerContextAwareTools();
-          }
-        }, 1000);
-
-        return this.formatSuccess({ message: 'New compose window opened.', composeIds: this.gmail.get.compose_ids() });
-      } catch (error) {
-        return this.formatError(error);
-      }
-    });
-
-
+    );
   }
 
   /**
    * Register search tools (useful in all contexts)
    */
   private registerSearchTools(): void {
-    this.safeRegisterTool('search_emails', {
-      title: 'Search Emails',
-      description: 'Search for emails using Gmail search syntax. Supports operators like from:, to:, subject:, has:attachment, etc.',
-      inputSchema: {
-        query: z.string().min(1).describe('Gmail search query (supports Gmail search operators)'),
-        executeSearch: z.boolean().default(true).describe('Execute the search in Gmail interface and update view')
+    this.safeRegisterTool(
+      'search_emails',
+      {
+        title: 'Search Emails',
+        description:
+          'Search for emails using Gmail search syntax. Supports operators like from:, to:, subject:, has:attachment, etc.',
+        inputSchema: {
+          query: z.string().min(1).describe('Gmail search query (supports Gmail search operators)'),
+          executeSearch: z
+            .boolean()
+            .default(true)
+            .describe('Execute the search in Gmail interface and update view'),
+        },
+        annotations: {
+          readOnlyHint: false,
+          destructiveHint: false,
+          idempotentHint: true,
+          openWorldHint: true,
+        },
       },
-      annotations: {
-        readOnlyHint: false,
-        destructiveHint: false,
-        idempotentHint: true,
-        openWorldHint: true
-      }
-    }, async ({ query, executeSearch }: { query: string; executeSearch: boolean }) => {
-      try {
-        if (executeSearch) {
-          window.location.hash = `#search/${encodeURIComponent(query)}`;
-          setTimeout(() => {
-            this.updateGmailState();
-            this.registerContextAwareTools();
-          }, 1000);
-          return this.formatSuccess({ searched: query, message: 'Search executed. View updated; use list_visible_emails to see results.' });
+      async ({ query, executeSearch }: { query: string; executeSearch: boolean }) => {
+        try {
+          if (executeSearch) {
+            window.location.hash = `#search/${encodeURIComponent(query)}`;
+            setTimeout(() => {
+              this.updateGmailState();
+              this.registerContextAwareTools();
+            }, 1000);
+            return this.formatSuccess({
+              searched: query,
+              message: 'Search executed. View updated; use list_visible_emails to see results.',
+            });
+          }
+
+          const currentQuery = this.gmail.get.search_query();
+          return this.formatSuccess({
+            currentQuery: currentQuery || 'No active search',
+            requestedQuery: query,
+            note: 'Use executeSearch: true to perform the search and update state.',
+          });
+        } catch (error) {
+          return this.formatError(error);
         }
+      }
+    );
 
-        const currentQuery = this.gmail.get.search_query();
-        return this.formatSuccess({
-          currentQuery: currentQuery || 'No active search',
-          requestedQuery: query,
-          note: 'Use executeSearch: true to perform the search and update state.'
-        });
-      } catch (error) {
-        return this.formatError(error);
+    this.safeRegisterTool(
+      'get_current_search',
+      {
+        title: 'Get Current Search Query',
+        description: 'Get the currently active search query in Gmail',
+        inputSchema: {},
+        annotations: {
+          readOnlyHint: true,
+          idempotentHint: true,
+          openWorldHint: false,
+        },
+      },
+      async () => {
+        try {
+          const query = this.gmail.get.search_query();
+          return this.formatSuccess({
+            query: query || null,
+            hasActiveSearch: !!query,
+          });
+        } catch (error) {
+          return this.formatError(error);
+        }
       }
-    });
-
-    this.safeRegisterTool('get_current_search', {
-      title: 'Get Current Search Query',
-      description: 'Get the currently active search query in Gmail',
-      inputSchema: {},
-      annotations: {
-        readOnlyHint: true,
-        idempotentHint: true,
-        openWorldHint: false
-      }
-    }, async () => {
-      try {
-        const query = this.gmail.get.search_query();
-        return this.formatSuccess({
-          query: query || null,
-          hasActiveSearch: !!query
-        });
-      } catch (error) {
-        return this.formatError(error);
-      }
-    });
+    );
   }
 
   /**
@@ -735,11 +865,25 @@ class GmailMCPServer {
   private setupGmailObservers(): void {
     const navigationHandler = () => {
       setTimeout(() => {
-        const oldState = { page: this.currentPage, inEmail: this.isInEmail, composing: this.isComposing };
+        const oldState = {
+          page: this.currentPage,
+          inEmail: this.isInEmail,
+          composing: this.isComposing,
+        };
         this.updateGmailState();
-        if (JSON.stringify(oldState) !== JSON.stringify({ page: this.currentPage, inEmail: this.isInEmail, composing: this.isComposing })) {
+        if (
+          JSON.stringify(oldState) !==
+          JSON.stringify({
+            page: this.currentPage,
+            inEmail: this.isInEmail,
+            composing: this.isComposing,
+          })
+        ) {
           this.registerContextAwareTools();
-          log('info', `State changed: ${JSON.stringify(oldState)} → ${JSON.stringify({ page: this.currentPage, inEmail: this.isInEmail, composing: this.isComposing })}. Tools updated.`);
+          log(
+            'info',
+            `State changed: ${JSON.stringify(oldState)} → ${JSON.stringify({ page: this.currentPage, inEmail: this.isInEmail, composing: this.isComposing })}. Tools updated.`
+          );
         }
       }, 500);
     };

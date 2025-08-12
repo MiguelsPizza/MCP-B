@@ -4,7 +4,7 @@ These tools read files from the users machine and either inject or register them
 make sure that files are passed in via absolute path
 */
 
-import { Tool } from "@modelcontextprotocol/sdk/types.js";
+import { Tool } from '@modelcontextprotocol/sdk/types.js';
 
 //we override the execute script tool to read the file from the users machine and inject it into the specifed tab
 //since the extension does not have access to the file system, we need to read the file from the users machine and inject it into the specifed tab
@@ -12,7 +12,7 @@ export const executeScriptToolOverride: Tool = {
   inputSchema: {
     type: 'object',
     description:
-      'Execute a local JavaScript userscript by reading it from disk (via the native host) and injecting its contents into a browser tab using the extension\'s User Scripts API. This bypasses CSP limitations and runs in the USER_SCRIPT world by default.',
+      "Execute a local JavaScript userscript by reading it from disk (via the native host) and injecting its contents into a browser tab using the extension's User Scripts API. This bypasses CSP limitations and runs in the USER_SCRIPT world by default.",
     properties: {
       filePath: {
         type: 'string',
@@ -37,7 +37,7 @@ export const executeScriptToolOverride: Tool = {
   name: 'extension_tool_execute_user_script',
   description:
     'Read a local userscript file and inject it into a page. Use an absolute file path. Requires the extension to be installed with User Scripts enabled (Developer Mode / Allow User Scripts). Runs with world=USER_SCRIPT and injectImmediately=true.',
-}
+};
 
 //we override the register userscript tool to read the file from the users machine and register it as a persistent userscript
 //the userscript will run automatically on matching pages based on the provided match patterns
@@ -66,13 +66,11 @@ export const registerUserscriptToolOverride: Tool = {
       excludeMatches: {
         type: 'array',
         items: { type: 'string' },
-        description:
-          'Optional. URL patterns to exclude from matching.',
+        description: 'Optional. URL patterns to exclude from matching.',
       },
       allFrames: {
         type: 'boolean',
-        description:
-          'Optional. Run in all frames of the page (default: false).',
+        description: 'Optional. Run in all frames of the page (default: false).',
       },
       runAt: {
         type: 'string',
@@ -96,22 +94,23 @@ export const registerUserscriptToolOverride: Tool = {
     additionalProperties: false,
     examples: [
       {
-        filePath: '/Users/alexmnahas/personalRepos/WebMCP/webmcp-userscripts/scripts/google/dist/google.user.js',
+        filePath:
+          '/Users/alexmnahas/personalRepos/WebMCP/webmcp-userscripts/scripts/google/dist/google.user.js',
         id: 'google-mcp-injector',
         matches: ['https://www.google.com/*'],
         runAt: 'document_start',
-        world: 'MAIN'
+        world: 'MAIN',
       },
       {
         filePath: '/Users/you/scripts/gmail-mcp.user.js',
         id: 'gmail-mcp',
         matches: ['https://mail.google.com/*'],
         runAt: 'document_start',
-        world: 'MAIN'
+        world: 'MAIN',
       },
     ],
   },
   name: 'extension_tool_userscripts_register',
   description:
     'Register a local userscript file to run automatically on matching pages. The script persists across browser sessions. For MCP-B userscripts, use world="MAIN" and runAt="document_start". Requires the extension with User Scripts enabled.',
-}
+};

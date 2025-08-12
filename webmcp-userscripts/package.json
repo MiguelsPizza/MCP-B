@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "TypeScript monorepo for building and testing Tampermonkey scripts which give websites WebMCP capabilities",
   "type": "module",
-  
+
   "scripts": {
     "build": "tsx tools/build-all.ts",
     "build:scripts": "pnpm -r run build",

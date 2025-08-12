@@ -117,21 +117,21 @@ export const userScriptRouter = t.router({
     )
     .query(async ({ input }) => {
       const scripts = await chrome.userScripts.getScripts({ ids: [input.id] });
-      
+
       if (scripts.length > 0) {
         const script = scripts[0];
-        
+
         // Try to load the saved code from storage
         const storageKey = `webmcp:userscripts:${input.id}`;
         const stored = await chrome.storage.local.get(storageKey);
         const savedCode = stored[storageKey];
-        
+
         return {
           ...script,
-          savedCode: savedCode || null
+          savedCode: savedCode || null,
         };
       }
-      
+
       return null;
     }),
 
@@ -209,11 +209,11 @@ export const userScriptRouter = t.router({
     .mutation(async ({ input }): Promise<{ success: boolean }> => {
       try {
         await chrome.userScripts.unregister({ ids: [input.id] });
-        
+
         // Clean up stored code from chrome.storage
         const storageKey = `webmcp:userscripts:${input.id}`;
         await chrome.storage.local.remove(storageKey);
-        
+
         return { success: true };
       } catch (error) {
         console.error('Failed to delete userscript:', error);
@@ -227,16 +227,16 @@ export const userScriptRouter = t.router({
   deleteAllScripts: t.procedure.mutation(async (): Promise<{ success: boolean }> => {
     try {
       await chrome.userScripts.unregister();
-      
+
       // Clean up all userscript code from storage
       const allStorage = await chrome.storage.local.get();
-      const userscriptKeys = Object.keys(allStorage).filter(key => 
+      const userscriptKeys = Object.keys(allStorage).filter((key) =>
         key.startsWith('webmcp:userscripts:')
       );
       if (userscriptKeys.length > 0) {
         await chrome.storage.local.remove(userscriptKeys);
       }
-      
+
       return { success: true };
     } catch (error) {
       console.error('Failed to delete all userscripts:', error);

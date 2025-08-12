@@ -15,9 +15,9 @@ console.log('🔨 Building all Tampermonkey MCP-B scripts...\n');
 // Build shared package first
 console.log('📦 Building shared package...');
 try {
-  execSync('pnpm run build', { 
+  execSync('pnpm run build', {
     cwd: join(projectRoot, 'packages/shared'),
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
   console.log('✅ Shared package built successfully\n');
 } catch (error) {
@@ -29,8 +29,7 @@ try {
 const scriptsDir = join(projectRoot, 'scripts');
 const scriptDirs = readdirSync(scriptsDir).filter(dir => {
   const scriptPath = join(scriptsDir, dir);
-  return statSync(scriptPath).isDirectory() && 
-         readdirSync(scriptPath).includes('package.json');
+  return statSync(scriptPath).isDirectory() && readdirSync(scriptPath).includes('package.json');
 });
 
 console.log(`Found ${scriptDirs.length} script(s): ${scriptDirs.join(', ')}\n`);
@@ -42,27 +41,30 @@ let failureCount = 0;
 for (const scriptDir of scriptDirs) {
   const scriptPath = join(scriptsDir, scriptDir);
   console.log(`🔨 Building ${scriptDir}...`);
-  
+
   try {
     // Install dependencies first
-    execSync('pnpm install', { 
+    execSync('pnpm install', {
       cwd: scriptPath,
-      stdio: 'pipe'
+      stdio: 'pipe',
     });
-    
+
     // Build the script
-    execSync('pnpm run build', { 
+    execSync('pnpm run build', {
       cwd: scriptPath,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
-    
+
     console.log(`✅ ${scriptDir} built successfully`);
     successCount++;
   } catch (error) {
-    console.error(`❌ Failed to build ${scriptDir}:`, error instanceof Error ? error.message : error);
+    console.error(
+      `❌ Failed to build ${scriptDir}:`,
+      error instanceof Error ? error.message : error
+    );
     failureCount++;
   }
-  
+
   console.log('');
 }
 

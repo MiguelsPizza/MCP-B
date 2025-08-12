@@ -4,7 +4,7 @@ import { streamText } from 'ai';
 import { Hono } from 'hono';
 import { z } from 'zod';
 
-import { jsonSchema } from "ai";
+import { jsonSchema } from 'ai';
 
 function cleanJsonSchema(schema: any): any {
   const cloned: any = JSON.parse(JSON.stringify(schema));
@@ -32,7 +32,7 @@ function cleanJsonSchema(schema: any): any {
         { type: 'boolean' },
         { type: 'object' },
         { type: 'array', items: { type: 'object' } },
-        { type: 'null' }
+        { type: 'null' },
       ];
     }
 
@@ -84,9 +84,7 @@ function cleanJsonSchema(schema: any): any {
   return processSchema(cloned);
 }
 
-export const frontendTools = (
-  tools: Record<string, { description?: string; parameters: any }>,
-) =>
+export const frontendTools = (tools: Record<string, { description?: string; parameters: any }>) =>
   Object.fromEntries(
     Object.entries(tools).map(([name, tool]) => [
       name,
@@ -94,7 +92,7 @@ export const frontendTools = (
         description: tool.description,
         parameters: jsonSchema(cleanJsonSchema(tool.parameters)),
       },
-    ]),
+    ])
   );
 /**
  * Request body schema for chat endpoint
@@ -109,15 +107,17 @@ const PostRequestBodySchema = z.object({
  * Chat route handler
  * Handles AI chat functionality using OpenAI models
  */
-const chat = new Hono<{ Bindings: Env }>()
-  .post('/chat', zValidator('json', PostRequestBodySchema), async (c) => {
+const chat = new Hono<{ Bindings: Env }>().post(
+  '/chat',
+  zValidator('json', PostRequestBodySchema),
+  async (c) => {
     const { messages, system, tools } = c.req.valid('json');
-    const newTools = frontendTools(tools)
-    Object.keys(newTools).forEach(key => {
-      if(key.length > 60){
-        console.log(JSON.stringify({ key, tool: newTools[key] }, null, 3))
+    const newTools = frontendTools(tools);
+    Object.keys(newTools).forEach((key) => {
+      if (key.length > 60) {
+        console.log(JSON.stringify({ key, tool: newTools[key] }, null, 3));
       }
-    })
+    });
 
     const openai = createOpenAI({
       // @ts-ignore
@@ -129,7 +129,7 @@ const chat = new Hono<{ Bindings: Env }>()
       model: openai('gpt-5', {
         parallelToolCalls: false,
         reasoningEffort: 'low',
-        serviceTier: 'priority'
+        serviceTier: 'priority',
       }),
       messages,
 
@@ -148,6 +148,7 @@ const chat = new Hono<{ Bindings: Env }>()
         return error instanceof Error ? error.message : 'Unknown error';
       },
     });
-  });
+  }
+);
 
 export default chat;

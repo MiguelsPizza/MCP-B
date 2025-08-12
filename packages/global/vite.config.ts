@@ -3,7 +3,7 @@ import monkey from 'vite-plugin-monkey';
 
 export default defineConfig({
   optimizeDeps: {
-    include: ['@mcp-b/transports', '@modelcontextprotocol/sdk']
+    include: ['@mcp-b/transports', '@modelcontextprotocol/sdk'],
   },
   plugins: [
     monkey({

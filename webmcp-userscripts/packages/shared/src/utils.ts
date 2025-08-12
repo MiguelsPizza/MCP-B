@@ -1,6 +1,3 @@
-
-
-
 /**
  * Wait for DOM element to be available
  */
@@ -15,7 +12,7 @@ export function waitForElement(
       resolve(element);
       return;
     }
-    
+
     const observer = new MutationObserver(() => {
       const element = root.querySelector(selector);
       if (element) {
@@ -23,12 +20,12 @@ export function waitForElement(
         resolve(element);
       }
     });
-    
+
     observer.observe(root, {
       childList: true,
       subtree: true,
     });
-    
+
     setTimeout(() => {
       observer.disconnect();
       reject(new Error(`Element ${selector} not found within ${timeout}ms`));
@@ -68,22 +65,22 @@ export async function retry<T>(
   baseDelay = 1000
 ): Promise<T> {
   let lastError: Error | undefined;
-  
+
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await operation();
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
-      
+
       if (attempt === maxAttempts) {
         throw lastError;
       }
-      
+
       const delayMs = baseDelay * 2 ** (attempt - 1);
       await delay(delayMs);
     }
   }
-  
+
   throw lastError;
 }
 
@@ -93,7 +90,7 @@ export async function retry<T>(
 export function log(level: 'info' | 'warn' | 'error', message: string, ...args: any[]): void {
   const timestamp = new Date().toISOString();
   const prefix = `[MCP-B ${timestamp}]`;
-  
+
   switch (level) {
     case 'info':
       console.log(prefix, message, ...args);

@@ -1,4 +1,3 @@
-
 // Tampermonkey Script Metadata
 export interface UserScriptMetadata {
   name: string;

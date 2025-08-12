@@ -23,7 +23,7 @@ class GoogleMcpServer {
           tools: { listChanged: true },
         },
         instructions:
-          'Google.com tools: read page title, extract search query, read search results, and navigate paginated results.'
+          'Google.com tools: read page title, extract search query, read search results, and navigate paginated results.',
       }
     );
 
@@ -42,12 +42,22 @@ class GoogleMcpServer {
   }
 
   private format(data: unknown) {
-    return { content: [{ type: 'text' as const, text: typeof data === 'string' ? data : JSON.stringify(data, null, 2) }] };
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: typeof data === 'string' ? data : JSON.stringify(data, null, 2),
+        },
+      ],
+    };
   }
 
   private formatError(error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    return { content: [{ type: 'text' as const, text: `Error: ${message}` }], isError: true as const };
+    return {
+      content: [{ type: 'text' as const, text: `Error: ${message}` }],
+      isError: true as const,
+    };
   }
 
   private getSearchQuery(): string | null {
@@ -96,7 +106,9 @@ class GoogleMcpServer {
     }> = [];
 
     // Heuristic: organic results typically have an anchor with an <h3> inside under #search
-    const h3Nodes = Array.from(document.querySelectorAll('div#search a h3')) as HTMLHeadingElement[];
+    const h3Nodes = Array.from(
+      document.querySelectorAll('div#search a h3')
+    ) as HTMLHeadingElement[];
     let index = 0;
     for (const h3 of h3Nodes) {
       const anchor = h3.closest('a') as HTMLAnchorElement | null;
@@ -115,11 +127,18 @@ class GoogleMcpServer {
 
       // Displayed URL (sometimes inside cite or span)
       const displayedUrlEl =
-        container?.querySelector('span.TPc9gc, cite, div.BTtC6e, span.VuuXrf') || anchor.querySelector('cite');
+        container?.querySelector('span.TPc9gc, cite, div.BTtC6e, span.VuuXrf') ||
+        anchor.querySelector('cite');
       const displayedUrl = displayedUrlEl?.textContent?.trim() || null;
 
       index += 1;
-      results.push({ position: index, title: title || 'Untitled result', url: anchor.href, displayedUrl, snippet });
+      results.push({
+        position: index,
+        title: title || 'Untitled result',
+        url: anchor.href,
+        displayedUrl,
+        snippet,
+      });
       if (results.length >= maxResults) break;
     }
 
@@ -136,9 +155,10 @@ class GoogleMcpServer {
         'extract_search_query',
         {
           title: 'Extract Search Query',
-          description: 'Read the current Google search query from the search box or URL parameter q',
+          description:
+            'Read the current Google search query from the search box or URL parameter q',
           inputSchema: {},
-          annotations: { readOnlyHint: true, idempotentHint: true }
+          annotations: { readOnlyHint: true, idempotentHint: true },
         },
         async () => {
           try {
@@ -157,7 +177,7 @@ class GoogleMcpServer {
           title: 'Run Search',
           description: 'Navigate to a Google results page for the provided query',
           inputSchema: { query: z.string().min(1).describe('Search terms') },
-          annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: true }
+          annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: true },
         },
         async ({ query }: { query: string }) => {
           try {
@@ -175,7 +195,8 @@ class GoogleMcpServer {
         'get_search_results',
         {
           title: 'Get Search Results',
-          description: 'Return a list of organic search results (title, url, snippet, displayedUrl)',
+          description:
+            'Return a list of organic search results (title, url, snippet, displayedUrl)',
           inputSchema: {
             maxResults: z
               .number()
@@ -191,7 +212,9 @@ class GoogleMcpServer {
           try {
             const query = this.getSearchQuery();
             if (!query) {
-              return this.formatError('No search query detected. Navigate to a results page first.');
+              return this.formatError(
+                'No search query detected. Navigate to a results page first.'
+              );
             }
             const results = this.parseSearchResults(maxResults ?? 10);
             return this.format({ query, results });
@@ -233,7 +256,9 @@ class GoogleMcpServer {
         {
           title: 'Go To Results Page',
           description: 'Navigate to a specific results page number (1-based)',
-          inputSchema: { page: z.number().int().min(1).describe('Results page number, starting at 1') },
+          inputSchema: {
+            page: z.number().int().min(1).describe('Results page number, starting at 1'),
+          },
           annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: true },
         },
         async ({ page }: { page: number }) => {
@@ -340,5 +365,3 @@ window.addEventListener('beforeunload', () => {
 });
 
 log('info', 'Google MCP Server script loaded');
-
-

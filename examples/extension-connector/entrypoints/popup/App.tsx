@@ -1,16 +1,16 @@
 /**
  * MCP Connector Extension - Popup UI Component
- * 
+ *
  * This React component provides the user interface for the MCP Connector extension.
  * It displays connection status, lists available tools, and allows tool execution.
- * 
+ *
  * Features:
  * - Real-time connection status display
  * - Tool discovery with category filtering (All/Extension/Website)
  * - Dynamic tool list updates via Chrome message passing
  * - JSON-based tool argument input
  * - Result display with error handling
- * 
+ *
  * @module popup/App
  */
 
@@ -31,7 +31,7 @@ interface ToolResult {
 
 /**
  * Main Popup Component
- * 
+ *
  * This component manages:
  * - Connection lifecycle (connect/disconnect)
  * - Tool discovery and filtering
@@ -44,12 +44,12 @@ export default function App() {
     connected: false,
     extensionId: '',
   });
-  
+
   // Tool management
   const [tools, setTools] = useState<Tool[]>([]);
   const [selectedTool, setSelectedTool] = useState<string>('');
   const [toolArgs, setToolArgs] = useState<string>('{}');
-  
+
   // UI state
   const [result, setResult] = useState<ToolResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -91,7 +91,7 @@ export default function App() {
     // Register event listeners
     chrome.storage.onChanged.addListener(handleStorageChange);
     chrome.runtime.onMessage.addListener(handleMessage);
-    
+
     // Cleanup listeners on unmount
     return () => {
       chrome.storage.onChanged.removeListener(handleStorageChange);
@@ -110,9 +110,9 @@ export default function App() {
         setResult({ type: 'error', error: response.error });
       }
     } catch (error) {
-      setResult({ 
-        type: 'error', 
-        error: error instanceof Error ? error.message : 'Connection failed' 
+      setResult({
+        type: 'error',
+        error: error instanceof Error ? error.message : 'Connection failed',
       });
     } finally {
       setLoading(false);
@@ -129,9 +129,9 @@ export default function App() {
       setTools([]);
       setResult(null);
     } catch (error) {
-      setResult({ 
-        type: 'error', 
-        error: error instanceof Error ? error.message : 'Disconnect failed' 
+      setResult({
+        type: 'error',
+        error: error instanceof Error ? error.message : 'Disconnect failed',
       });
     } finally {
       setLoading(false);
@@ -169,14 +169,14 @@ export default function App() {
             setResult({ type: 'success', data: { tools: response.tools } });
           }
       }
-      
+
       if (response.error) {
         setResult({ type: 'error', error: response.error });
       }
     } catch (error) {
-      setResult({ 
-        type: 'error', 
-        error: error instanceof Error ? error.message : 'Failed to refresh tools' 
+      setResult({
+        type: 'error',
+        error: error instanceof Error ? error.message : 'Failed to refresh tools',
       });
     } finally {
       setLoading(false);
@@ -218,9 +218,9 @@ export default function App() {
         setResult({ type: 'success', data: response.result });
       }
     } catch (error) {
-      setResult({ 
-        type: 'error', 
-        error: error instanceof Error ? error.message : 'Tool call failed' 
+      setResult({
+        type: 'error',
+        error: error instanceof Error ? error.message : 'Tool call failed',
       });
     } finally {
       setLoading(false);
@@ -230,7 +230,7 @@ export default function App() {
   /**
    * Filter tools based on active tab selection
    */
-  const filteredTools = tools.filter(tool => {
+  const filteredTools = tools.filter((tool) => {
     if (activeTab === 'extension') return tool.name.startsWith('extension_');
     if (activeTab === 'website') return tool.name.startsWith('website_');
     return true;
@@ -239,7 +239,7 @@ export default function App() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">MCP Connector Extension</h1>
-      
+
       {/* Connection Status Section */}
       <div className="mb-4 p-3 bg-gray-100 rounded">
         <div className="flex items-center justify-between">
@@ -280,9 +280,7 @@ export default function App() {
               <button
                 onClick={() => setActiveTab('all')}
                 className={`px-3 py-1 rounded ${
-                  activeTab === 'all'
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 hover:bg-gray-300'
+                  activeTab === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
                 }`}
               >
                 All Tools
@@ -340,9 +338,7 @@ export default function App() {
 
           {/* Tool Arguments Input */}
           <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2">
-              Arguments (JSON)
-            </label>
+            <label className="block text-sm font-semibold mb-2">Arguments (JSON)</label>
             <textarea
               value={toolArgs}
               onChange={(e) => setToolArgs(e.target.value)}
@@ -367,17 +363,13 @@ export default function App() {
           {/* Result Display */}
           {result && (
             <div
-              className={`p-3 rounded ${
-                result.type === 'success' ? 'bg-green-50' : 'bg-red-50'
-              }`}
+              className={`p-3 rounded ${result.type === 'success' ? 'bg-green-50' : 'bg-red-50'}`}
             >
               <div className="font-semibold mb-2">
                 {result.type === 'success' ? 'Result:' : 'Error:'}
               </div>
               <pre className="text-xs overflow-auto max-h-48 p-2 bg-white rounded">
-                {result.type === 'success'
-                  ? JSON.stringify(result.data, null, 2)
-                  : result.error}
+                {result.type === 'success' ? JSON.stringify(result.data, null, 2) : result.error}
               </pre>
             </div>
           )}

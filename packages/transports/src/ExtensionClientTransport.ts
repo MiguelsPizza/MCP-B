@@ -54,7 +54,7 @@ export interface ExtensionClientTransportOptions {
  * Client transport for Chrome extensions using Port-based messaging.
  * This transport can be used in content scripts, popup scripts, or sidepanel scripts
  * to connect to a server running in the background service worker.
- * 
+ *
  * Features automatic reconnection to handle background service worker lifecycle.
  */
 export class ExtensionClientTransport implements Transport {
@@ -105,7 +105,7 @@ export class ExtensionClientTransport implements Transport {
 
     this._isStarted = true;
     this._isClosed = false;
-    
+
     await this._connect();
   }
 
@@ -150,7 +150,7 @@ export class ExtensionClientTransport implements Transport {
         // Set up disconnect handler
         this._disconnectHandler = () => {
           this._cleanup();
-          
+
           // Only attempt reconnection if we're started and not manually closed
           if (this._isStarted && !this._isClosed && this._autoReconnect) {
             this._scheduleReconnect();
@@ -166,13 +166,13 @@ export class ExtensionClientTransport implements Transport {
         const error = chrome.runtime.lastError;
         if (error) {
           this._cleanup();
-          
+
           // If we're reconnecting and hit an error, schedule another attempt
           if (this._isReconnecting && this._isStarted && !this._isClosed && this._autoReconnect) {
             reject(new Error(`Connection failed: ${error.message}`));
             return;
           }
-          
+
           reject(new Error(`Connection failed: ${error.message}`));
           return;
         }
@@ -218,7 +218,7 @@ export class ExtensionClientTransport implements Transport {
   async close(): Promise<void> {
     this._isClosed = true;
     this._isStarted = false;
-    
+
     // Cancel any pending reconnection
     if (this._reconnectTimer) {
       clearTimeout(this._reconnectTimer);
@@ -272,7 +272,7 @@ export class ExtensionClientTransport implements Transport {
     }
 
     this._reconnectAttempts++;
-    
+
     console.log(
       `Scheduling reconnection attempt ${this._reconnectAttempts}/${this._maxReconnectAttempts} in ${this._currentReconnectDelay}ms`
     );
@@ -308,15 +308,14 @@ export class ExtensionClientTransport implements Transport {
 
       // Attempt to connect
       await this._connect();
-      
+
       console.log('Reconnection successful');
       this._isReconnecting = false;
     } catch (error) {
       console.error('Reconnection failed:', error);
-      
+
       // Schedule another attempt
       this._scheduleReconnect();
     }
   }
-
 }

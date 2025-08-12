@@ -110,7 +110,10 @@ async function initializeEditor() {
 
       try {
         // Get content from the text model using getValue()
-        let content = currentDoc && typeof currentDoc.getValue === 'function' ? currentDoc.getValue() : undefined;
+        let content =
+          currentDoc && typeof currentDoc.getValue === 'function'
+            ? currentDoc.getValue()
+            : undefined;
         if (content == null) {
           try {
             // Re-open the document if needed
@@ -221,7 +224,9 @@ async function saveUserscript(id, content) {
   try {
     await chrome.storage.local.set({ [storageKey]: content });
     // Also persist a pointer to the last saved script for convenience
-    await chrome.storage.local.set({ 'webmcp:userscripts:last': { id, content, savedAt: Date.now() } });
+    await chrome.storage.local.set({
+      'webmcp:userscripts:last': { id, content, savedAt: Date.now() },
+    });
   } catch (e) {
     console.error('Failed to persist userscript', e);
     throw e;

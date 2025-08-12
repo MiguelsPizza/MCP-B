@@ -15,23 +15,20 @@ export default defineConfig({
         grant: ['GM.info', 'unsafeWindow'],
         license: 'MIT',
         homepageURL: 'https://github.com/WebMCP-org/webmcp-userscripts',
-        supportURL: 'https://github.com/WebMCP-org/webmcp-userscripts/issues'
+        supportURL: 'https://github.com/WebMCP-org/webmcp-userscripts/issues',
       },
       build: {
         fileName: 'hackernews.user.js',
         metaFileName: true,
-        autoGrant: true
+        autoGrant: true,
       },
       server: {
         open: true,
-        prefix: 'dev:'
-      }
-    })
+        prefix: 'dev:',
+      },
+    }),
   ],
   build: {
-    minify: false
-  }
+    minify: false,
+  },
 });
-
-
-

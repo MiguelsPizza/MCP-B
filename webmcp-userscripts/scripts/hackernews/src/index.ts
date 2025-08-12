@@ -31,7 +31,7 @@ class HackerNewsMcpServer {
       { name: 'Hacker News MCP Server', version: '1.0.0' },
       {
         capabilities: { tools: { listChanged: true } },
-        instructions: 'Tools for reading Hacker News front page posts and clicking into a post.'
+        instructions: 'Tools for reading Hacker News front page posts and clicking into a post.',
       }
     );
 
@@ -51,12 +51,22 @@ class HackerNewsMcpServer {
   }
 
   private format(data: unknown) {
-    return { content: [{ type: 'text' as const, text: typeof data === 'string' ? data : JSON.stringify(data, null, 2) }] };
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: typeof data === 'string' ? data : JSON.stringify(data, null, 2),
+        },
+      ],
+    };
   }
 
   private formatError(error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    return { content: [{ type: 'text' as const, text: `Error: ${message}` }], isError: true as const };
+    return {
+      content: [{ type: 'text' as const, text: `Error: ${message}` }],
+      isError: true as const,
+    };
   }
 
   private parseFrontPage(maxResults: number = 30): HackerNewsPost[] {
@@ -66,7 +76,8 @@ class HackerNewsMcpServer {
     let position = 0;
     for (const row of rows) {
       const id = row.getAttribute('id');
-      const titleAnchor = (row.querySelector('.titleline a') || row.querySelector('a.storylink')) as HTMLAnchorElement | null;
+      const titleAnchor = (row.querySelector('.titleline a') ||
+        row.querySelector('a.storylink')) as HTMLAnchorElement | null;
       if (!titleAnchor) continue;
 
       const siteEl = row.querySelector('.sitestr') as HTMLElement | null;
@@ -75,8 +86,11 @@ class HackerNewsMcpServer {
       const scoreText = subtext?.querySelector('.score')?.textContent || null;
       const score = scoreText ? Number.parseInt(scoreText, 10) : null;
 
-      const commentAnchorCandidates = subtext ? Array.from(subtext.querySelectorAll('a')) as HTMLAnchorElement[] : [];
-      const commentsAnchor = commentAnchorCandidates.reverse().find(a => /comment/i.test(a.textContent || '')) || null;
+      const commentAnchorCandidates = subtext
+        ? (Array.from(subtext.querySelectorAll('a')) as HTMLAnchorElement[])
+        : [];
+      const commentsAnchor =
+        commentAnchorCandidates.reverse().find(a => /comment/i.test(a.textContent || '')) || null;
       let commentsCount: number | null = null;
       if (commentsAnchor) {
         const match = (commentsAnchor.textContent || '').match(/(\d+)\s+comment/);
@@ -113,7 +127,8 @@ class HackerNewsMcpServer {
         'hn_get_posts',
         {
           title: 'HN Get Posts',
-          description: 'Read Hacker News front-page posts (title, url, id, site, score, commentsCount, author, age)',
+          description:
+            'Read Hacker News front-page posts (title, url, id, site, score, commentsCount, author, age)',
           inputSchema: {
             maxResults: z
               .number()
@@ -139,39 +154,65 @@ class HackerNewsMcpServer {
         'hn_click_post',
         {
           title: 'HN Click Post',
-          description: 'Click/navigate into a Hacker News post by index (1-based), id, or matching title text',
+          description:
+            'Click/navigate into a Hacker News post by index (1-based), id, or matching title text',
           inputSchema: {
-            index: z.number().int().min(1).optional().describe('1-based index of the post on the page'),
+            index: z
+              .number()
+              .int()
+              .min(1)
+              .optional()
+              .describe('1-based index of the post on the page'),
             id: z.string().optional().describe('The post id (tr.athing id)'),
-            titleIncludes: z.string().optional().describe('Case-insensitive substring to match post title'),
+            titleIncludes: z
+              .string()
+              .optional()
+              .describe('Case-insensitive substring to match post title'),
           },
           annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: true },
         },
-        async ({ index, id, titleIncludes }: { index?: number; id?: string; titleIncludes?: string }) => {
+        async ({
+          index,
+          id,
+          titleIncludes,
+        }: {
+          index?: number;
+          id?: string;
+          titleIncludes?: string;
+        }) => {
           try {
             let anchor: HTMLAnchorElement | null = null;
 
             if (id) {
               const row = document.querySelector(`tr.athing[id="${CSS.escape(id)}"]`);
-              anchor = (row?.querySelector('.titleline a') || row?.querySelector('a.storylink')) as HTMLAnchorElement | null;
+              anchor = (row?.querySelector('.titleline a') ||
+                row?.querySelector('a.storylink')) as HTMLAnchorElement | null;
             }
 
             if (!anchor && typeof index === 'number') {
-              const rows = Array.from(document.querySelectorAll('tr.athing')) as HTMLTableRowElement[];
+              const rows = Array.from(
+                document.querySelectorAll('tr.athing')
+              ) as HTMLTableRowElement[];
               const row = rows[index - 1];
               if (row) {
-                anchor = (row.querySelector('.titleline a') || row.querySelector('a.storylink')) as HTMLAnchorElement | null;
+                anchor = (row.querySelector('.titleline a') ||
+                  row.querySelector('a.storylink')) as HTMLAnchorElement | null;
               }
             }
 
             if (!anchor && titleIncludes) {
-              const allAnchors = Array.from(document.querySelectorAll('tr.athing .titleline a, tr.athing a.storylink')) as HTMLAnchorElement[];
+              const allAnchors = Array.from(
+                document.querySelectorAll('tr.athing .titleline a, tr.athing a.storylink')
+              ) as HTMLAnchorElement[];
               const needle = titleIncludes.toLowerCase();
-              anchor = allAnchors.find(a => (a.textContent || '').toLowerCase().includes(needle)) || null;
+              anchor =
+                allAnchors.find(a => (a.textContent || '').toLowerCase().includes(needle)) || null;
             }
 
             if (!anchor) {
-              return this.formatError('Could not find a matching post. Provide id, index, or titleIncludes.');
+              return this.formatError(
+                'Could not find a matching post. Provide id, index, or titleIncludes.'
+              );
             }
 
             const href = anchor.href;
@@ -237,5 +278,3 @@ window.addEventListener('beforeunload', () => {
 });
 
 log('info', 'Hacker News MCP Server script loaded');
-
-
