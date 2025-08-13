@@ -8,7 +8,7 @@ import { createInterface } from 'readline/promises';
 
 const rl = createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 
 console.log('Clearing native messaging configurations...\n');
@@ -31,20 +31,41 @@ async function removeFile(filePath) {
 // Define paths
 const home = homedir();
 const nativeHostPaths = [
-  join(home, 'Library/Application Support/Google/Chrome/NativeMessagingHosts/com.chromemcp.nativehost.json'),
-  join(home, 'Library/Application Support/Google/Chrome Beta/NativeMessagingHosts/com.chromemcp.nativehost.json'),
-  join(home, 'Library/Application Support/Google/Chrome Canary/NativeMessagingHosts/com.chromemcp.nativehost.json'),
-  join(home, 'Library/Application Support/Google/Chrome Dev/NativeMessagingHosts/com.chromemcp.nativehost.json'),
-  join(home, 'Library/Application Support/Chromium/NativeMessagingHosts/com.chromemcp.nativehost.json'),
+  join(
+    home,
+    'Library/Application Support/Google/Chrome/NativeMessagingHosts/com.chromemcp.nativehost.json'
+  ),
+  join(
+    home,
+    'Library/Application Support/Google/Chrome Beta/NativeMessagingHosts/com.chromemcp.nativehost.json'
+  ),
+  join(
+    home,
+    'Library/Application Support/Google/Chrome Canary/NativeMessagingHosts/com.chromemcp.nativehost.json'
+  ),
+  join(
+    home,
+    'Library/Application Support/Google/Chrome Dev/NativeMessagingHosts/com.chromemcp.nativehost.json'
+  ),
+  join(
+    home,
+    'Library/Application Support/Chromium/NativeMessagingHosts/com.chromemcp.nativehost.json'
+  ),
 ];
 
 // WXT persistent profile path
-const wxtPath = join(process.cwd(), 'extension/.wxt/chrome-data/NativeMessagingHosts/com.chromemcp.nativehost.json');
+const wxtPath = join(
+  process.cwd(),
+  'extension/.wxt/chrome-data/NativeMessagingHosts/com.chromemcp.nativehost.json'
+);
 
 // MCP configuration paths
 const mcpConfigs = [
   { path: join(home, '.cursor/mcp.json'), name: 'Cursor MCP config' },
-  { path: join(home, 'Library/Application Support/Claude/claude_desktop_config.json'), name: 'Claude Desktop config' }
+  {
+    path: join(home, 'Library/Application Support/Claude/claude_desktop_config.json'),
+    name: 'Claude Desktop config',
+  },
 ];
 
 async function main() {
@@ -70,7 +91,7 @@ async function main() {
     if (existsSync(config.path)) {
       console.log(`Found ${config.name} at: ${config.path}`);
       const answer = await rl.question('Do you want to remove this file? (y/n) ');
-      
+
       if (answer.toLowerCase() === 'y') {
         if (await removeFile(config.path)) {
           removedCount++;
