@@ -1,4 +1,4 @@
-import { createOpenAI } from '@ai-sdk/openai';
+import { anthropic } from '@ai-sdk/anthropic';
 import { zValidator } from '@hono/zod-validator';
 import { streamText } from 'ai';
 import { Env, Hono } from 'hono';
@@ -123,22 +123,10 @@ const chat = new Hono<{ Bindings: Env }>().post(
       }
     });
 
-    const openai = createOpenAI({
-      // @ts-ignore
-      apiKey: c.env.OPENAI_API_KEY,
-    });
-
     const result = streamText({
-      model: openai('gpt-5', {
-        parallelToolCalls: false,
-        reasoningEffort: 'low',
-        serviceTier: 'priority',
-      }),
+      model: anthropic('claude-sonnet-4-20250514'),
       messages,
-
-      toolCallStreaming: true,
       system,
-
       tools: {
         ...newTools,
       },
