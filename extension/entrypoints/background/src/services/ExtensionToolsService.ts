@@ -1,12 +1,17 @@
 import {
+  BookmarksApiTools,
   type BookmarksApiToolsOptions,
+  HistoryApiTools,
   type HistoryApiToolsOptions,
   ScriptingApiTools,
   type ScriptingApiToolsOptions,
+  StorageApiTools,
   type StorageApiToolsOptions,
+  TabGroupsApiTools,
   type TabGroupsApiToolsOptions,
   TabsApiTools,
   type TabsApiToolsOptions,
+  WindowsApiTools,
   type WindowsApiToolsOptions,
 } from '@mcp-b/extension-tools';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -41,13 +46,13 @@ export class ExtensionToolsService {
   private initializeApiTools(): void {
     // Initialize all API tool classes
     this.apiTools = [
-      // new BookmarksApiTools(this.server, this.options.bookmarks),
-      // new StorageApiTools(this.server, this.options.storage),
-      // new HistoryApiTools(this.server, this.options.history),
-      // new TabGroupsApiTools(this.server, this.options.tabGroups),
+      new BookmarksApiTools(this.server, this.options.bookmarks),
+      new StorageApiTools(this.server, this.options.storage),
+      new HistoryApiTools(this.server, this.options.history),
+      new TabGroupsApiTools(this.server, this.options.tabGroups),
       new TabsApiTools(this.server, this.options.tabs),
       new UserScriptTools(this.server, this.options.userScriptTools),
-      // new WindowsApiTools(this.server, this.options.windows),
+      new WindowsApiTools(this.server, this.options.windows),
       new ScriptingApiTools(this.server, this.options.scripting),
     ];
   }
