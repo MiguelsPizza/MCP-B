@@ -123,8 +123,11 @@ const chat = new Hono<{ Bindings: Env }>().post(
       }
     });
 
+    // @ts-ignore
+    const modelName = c.env.ANTHROPIC_MODEL_NAME ?? 'claude-sonnet-4-20250514';
+
     const result = streamText({
-      model: anthropic('claude-sonnet-4-20250514'),
+      model: anthropic(modelName),
       messages,
       system,
       tools: {
