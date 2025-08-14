@@ -1,7 +1,4 @@
-import {
-  createWorketFromSrc,
-  registeredWorklets,
-} from "./audioworklet-registry";
+import { createWorketFromSrc, registeredWorklets } from './audioworklet-registry';
 
 export class AudioStreamer {
   public audioQueue: Float32Array[] = [];
@@ -31,7 +28,7 @@ export class AudioStreamer {
   async addWorklet<T extends (d: any) => void>(
     workletName: string,
     workletSrc: string,
-    handler: T,
+    handler: T
   ): Promise<this> {
     let workletsRecord = registeredWorklets.get(this.context);
     if (workletsRecord && workletsRecord[workletName]) {
@@ -76,9 +73,7 @@ export class AudioStreamer {
       }
     }
 
-    const newBuffer = new Float32Array(
-      this.processingBuffer.length + float32Array.length,
-    );
+    const newBuffer = new Float32Array(this.processingBuffer.length + float32Array.length);
     newBuffer.set(this.processingBuffer);
     newBuffer.set(float32Array, this.processingBuffer.length);
     this.processingBuffer = newBuffer;
@@ -98,11 +93,7 @@ export class AudioStreamer {
   }
 
   private createAudioBuffer(audioData: Float32Array): AudioBuffer {
-    const audioBuffer = this.context.createBuffer(
-      1,
-      audioData.length,
-      this.sampleRate,
-    );
+    const audioBuffer = this.context.createBuffer(1, audioData.length, this.sampleRate);
     audioBuffer.getChannelData(0).set(audioData);
     return audioBuffer;
   }
@@ -124,10 +115,7 @@ export class AudioStreamer {
         }
         this.endOfQueueAudioSource = source;
         source.onended = () => {
-          if (
-            !this.audioQueue.length &&
-            this.endOfQueueAudioSource === source
-          ) {
+          if (!this.audioQueue.length && this.endOfQueueAudioSource === source) {
             this.endOfQueueAudioSource = null;
             this.onComplete();
           }
@@ -175,22 +163,15 @@ export class AudioStreamer {
       } else {
         if (!this.checkInterval) {
           this.checkInterval = window.setInterval(() => {
-            if (
-              this.audioQueue.length > 0 ||
-              this.processingBuffer.length >= this.bufferSize
-            ) {
+            if (this.audioQueue.length > 0 || this.processingBuffer.length >= this.bufferSize) {
               this.scheduleNextBuffer();
             }
           }, 100) as unknown as number;
         }
       }
     } else {
-      const nextCheckTime =
-        (this.scheduledTime - this.context.currentTime) * 1000;
-      setTimeout(
-        () => this.scheduleNextBuffer(),
-        Math.max(0, nextCheckTime - 50),
-      );
+      const nextCheckTime = (this.scheduledTime - this.context.currentTime) * 1000;
+      setTimeout(() => this.scheduleNextBuffer(), Math.max(0, nextCheckTime - 50));
     }
   }
 
@@ -206,10 +187,7 @@ export class AudioStreamer {
       this.checkInterval = null;
     }
 
-    this.gainNode.gain.linearRampToValueAtTime(
-      0,
-      this.context.currentTime + 0.1,
-    );
+    this.gainNode.gain.linearRampToValueAtTime(0, this.context.currentTime + 0.1);
 
     setTimeout(() => {
       this.gainNode.disconnect();
@@ -219,7 +197,7 @@ export class AudioStreamer {
   }
 
   async resume() {
-    if (this.context.state === "suspended") {
+    if (this.context.state === 'suspended') {
       await this.context.resume();
     }
     this.isStreamComplete = false;

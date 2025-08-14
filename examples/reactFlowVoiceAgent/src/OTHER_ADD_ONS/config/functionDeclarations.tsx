@@ -6,6 +6,4 @@ export const functionDeclarations = [
   // QUERY_DATABASE_DECLARATION,
   // EXECUTE_SHELL_COMMAND_DECLARATION,
   // RENDER_ALTAIR_DECLARATION,
-]
-
-
+];

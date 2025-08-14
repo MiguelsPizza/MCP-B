@@ -20,19 +20,17 @@ export type GetAudioContextOptions = AudioContextOptions & {
 
 const map: Map<string, AudioContext> = new Map();
 
-export const audioContext: (
-  options?: GetAudioContextOptions,
-) => Promise<AudioContext> = (() => {
+export const audioContext: (options?: GetAudioContextOptions) => Promise<AudioContext> = (() => {
   const didInteract = new Promise((res) => {
-    window.addEventListener("pointerdown", res, { once: true });
-    window.addEventListener("keydown", res, { once: true });
+    window.addEventListener('pointerdown', res, { once: true });
+    window.addEventListener('keydown', res, { once: true });
   });
 
   return async (options?: GetAudioContextOptions) => {
     try {
       const a = new Audio();
       a.src =
-        "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+        'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
       await a.play();
       if (options?.id && map.has(options.id)) {
         const ctx = map.get(options.id);
@@ -70,7 +68,7 @@ export const blobToJSON = (blob: Blob) =>
         const json = JSON.parse(reader.result as string);
         resolve(json);
       } else {
-        reject("oops");
+        reject('oops');
       }
     };
     reader.readAsText(blob);

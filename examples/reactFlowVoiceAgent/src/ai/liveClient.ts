@@ -1,6 +1,6 @@
-import type { Content, GenerativeContentBlob, Part } from "@google/generative-ai";
-import { EventEmitter } from "eventemitter3";
-import { difference } from "lodash";
+import type { Content, GenerativeContentBlob, Part } from '@google/generative-ai';
+import { EventEmitter } from 'eventemitter3';
+import { difference } from 'lodash';
 import {
   type ClientContentMessage,
   isInterrupted,
@@ -25,8 +25,8 @@ import {
   type ShellCommandResponse,
   type LiveConfig,
   type ShellResponseMessage,
-} from "../lib/live-types";
-import { blobToJSON, base64ToArrayBuffer } from "../lib/utils";
+} from '../lib/live-types';
+import { blobToJSON, base64ToArrayBuffer } from '../lib/utils';
 
 /**
  * the events that this client will emit
@@ -51,13 +51,7 @@ export type MultimodalLiveAPIClientConnection = {
   apiKey: string;
 };
 
-
-
-
-let fullResponse = ""
-
-
-
+let fullResponse = '';
 
 /**
  * A event-emitting class that manages the connection to the websocket and emits
@@ -67,7 +61,7 @@ let fullResponse = ""
 export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEventTypes> {
   public ws: WebSocket | null = null;
   protected config: LiveConfig | null = null;
-  public url: string = "";
+  public url: string = '';
   public getConfig() {
     return { ...this.config };
   }
@@ -99,11 +93,11 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
 
     const ws = new WebSocket(this.url);
 
-    ws.addEventListener("message", async (evt: MessageEvent) => {
+    ws.addEventListener('message', async (evt: MessageEvent) => {
       if (evt.data instanceof Blob) {
         this.receive(evt.data);
       } else {
-        console.log("non blob message", evt);
+        console.log('non blob message', evt);
       }
     });
     return new Promise((resolve, reject) => {
@@ -113,14 +107,14 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
         // this.log(`server.${ev.type}`, message);
         reject(new Error(message));
       };
-      ws.addEventListener("error", onError);
-      ws.addEventListener("open", (ev: Event) => {
+      ws.addEventListener('error', onError);
+      ws.addEventListener('open', (ev: Event) => {
         if (!this.config) {
-          reject("Invalid config sent to `connect(config)`");
+          reject('Invalid config sent to `connect(config)`');
           return;
         }
         // this.log(`client.${ev.type}`, `connected to socket`);
-        this.emit("open");
+        this.emit('open');
 
         this.ws = ws;
 
@@ -130,25 +124,22 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
         this._sendDirect(setupMessage);
         // this.log("client.send", "setup");
 
-        ws.removeEventListener("error", onError);
-        ws.addEventListener("close", (ev: CloseEvent) => {
+        ws.removeEventListener('error', onError);
+        ws.addEventListener('close', (ev: CloseEvent) => {
           this.disconnect(ws);
-          let reason = ev.reason || "";
-          if (reason.toLowerCase().includes("error")) {
-            const prelude = "ERROR]";
+          let reason = ev.reason || '';
+          if (reason.toLowerCase().includes('error')) {
+            const prelude = 'ERROR]';
             const preludeIndex = reason.indexOf(prelude);
             if (preludeIndex > 0) {
-              reason = reason.slice(
-                preludeIndex + prelude.length + 1,
-                Infinity,
-              );
+              reason = reason.slice(preludeIndex + prelude.length + 1, Infinity);
             }
           }
           // this.log(
           //   `server.${ev.type}`,
           //   `disconnected ${reason ? `with reason: ${reason}` : ``}`,
           // );
-          this.emit("close", reason);
+          this.emit('close', reason);
         });
         resolve(true);
       });
@@ -170,40 +161,37 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
   protected async receive(blob: Blob) {
     // console.log("receive", blob);
 
-    const response: LiveIncomingMessage = (await blobToJSON(
-      blob,
-    )) as LiveIncomingMessage;
+    const response: LiveIncomingMessage = (await blobToJSON(blob)) as LiveIncomingMessage;
 
-    
     if (isToolCallMessage(response)) {
       // console.log("response", response);
-      
-      fullResponse = "";
-      this.emit("toolcall", response.toolCall);
+
+      fullResponse = '';
+      this.emit('toolcall', response.toolCall);
       return;
     }
 
     if (isToolCallCancellationMessage(response)) {
       // this.log("receive.toolCallCancellation", response);
-      this.emit("toolcallcancellation", response.toolCallCancellation);
+      this.emit('toolcallcancellation', response.toolCallCancellation);
       return;
     }
 
     if (isShellCommandMessage(response)) {
       // this.log("server.shellCommand", response);
-      this.emit("shellcommand", response.shellCommand.command);
+      this.emit('shellcommand', response.shellCommand.command);
       return;
     }
 
     if (isShellResponseMessage(response)) {
       // this.log("server.shellResponse", response);
-      this.emit("shellresponse", response.shellResponse);
+      this.emit('shellresponse', response.shellResponse);
       return;
     }
 
     if (isSetupCompleteMessage(response)) {
       // this.log("server.send", "setupComplete");
-      this.emit("setupcomplete");
+      this.emit('setupcomplete');
       return;
     }
 
@@ -213,14 +201,14 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
       const { serverContent } = response;
       if (isInterrupted(serverContent)) {
         // this.log("receive.serverContent", "interrupted");
-        this.emit("interrupted");
+        this.emit('interrupted');
         return;
       }
       if (isTurnComplete(serverContent)) {
         // this.log("server.send", "turnComplete");
-        this.emit("turncomplete", fullResponse);
-        fullResponse = "";
-        
+        this.emit('turncomplete', fullResponse);
+        fullResponse = '';
+
         //plausible theres more to the message, continue
       }
 
@@ -229,21 +217,21 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
 
         // when its audio that is returned for modelTurn
         const audioParts = parts.filter(
-          (p) => p.inlineData && p.inlineData.mimeType.startsWith("audio/pcm"),
+          (p) => p.inlineData && p.inlineData.mimeType.startsWith('audio/pcm')
         );
         const base64s = audioParts.map((p) => p.inlineData?.data);
 
         // strip the audio parts out of the modelTurn
         const otherParts = difference(parts, audioParts);
 
-        const part = otherParts.map((p) => p.text).join("");
+        const part = otherParts.map((p) => p.text).join('');
         fullResponse += part;
 
         base64s.forEach((b64) => {
           if (b64) {
             const data = base64ToArrayBuffer(b64);
-            console.log("data", data);
-            this.emit("audio", data);
+            console.log('data', data);
+            this.emit('audio', data);
             // this.log(`server.audio`, `buffer (${data.byteLength})`);
           }
         });
@@ -254,11 +242,11 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
         parts = otherParts;
 
         const content: ModelTurn = { modelTurn: { parts } };
-        this.emit("content", content);
+        this.emit('content', content);
         // this.log(`server.content`, response);
       }
     } else {
-      console.log("received unmatched message", response);
+      console.log('received unmatched message', response);
     }
   }
 
@@ -300,10 +288,10 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
     let hasVideo = false;
     for (let i = 0; i < chunks.length; i++) {
       const ch = chunks[i];
-      if (ch.mimeType.includes("audio")) {
+      if (ch.mimeType.includes('audio')) {
         hasAudio = true;
       }
-      if (ch.mimeType.includes("image")) {
+      if (ch.mimeType.includes('image')) {
         hasVideo = true;
       }
       if (hasAudio && hasVideo) {
@@ -311,13 +299,7 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
       }
     }
     const message =
-      hasAudio && hasVideo
-        ? "audio + video"
-        : hasAudio
-          ? "audio"
-          : hasVideo
-            ? "video"
-            : "unknown";
+      hasAudio && hasVideo ? 'audio + video' : hasAudio ? 'audio' : hasVideo ? 'video' : 'unknown';
 
     const data: RealtimeInputMessage = {
       realtimeInput: {
@@ -331,7 +313,7 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
   /**
    *  send a response to a function call and provide the id of the functions you are responding to
    */
-  sendToolResponse(toolResponse: ToolResponseMessage["toolResponse"]) {
+  sendToolResponse(toolResponse: ToolResponseMessage['toolResponse']) {
     const message: ToolResponseMessage = {
       toolResponse,
     };
@@ -346,7 +328,7 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
   send(parts: Part | Part[], turnComplete: boolean = true) {
     parts = Array.isArray(parts) ? parts : [parts];
     const content: Content = {
-      role: "user",
+      role: 'user',
       parts,
     };
 
@@ -365,9 +347,17 @@ export class MultimodalLiveClient extends EventEmitter<MultimodalLiveClientEvent
    *  used internally to send all messages
    *  don't use directly unless trying to send an unsupported message type
    */
-  _sendDirect(request: SetupMessage | ClientContentMessage | ToolResponseMessage | RealtimeInputMessage | ShellCommandMessage | ShellResponseMessage) {
+  _sendDirect(
+    request:
+      | SetupMessage
+      | ClientContentMessage
+      | ToolResponseMessage
+      | RealtimeInputMessage
+      | ShellCommandMessage
+      | ShellResponseMessage
+  ) {
     if (!this.ws) {
-      throw new Error("WebSocket is not connected");
+      throw new Error('WebSocket is not connected');
     }
     const str = JSON.stringify(request);
     this.ws.send(str);

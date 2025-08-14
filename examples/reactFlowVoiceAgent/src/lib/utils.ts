@@ -1,14 +1,11 @@
 import { type Node, type NodeTypes } from 'reactflow';
 
-
 import { MCP_SERVERS, type MCP_SERVERS_CONFIG } from '../config/mcp_config.ts';
 import type { LiveConfig, MCPTool } from './live-types.ts';
 
 import { type FunctionDeclaration } from '@google/generative-ai';
 
-
 import { CONST_CONFIG, LLM_CONFIG } from '../config/ai_config';
-
 
 export type GetAudioContextOptions = AudioContextOptions & {
   id?: string;
@@ -16,19 +13,17 @@ export type GetAudioContextOptions = AudioContextOptions & {
 
 const map: Map<string, AudioContext> = new Map();
 
-export const audioContext: (
-  options?: GetAudioContextOptions,
-) => Promise<AudioContext> = (() => {
+export const audioContext: (options?: GetAudioContextOptions) => Promise<AudioContext> = (() => {
   const didInteract = new Promise((res) => {
-    window.addEventListener("pointerdown", res, { once: true });
-    window.addEventListener("keydown", res, { once: true });
+    window.addEventListener('pointerdown', res, { once: true });
+    window.addEventListener('keydown', res, { once: true });
   });
 
   return async (options?: GetAudioContextOptions) => {
     try {
       const a = new Audio();
       a.src =
-        "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA";
+        'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
       await a.play();
       if (options?.id && map.has(options.id)) {
         const ctx = map.get(options.id);
@@ -66,7 +61,7 @@ export const blobToJSON = (blob: Blob) =>
         const json = JSON.parse(reader.result as string);
         resolve(json);
       } else {
-        reject("oops");
+        reject('oops');
       }
     };
     reader.readAsText(blob);
@@ -81,11 +76,6 @@ export function base64ToArrayBuffer(base64: string) {
   return bytes.buffer;
 }
 
-
-
-
-
-
 // Helper functions
 export const createMCPServerNode = (id: string, config: MCP_SERVERS_CONFIG): Node => ({
   id,
@@ -99,14 +89,11 @@ export const createMCPServerNode = (id: string, config: MCP_SERVERS_CONFIG): Nod
   },
 });
 
-
 export const isMCPServer = (nodeId: string | null): nodeId is keyof typeof MCP_SERVERS => {
   if (!nodeId) return false;
-  
+
   return nodeId in MCP_SERVERS;
 };
-
-
 
 export const initialNodes: Node[] = [
   {
@@ -118,23 +105,9 @@ export const initialNodes: Node[] = [
   ...Object.entries(MCP_SERVERS).map(([id, config]) => createMCPServerNode(id, config)),
 ];
 
-
-
-
-
-
-
-
-
-
-
-
-
 export const getServerName = (serverId: string): string => {
   return isMCPServer(serverId) ? MCP_SERVERS[serverId].label : serverId;
 };
-
-
 
 // CONVERT MCP PARAMETERS TO GEMINI LIVE API FORMAT
 export const convertMCPParams = (params: any): any => {
@@ -146,26 +119,20 @@ export const convertMCPParams = (params: any): any => {
   for (const [key, value] of Object.entries(params.properties)) {
     const param = value as any;
     properties[key] = {
-      type: param.type || "string",
+      type: param.type || 'string',
       description: param.description || key,
       // Add format and other OpenAPI schema properties if they exist
       ...(param.format && { format: param.format }),
       ...(param.enum && { enum: param.enum }),
-      ...(param.items && { items: param.items })
+      ...(param.items && { items: param.items }),
     };
   }
-  
+
   return properties;
 };
 
-
-
-
-
-
-
- // CREATE LIVE CONFIG WITH MCP TOOLS  
- export const createLiveConfigWithTools = (mcpTools: MCPTool[]): LiveConfig => {
+// CREATE LIVE CONFIG WITH MCP TOOLS
+export const createLiveConfigWithTools = (mcpTools: MCPTool[]): LiveConfig => {
   if (mcpTools.length === 0) {
     return LLM_CONFIG;
   }
@@ -173,31 +140,32 @@ export const convertMCPParams = (params: any): any => {
   // console.log('🔧 Converting MCP tools to Live API format:', mcpTools);
 
   // Convert MCP tools to proper Live API FunctionDeclaration format
-  const mcpFunctionDeclarations = mcpTools.map(tool => {
+  const mcpFunctionDeclarations = mcpTools.map((tool) => {
     const functionDeclaration = {
       name: tool.name,
       description: tool.description || `Execute ${tool.name}`,
       parameters: {
-        type: "object",
+        type: 'object',
         properties: convertMCPParams(tool.parameters),
-        required: tool.parameters?.required || []
-      }
+        required: tool.parameters?.required || [],
+      },
     };
-    
+
     // console.log(`📋 Function declaration for ${tool.name}:`, functionDeclaration);
     return functionDeclaration;
   });
 
-
   // Create the tools array in the correct LiveConfig format
-  const tools: LiveConfig['tools'] = [{
-    functionDeclarations: mcpFunctionDeclarations as FunctionDeclaration[]
-  }];
+  const tools: LiveConfig['tools'] = [
+    {
+      functionDeclarations: mcpFunctionDeclarations as FunctionDeclaration[],
+    },
+  ];
 
   // console.log('🎯 Final Live API config tools:', tools);
 
   return {
     ...LLM_CONFIG,
-    tools: tools
+    tools: tools,
   };
 };

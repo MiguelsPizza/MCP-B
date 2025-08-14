@@ -1,8 +1,7 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { TabServerTransport } from '@mcp-b/transports'
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { TabServerTransport } from '@mcp-b/transports';
 
-import { z } from 'zod'
-
+import { z } from 'zod';
 
 function createTransport(): TabServerTransport {
   const transport = new TabServerTransport({
@@ -12,18 +11,13 @@ function createTransport(): TabServerTransport {
   return transport;
 }
 
-
-
-
 export async function setupCounter(element: HTMLButtonElement) {
-  
-
   const transport: TabServerTransport = createTransport();
   // const server = createMcpServer(element);
 
   const server = new McpServer({
-    name: "test-video",
-    version: "1.0.0",
+    name: 'test-video',
+    version: '1.0.0',
     capabilities: {
       tools: {},
       resources: {},
@@ -31,34 +25,36 @@ export async function setupCounter(element: HTMLButtonElement) {
     },
   });
 
-  let counter = 0
+  let counter = 0;
   const setCounter = (count: number) => {
-    counter = count
-    element.innerHTML = `count is ${counter}`
-  }
+    counter = count;
+    element.innerHTML = `count is ${counter}`;
+  };
 
   // Initialize the counter display
-  setCounter(0)
+  setCounter(0);
 
   // Add click handler for the button
-  element.addEventListener('click', () => setCounter(counter + 1))
+  element.addEventListener('click', () => setCounter(counter + 1));
 
   server.registerTool(
     'incrementCounter',
     {
       inputSchema: {
-        amount: z.number().optional().default(1)
-      }
+        amount: z.number().optional().default(1),
+      },
     },
     async ({ amount = 1 }) => {
-      const newCount = counter + amount
-      setCounter(newCount)
+      const newCount = counter + amount;
+      setCounter(newCount);
 
       return {
-        content: [{
-          type: 'text',
-          text: `Incremented counter by ${amount} to ${newCount}`
-        }]
+        content: [
+          {
+            type: 'text',
+            text: `Incremented counter by ${amount} to ${newCount}`,
+          },
+        ],
       };
     }
   );
@@ -67,17 +63,19 @@ export async function setupCounter(element: HTMLButtonElement) {
     'setCounter',
     {
       inputSchema: {
-        value: z.string()
-      }
+        value: z.string(),
+      },
     },
     async ({ value }) => {
-      setCounter(parseInt(value))
+      setCounter(parseInt(value));
 
       return {
-        content: [{
-          type: 'text',
-          text: `Set counter to ${value}`
-        }]
+        content: [
+          {
+            type: 'text',
+            text: `Set counter to ${value}`,
+          },
+        ],
       };
     }
   );
@@ -85,21 +83,22 @@ export async function setupCounter(element: HTMLButtonElement) {
   server.registerTool(
     'getCounter',
     {
-      inputSchema: {}
+      inputSchema: {},
     },
     async () => {
       return {
-        content: [{
-          type: 'text',
-          text: `Current counter value is ${counter}`
-        }]
+        content: [
+          {
+            type: 'text',
+            text: `Current counter value is ${counter}`,
+          },
+        ],
       };
     }
   );
 
   // Connect the server
   await server.connect(transport);
-  
+
   return server;
 }
-

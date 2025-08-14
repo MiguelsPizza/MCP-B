@@ -1,8 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-
-
 // Helper functions for math operations
 function add(a: number, b: number): number {
   return a + b;
@@ -46,14 +44,11 @@ function factorial(n: number): number {
   return result;
 }
 
-
-
-
 // MATH MCP SERVER
 export function createMcpServer(): McpServer {
   const server = new McpServer({
-    name: "math-mcp",
-    version: "1.0.0",
+    name: 'math-mcp',
+    version: '1.0.0',
     capabilities: {
       tools: {},
       resources: {},
@@ -66,27 +61,31 @@ export function createMcpServer(): McpServer {
     'add',
     {
       a: z.number().describe('First number'),
-      b: z.number().describe('Second number')
+      b: z.number().describe('Second number'),
     },
     async ({ a, b }) => {
       console.log(`➕ Math: Adding ${a} + ${b}`);
-      
+
       try {
         const result = add(a, b);
-        
+
         return {
-          content: [{
-            type: 'text',
-            text: `✅ ${a} + ${b} = ${result}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `✅ ${a} + ${b} = ${result}`,
+            },
+          ],
         };
       } catch (error) {
         console.error('Addition failed:', error);
         return {
-          content: [{
-            type: 'text',
-            text: `❌ Addition failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `❌ Addition failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+          ],
         };
       }
     }
@@ -96,27 +95,31 @@ export function createMcpServer(): McpServer {
     'subtract',
     {
       a: z.number().describe('First number (minuend)'),
-      b: z.number().describe('Second number (subtrahend)')
+      b: z.number().describe('Second number (subtrahend)'),
     },
     async ({ a, b }) => {
       console.log(`➖ Math: Subtracting ${a} - ${b}`);
-      
+
       try {
         const result = subtract(a, b);
-        
+
         return {
-          content: [{
-            type: 'text',
-            text: `✅ ${a} - ${b} = ${result}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `✅ ${a} - ${b} = ${result}`,
+            },
+          ],
         };
       } catch (error) {
         console.error('Subtraction failed:', error);
         return {
-          content: [{
-            type: 'text',
-            text: `❌ Subtraction failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `❌ Subtraction failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+          ],
         };
       }
     }
@@ -126,27 +129,31 @@ export function createMcpServer(): McpServer {
     'multiply',
     {
       a: z.number().describe('First number'),
-      b: z.number().describe('Second number')
+      b: z.number().describe('Second number'),
     },
     async ({ a, b }) => {
       console.log(`✖️ Math: Multiplying ${a} × ${b}`);
-      
+
       try {
         const result = multiply(a, b);
-        
+
         return {
-          content: [{
-            type: 'text',
-            text: `✅ ${a} × ${b} = ${result}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `✅ ${a} × ${b} = ${result}`,
+            },
+          ],
         };
       } catch (error) {
         console.error('Multiplication failed:', error);
         return {
-          content: [{
-            type: 'text',
-            text: `❌ Multiplication failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `❌ Multiplication failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+          ],
         };
       }
     }
@@ -156,27 +163,31 @@ export function createMcpServer(): McpServer {
     'divide',
     {
       a: z.number().describe('Dividend'),
-      b: z.number().describe('Divisor')
+      b: z.number().describe('Divisor'),
     },
     async ({ a, b }) => {
       console.log(`➗ Math: Dividing ${a} ÷ ${b}`);
-      
+
       try {
         const result = divide(a, b);
-        
+
         return {
-          content: [{
-            type: 'text',
-            text: `✅ ${a} ÷ ${b} = ${result}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `✅ ${a} ÷ ${b} = ${result}`,
+            },
+          ],
         };
       } catch (error) {
         console.error('Division failed:', error);
         return {
-          content: [{
-            type: 'text',
-            text: `❌ Division failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `❌ Division failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+          ],
         };
       }
     }
@@ -187,27 +198,31 @@ export function createMcpServer(): McpServer {
     'power',
     {
       base: z.number().describe('Base number'),
-      exponent: z.number().describe('Exponent')
+      exponent: z.number().describe('Exponent'),
     },
     async ({ base, exponent }) => {
       console.log(`🔢 Math: Calculating ${base}^${exponent}`);
-      
+
       try {
         const result = power(base, exponent);
-        
+
         return {
-          content: [{
-            type: 'text',
-            text: `✅ ${base}^${exponent} = ${result}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `✅ ${base}^${exponent} = ${result}`,
+            },
+          ],
         };
       } catch (error) {
         console.error('Power calculation failed:', error);
         return {
-          content: [{
-            type: 'text',
-            text: `❌ Power calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `❌ Power calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+          ],
         };
       }
     }
@@ -216,27 +231,31 @@ export function createMcpServer(): McpServer {
   server.tool(
     'sqrt',
     {
-      number: z.number().describe('Number to find square root of')
+      number: z.number().describe('Number to find square root of'),
     },
     async ({ number }) => {
       console.log(`√ Math: Finding square root of ${number}`);
-      
+
       try {
         const result = sqrt(number);
-        
+
         return {
-          content: [{
-            type: 'text',
-            text: `✅ √${number} = ${result}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `✅ √${number} = ${result}`,
+            },
+          ],
         };
       } catch (error) {
         console.error('Square root calculation failed:', error);
         return {
-          content: [{
-            type: 'text',
-            text: `❌ Square root calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `❌ Square root calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+          ],
         };
       }
     }
@@ -245,27 +264,31 @@ export function createMcpServer(): McpServer {
   server.tool(
     'factorial',
     {
-      number: z.number().int().min(0).describe('Non-negative integer to find factorial of')
+      number: z.number().int().min(0).describe('Non-negative integer to find factorial of'),
     },
     async ({ number }) => {
       console.log(`! Math: Calculating factorial of ${number}`);
-      
+
       try {
         const result = factorial(number);
-        
+
         return {
-          content: [{
-            type: 'text',
-            text: `✅ ${number}! = ${result}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `✅ ${number}! = ${result}`,
+            },
+          ],
         };
       } catch (error) {
         console.error('Factorial calculation failed:', error);
         return {
-          content: [{
-            type: 'text',
-            text: `❌ Factorial calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `❌ Factorial calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+          ],
         };
       }
     }
@@ -275,39 +298,43 @@ export function createMcpServer(): McpServer {
   server.tool(
     'calculate',
     {
-      expression: z.string().describe('Math expression to evaluate (e.g., "2 + 3 * 4")')
+      expression: z.string().describe('Math expression to evaluate (e.g., "2 + 3 * 4")'),
     },
     async ({ expression }) => {
       console.log(`🧮 Math: Evaluating expression "${expression}"`);
-      
+
       try {
         // Simple expression evaluation (for basic expressions only)
         // This is a simplified implementation - in production, use a proper math parser
         const sanitizedExpression = expression.replace(/[^0-9+\-*/().\s]/g, '');
-        
+
         if (sanitizedExpression !== expression) {
           throw new Error('Invalid characters in expression');
         }
-        
+
         const result = Function('"use strict"; return (' + sanitizedExpression + ')')();
-        
+
         if (typeof result !== 'number' || !isFinite(result)) {
           throw new Error('Invalid result');
         }
-        
+
         return {
-          content: [{
-            type: 'text',
-            text: `✅ ${expression} = ${result}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `✅ ${expression} = ${result}`,
+            },
+          ],
         };
       } catch (error) {
         console.error('Expression evaluation failed:', error);
         return {
-          content: [{
-            type: 'text',
-            text: `❌ Expression evaluation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-          }]
+          content: [
+            {
+              type: 'text',
+              text: `❌ Expression evaluation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            },
+          ],
         };
       }
     }
@@ -315,4 +342,3 @@ export function createMcpServer(): McpServer {
 
   return server;
 }
-

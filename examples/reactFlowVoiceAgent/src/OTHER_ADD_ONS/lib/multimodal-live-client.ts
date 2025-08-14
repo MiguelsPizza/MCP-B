@@ -224,7 +224,6 @@
 //         return;
 //       }
 
-      
 //       if (isTurnComplete(serverContent)) {
 //         console.log("fullResponse", fullResponse);
 //         this.log("server.send", fullResponse);
@@ -396,6 +395,4 @@
 //     this.ws.send(str);
 //   }
 // }
-
-
 
