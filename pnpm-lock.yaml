@@ -387,7 +387,7 @@ importers:
         version: 11.0.1
       '@mcp-b/transports':
         specifier: ^1.0.1
-        version: link:../packages/transports
+        version: 1.0.2(@modelcontextprotocol/sdk@1.17.1)
       '@modelcontextprotocol/sdk':
         specifier: ^1.17.1
         version: 1.17.1
@@ -458,6 +458,9 @@ importers:
       zod:
         specifier: ^3.25.74
         version: 3.25.74
+      zod-to-json-schema:
+        specifier: ^3.24.5
+        version: 3.24.5(zod@3.25.74)
     devDependencies:
       '@anthropic-ai/sdk':
         specifier: 'catalog:'
@@ -488,7 +491,7 @@ importers:
     dependencies:
       '@mcp-b/transports':
         specifier: ^1.0.0
-        version: link:../transports
+        version: 1.0.2(@modelcontextprotocol/sdk@1.15.0)
       '@modelcontextprotocol/sdk':
         specifier: 1.15.0
         version: 1.15.0
@@ -2277,6 +2280,11 @@ packages:
 
   '@manypkg/get-packages@1.1.3':
     resolution: {integrity: sha512-fo+QhuU3qE/2TQMQmbVMqaQ6EWbMhi4ABWP+O4AM1NqPBuy0OrApV5LO6BrrgnhtAHS2NH6RrVk9OL181tTi8A==}
+
+  '@mcp-b/transports@1.0.2':
+    resolution: {integrity: sha512-nktWlNOXimkFWunksSgmnCo3trqJ1pN6XEGKoG9tYJ2BiO8mjQhtCwur7EPtD7MoBf8O4Ayi06w+Yos8fr9XzA==}
+    peerDependencies:
+      '@modelcontextprotocol/sdk': ^1.15.0
 
   '@mjackson/node-fetch-server@0.6.1':
     resolution: {integrity: sha512-9ZJnk/DJjt805uv5PPv11haJIW+HHf3YEEyVXv+8iLQxLD/iXA68FH220XoiTPBC4gCg5q+IMadDw8qPqlA5wg==}
@@ -9765,6 +9773,16 @@ snapshots:
       fs-extra: 8.1.0
       globby: 11.1.0
       read-yaml-file: 1.1.0
+
+  '@mcp-b/transports@1.0.2(@modelcontextprotocol/sdk@1.15.0)':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.15.0
+      zod: 3.25.74
+
+  '@mcp-b/transports@1.0.2(@modelcontextprotocol/sdk@1.17.1)':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.17.1
+      zod: 3.25.74
 
   '@mjackson/node-fetch-server@0.6.1': {}
 
