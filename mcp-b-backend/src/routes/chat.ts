@@ -1,7 +1,8 @@
 import { anthropic } from '@ai-sdk/anthropic';
+import { openai } from '@ai-sdk/openai';
 import { zValidator } from '@hono/zod-validator';
 import { streamText } from 'ai';
-import { Env, Hono } from 'hono';
+import { Context, Env, Hono } from 'hono';
 import { z } from 'zod';
 import '../../worker-configuration.d.ts';
 
@@ -107,6 +108,23 @@ const PostRequestBodySchema = z.object({
   tools: z.any().optional(),
 });
 
+function getModel(c: Context<{ Bindings: Env }>) {
+  // @ts-ignore
+  if (!c.env.MODEL_PROVIDER || c.env.MODEL_PROVIDER === 'anthropic') {
+    // @ts-ignore
+    const modelName = c.env.ANTHROPIC_MODEL_NAME ?? 'claude-sonnet-4-20250514';
+    return anthropic(modelName);
+  }
+  // @ts-ignore
+  if (c.env.MODEL_PROVIDER === 'openai') {
+    // @ts-ignore
+    const modelName = c.env.OPENAI_MODEL_NAME ?? 'gpt-4o';
+    return openai(modelName);
+  }
+  // default fallback
+  return anthropic('claude-sonnet-4-20250514');
+}
+
 /**
  * Chat route handler
  * Handles AI chat functionality using OpenAI models
@@ -127,7 +145,7 @@ const chat = new Hono<{ Bindings: Env }>().post(
     const modelName = c.env.ANTHROPIC_MODEL_NAME ?? 'claude-sonnet-4-20250514';
 
     const result = streamText({
-      model: anthropic(modelName),
+      model: getModel(c),
       messages,
       system,
       tools: {
