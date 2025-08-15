@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@mcp-b/transports": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.17.2"
+    "@modelcontextprotocol/sdk": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

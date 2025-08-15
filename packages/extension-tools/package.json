@@ -54,7 +54,7 @@
     "check": "biome check --write ."
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.15.0",
+    "@modelcontextprotocol/sdk": "catalog:",
     "zod": "^3.25.74",
     "zod-to-json-schema": "^3.24.5"
   },
