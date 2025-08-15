@@ -162,7 +162,10 @@ function EditUserScriptPage() {
     if (scriptData) {
       form.reset({
         id: scriptData.id,
-        matches: scriptData?.matches?.length > 0 ? scriptData.matches : [''],
+        matches:
+          Array.isArray(scriptData?.matches) && scriptData.matches.length > 0
+            ? scriptData.matches
+            : [''],
         excludeMatches: scriptData.excludeMatches || [],
         runAt: scriptData.runAt || 'document_start',
         allFrames: scriptData.allFrames || false,

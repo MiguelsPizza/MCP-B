@@ -91,8 +91,8 @@ catalogs:
       specifier: ^5.8.3
       version: 5.8.3
     zod:
-      specifier: 3.23.8
-      version: 3.23.8
+      specifier: 3.25.76
+      version: 3.25.76
 
 importers:
 
@@ -164,7 +164,7 @@ importers:
     dependencies:
       '@ai-sdk/openai':
         specifier: 'catalog:'
-        version: 1.3.22(zod@3.23.8)
+        version: 1.3.22(zod@3.25.76)
       '@assistant-ui/react':
         specifier: 'catalog:'
         version: 0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
@@ -176,10 +176,10 @@ importers:
         version: 0.10.4(@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@autoform/react':
         specifier: ^3.1.0
-        version: 3.1.0(react-hook-form@7.62.0(react@19.1.0))(react@19.1.0)(yup@1.6.1)(zod@3.23.8)
+        version: 3.1.0(react-hook-form@7.62.0(react@19.1.0))(react@19.1.0)(yup@1.6.1)(zod@3.25.76)
       '@autoform/zod':
         specifier: ^3.1.0
-        version: 3.1.0(zod@3.23.8)
+        version: 3.1.0(zod@3.25.76)
       '@hookform/resolvers':
         specifier: ^4.1.0
         version: 4.1.3(react-hook-form@7.62.0(react@19.1.0))
@@ -242,7 +242,7 @@ importers:
         version: 1.121.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@tanstack/zod-adapter':
         specifier: ^1.92.11
-        version: 1.121.2(@tanstack/react-router@1.121.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(zod@3.23.8)
+        version: 1.121.2(@tanstack/react-router@1.121.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(zod@3.25.76)
       '@trpc/client':
         specifier: ^10.45.2
         version: 10.45.2(@trpc/server@10.45.2)
@@ -260,7 +260,7 @@ importers:
         version: 1.1.1
       ai:
         specifier: 'catalog:'
-        version: 4.3.16(react@19.1.0)(zod@3.23.8)
+        version: 4.3.16(react@19.1.0)(zod@3.25.76)
       arktype:
         specifier: ^2.1.11
         version: 2.1.20
@@ -332,7 +332,7 @@ importers:
         version: 1.3.4
       zod:
         specifier: 'catalog:'
-        version: 3.23.8
+        version: 3.25.76
       zod-from-json-schema:
         specifier: ^0.4.2
         version: 0.4.2
@@ -378,16 +378,16 @@ importers:
     dependencies:
       '@ai-sdk/openai':
         specifier: 1.3.24
-        version: 1.3.24(zod@3.23.8)
+        version: 1.3.24(zod@3.25.76)
       '@assistant-ui/react-ai-sdk':
         specifier: ^0.11.1
         version: 0.11.3(@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))(@types/react@19.1.8)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
       '@hono/zod-validator':
         specifier: ^0.5.0
-        version: 0.5.0(hono@4.9.0)(zod@3.23.8)
+        version: 0.5.0(hono@4.9.0)(zod@3.25.76)
       ai:
         specifier: ^4.3.19
-        version: 4.3.19(react@19.1.0)(zod@3.23.8)
+        version: 4.3.19(react@19.1.0)(zod@3.25.76)
       dotenv:
         specifier: 'catalog:'
         version: 16.5.0
@@ -402,10 +402,10 @@ importers:
         version: 11.1.0
       zod:
         specifier: 'catalog:'
-        version: 3.23.8
+        version: 3.25.76
       zod-to-json-schema:
         specifier: ^3.24.1
-        version: 3.24.5(zod@3.23.8)
+        version: 3.24.5(zod@3.25.76)
     devDependencies:
       '@types/json-schema':
         specifier: ^7.0.15
@@ -565,7 +565,7 @@ importers:
         version: 5.8.3
       zod:
         specifier: 'catalog:'
-        version: 3.23.8
+        version: 3.25.76
 
   packages/mcp-react-hooks:
     dependencies:
@@ -633,7 +633,7 @@ importers:
         version: 1.53.0
       zod:
         specifier: 'catalog:'
-        version: 3.23.8
+        version: 3.25.76
     devDependencies:
       '@anthropic-ai/sdk':
         specifier: 'catalog:'
@@ -7718,11 +7718,11 @@ packages:
   zod@3.22.3:
     resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
 
-  zod@3.23.8:
-    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
-
   zod@3.25.74:
     resolution: {integrity: sha512-J8poo92VuhKjNknViHRAIuuN6li/EwFbAC8OedzI8uxpEPGiXHGQu9wemIAioIpqgfB4SySaJhdk0mH5Y4ICBg==}
+
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
   zod@4.0.17:
     resolution: {integrity: sha512-1PHjlYRevNxxdy2JZ8JcNAw7rX8V9P1AKkP+x/xZfxB0K5FYfuV+Ug6P/6NVSR2jHQ+FzDDoDHS04nYUsOIyLQ==}
@@ -7773,11 +7773,11 @@ snapshots:
       defu: 6.1.4
       many-keys-map: 2.0.1
 
-  '@ai-sdk/gateway@1.0.4(zod@3.25.74)':
+  '@ai-sdk/gateway@1.0.4(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.1(zod@3.25.74)
-      zod: 3.25.74
+      '@ai-sdk/provider-utils': 3.0.1(zod@3.25.76)
+      zod: 3.25.76
 
   '@ai-sdk/gateway@1.0.4(zod@4.0.17)':
     dependencies:
@@ -7785,39 +7785,32 @@ snapshots:
       '@ai-sdk/provider-utils': 3.0.1(zod@4.0.17)
       zod: 4.0.17
 
-  '@ai-sdk/openai@1.3.22(zod@3.23.8)':
+  '@ai-sdk/openai@1.3.22(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.23.8)
-      zod: 3.23.8
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
+      zod: 3.25.76
 
-  '@ai-sdk/openai@1.3.24(zod@3.23.8)':
+  '@ai-sdk/openai@1.3.24(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.23.8)
-      zod: 3.23.8
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
+      zod: 3.25.76
 
-  '@ai-sdk/provider-utils@2.2.8(zod@3.23.8)':
-    dependencies:
-      '@ai-sdk/provider': 1.1.3
-      nanoid: 3.3.11
-      secure-json-parse: 2.7.0
-      zod: 3.23.8
-
-  '@ai-sdk/provider-utils@2.2.8(zod@3.25.74)':
+  '@ai-sdk/provider-utils@2.2.8(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
       nanoid: 3.3.11
       secure-json-parse: 2.7.0
-      zod: 3.25.74
+      zod: 3.25.76
 
-  '@ai-sdk/provider-utils@3.0.1(zod@3.25.74)':
+  '@ai-sdk/provider-utils@3.0.1(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
       '@standard-schema/spec': 1.0.0
       eventsource-parser: 3.0.3
-      zod: 3.25.74
-      zod-to-json-schema: 3.24.5(zod@3.25.74)
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.5(zod@3.25.76)
 
   '@ai-sdk/provider-utils@3.0.1(zod@4.0.17)':
     dependencies:
@@ -7839,25 +7832,25 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@1.2.12(react@19.1.0)(zod@3.23.8)':
+  '@ai-sdk/react@1.2.12(react@19.1.0)(zod@3.25.76)':
     dependencies:
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.23.8)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.23.8)
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.76)
       react: 19.1.0
       swr: 2.3.3(react@19.1.0)
       throttleit: 2.1.0
     optionalDependencies:
-      zod: 3.23.8
+      zod: 3.25.76
 
-  '@ai-sdk/react@2.0.8(react@19.1.0)(zod@3.25.74)':
+  '@ai-sdk/react@2.0.8(react@19.1.0)(zod@3.25.76)':
     dependencies:
-      '@ai-sdk/provider-utils': 3.0.1(zod@3.25.74)
-      ai: 5.0.8(zod@3.25.74)
+      '@ai-sdk/provider-utils': 3.0.1(zod@3.25.76)
+      ai: 5.0.8(zod@3.25.76)
       react: 19.1.0
       swr: 2.3.3(react@19.1.0)
       throttleit: 2.1.0
     optionalDependencies:
-      zod: 3.25.74
+      zod: 3.25.76
 
   '@ai-sdk/react@2.0.8(react@19.1.0)(zod@4.0.17)':
     dependencies:
@@ -7869,19 +7862,12 @@ snapshots:
     optionalDependencies:
       zod: 4.0.17
 
-  '@ai-sdk/ui-utils@1.2.11(zod@3.23.8)':
+  '@ai-sdk/ui-utils@1.2.11(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.23.8)
-      zod: 3.23.8
-      zod-to-json-schema: 3.24.5(zod@3.23.8)
-
-  '@ai-sdk/ui-utils@1.2.11(zod@3.25.74)':
-    dependencies:
-      '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.74)
-      zod: 3.25.74
-      zod-to-json-schema: 3.24.5(zod@3.25.74)
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.5(zod@3.25.76)
 
   '@aklinker1/rollup-plugin-visualizer@5.12.0(rollup@4.43.0)':
     dependencies:
@@ -7915,14 +7901,14 @@ snapshots:
 
   '@assistant-ui/react-ai-sdk@0.10.14(@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))':
     dependencies:
-      '@ai-sdk/react': 2.0.8(react@19.1.0)(zod@3.25.74)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.74)
+      '@ai-sdk/react': 2.0.8(react@19.1.0)(zod@3.25.76)
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.76)
       '@assistant-ui/react': 0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
       '@assistant-ui/react-edge': 0.2.12(@assistant-ui/react@0.10.24(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0)))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-use-callback-ref': 1.1.1(@types/react@19.1.8)(react@19.1.0)
       '@types/json-schema': 7.0.15
       react: 19.1.0
-      zod: 3.25.74
+      zod: 3.25.76
       zustand: 5.0.7(@types/react@19.1.8)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
     optionalDependencies:
       '@types/react': 19.1.8
@@ -7959,8 +7945,8 @@ snapshots:
       json-schema: 0.4.0
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      zod: 3.25.74
-      zod-to-json-schema: 3.24.5(zod@3.25.74)
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.5(zod@3.25.76)
     optionalDependencies:
       '@types/react': 19.1.8
       '@types/react-dom': 19.1.6(@types/react@19.1.8)
@@ -7999,7 +7985,7 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
       react-textarea-autosize: 8.5.9(@types/react@19.1.8)(react@19.1.0)
-      zod: 3.25.74
+      zod: 3.25.76
       zustand: 5.0.7(@types/react@19.1.8)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
     optionalDependencies:
       '@types/react': 19.1.8
@@ -8031,8 +8017,8 @@ snapshots:
       react-dom: 19.1.0(react@19.1.0)
       react-textarea-autosize: 8.5.9(@types/react@19.1.8)(react@19.1.0)
       secure-json-parse: 2.7.0
-      zod: 3.25.74
-      zod-to-json-schema: 3.24.5(zod@3.25.74)
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.5(zod@3.25.76)
       zustand: 5.0.5(@types/react@19.1.8)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
     optionalDependencies:
       '@types/react': 19.1.8
@@ -8043,11 +8029,11 @@ snapshots:
 
   '@autoform/core@3.0.0': {}
 
-  '@autoform/react@3.1.0(react-hook-form@7.62.0(react@19.1.0))(react@19.1.0)(yup@1.6.1)(zod@3.23.8)':
+  '@autoform/react@3.1.0(react-hook-form@7.62.0(react@19.1.0))(react@19.1.0)(yup@1.6.1)(zod@3.25.76)':
     dependencies:
       '@autoform/core': 3.0.0
       '@autoform/yup': 3.0.0(yup@1.6.1)
-      '@autoform/zod': 3.1.0(zod@3.23.8)
+      '@autoform/zod': 3.1.0(zod@3.25.76)
       '@hookform/resolvers': 3.10.0(react-hook-form@7.62.0(react@19.1.0))
       react: 19.1.0
       react-hook-form: 7.62.0(react@19.1.0)
@@ -8059,10 +8045,10 @@ snapshots:
     dependencies:
       yup: 1.6.1
 
-  '@autoform/zod@3.1.0(zod@3.23.8)':
+  '@autoform/zod@3.1.0(zod@3.25.76)':
     dependencies:
       '@autoform/core': 3.0.0
-      zod: 3.23.8
+      zod: 3.25.76
 
   '@babel/code-frame@7.27.1':
     dependencies:
@@ -9010,10 +8996,10 @@ snapshots:
 
   '@floating-ui/utils@0.2.9': {}
 
-  '@hono/zod-validator@0.5.0(hono@4.9.0)(zod@3.23.8)':
+  '@hono/zod-validator@0.5.0(hono@4.9.0)(zod@3.25.76)':
     dependencies:
       hono: 4.9.0
-      zod: 3.23.8
+      zod: 3.25.76
 
   '@hookform/resolvers@3.10.0(react-hook-form@7.62.0(react@19.1.0))':
     dependencies:
@@ -9359,7 +9345,7 @@ snapshots:
   '@mcp-b/transports@1.0.2(@modelcontextprotocol/sdk@1.17.3)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.17.3
-      zod: 3.25.74
+      zod: 3.25.76
 
   '@modelcontextprotocol/sdk@1.17.3':
     dependencies:
@@ -9373,8 +9359,8 @@ snapshots:
       express-rate-limit: 7.5.0(express@5.1.0)
       pkce-challenge: 5.0.0
       raw-body: 3.0.0
-      zod: 3.25.74
-      zod-to-json-schema: 3.24.5(zod@3.25.74)
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.5(zod@3.25.76)
     transitivePeerDependencies:
       - supports-color
 
@@ -10028,7 +10014,7 @@ snapshots:
       recast: 0.23.11
       source-map: 0.7.4
       tsx: 4.20.3
-      zod: 3.25.74
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
@@ -10047,7 +10033,7 @@ snapshots:
       babel-dead-code-elimination: 1.0.10
       chokidar: 3.6.0
       unplugin: 2.3.5
-      zod: 3.25.74
+      zod: 3.25.76
     optionalDependencies:
       '@tanstack/react-router': 1.121.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       vite: 5.4.19(@types/node@24.0.1)(lightningcss@1.30.1)
@@ -10069,10 +10055,10 @@ snapshots:
 
   '@tanstack/virtual-file-routes@1.120.17': {}
 
-  '@tanstack/zod-adapter@1.121.2(@tanstack/react-router@1.121.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(zod@3.23.8)':
+  '@tanstack/zod-adapter@1.121.2(@tanstack/react-router@1.121.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(zod@3.25.76)':
     dependencies:
       '@tanstack/react-router': 1.121.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      zod: 3.23.8
+      zod: 3.25.76
 
   '@testing-library/dom@10.4.0':
     dependencies:
@@ -10495,37 +10481,37 @@ snapshots:
 
   agent-base@7.1.3: {}
 
-  ai@4.3.16(react@19.1.0)(zod@3.23.8):
+  ai@4.3.16(react@19.1.0)(zod@3.25.76):
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.23.8)
-      '@ai-sdk/react': 1.2.12(react@19.1.0)(zod@3.23.8)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.23.8)
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
+      '@ai-sdk/react': 1.2.12(react@19.1.0)(zod@3.25.76)
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.76)
       '@opentelemetry/api': 1.9.0
       jsondiffpatch: 0.6.0
-      zod: 3.23.8
+      zod: 3.25.76
     optionalDependencies:
       react: 19.1.0
 
-  ai@4.3.19(react@19.1.0)(zod@3.23.8):
+  ai@4.3.19(react@19.1.0)(zod@3.25.76):
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.23.8)
-      '@ai-sdk/react': 1.2.12(react@19.1.0)(zod@3.23.8)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.23.8)
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.76)
+      '@ai-sdk/react': 1.2.12(react@19.1.0)(zod@3.25.76)
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.76)
       '@opentelemetry/api': 1.9.0
       jsondiffpatch: 0.6.0
-      zod: 3.23.8
+      zod: 3.25.76
     optionalDependencies:
       react: 19.1.0
 
-  ai@5.0.8(zod@3.25.74):
+  ai@5.0.8(zod@3.25.76):
     dependencies:
-      '@ai-sdk/gateway': 1.0.4(zod@3.25.74)
+      '@ai-sdk/gateway': 1.0.4(zod@3.25.76)
       '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.1(zod@3.25.74)
+      '@ai-sdk/provider-utils': 3.0.1(zod@3.25.76)
       '@opentelemetry/api': 1.9.0
-      zod: 3.25.74
+      zod: 3.25.76
 
   ai@5.0.8(zod@4.0.17):
     dependencies:
@@ -13985,7 +13971,7 @@ snapshots:
       open: 9.1.0
       ora: 6.3.1
       prompts: 2.4.2
-      zod: 3.25.74
+      zod: 3.25.76
     transitivePeerDependencies:
       - supports-color
 
@@ -15564,15 +15550,15 @@ snapshots:
 
   zod-from-json-schema@0.4.2:
     dependencies:
-      zod: 3.25.74
-
-  zod-to-json-schema@3.24.5(zod@3.23.8):
-    dependencies:
-      zod: 3.23.8
+      zod: 3.25.76
 
   zod-to-json-schema@3.24.5(zod@3.25.74):
     dependencies:
       zod: 3.25.74
+
+  zod-to-json-schema@3.24.5(zod@3.25.76):
+    dependencies:
+      zod: 3.25.76
 
   zod-to-json-schema@3.24.5(zod@4.0.17):
     dependencies:
@@ -15580,9 +15566,9 @@ snapshots:
 
   zod@3.22.3: {}
 
-  zod@3.23.8: {}
-
   zod@3.25.74: {}
+
+  zod@3.25.76: {}
 
   zod@4.0.17: {}
 
