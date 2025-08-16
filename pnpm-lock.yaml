@@ -99,6 +99,9 @@ importers:
 
   apps/backend:
     dependencies:
+      '@ai-sdk/anthropic':
+        specifier: ^2.0.4
+        version: 2.0.4(zod@4.0.17)
       '@ai-sdk/openai':
         specifier: ^2.0.15
         version: 2.0.15(zod@4.0.17)
@@ -419,7 +422,7 @@ importers:
         version: 6.0.1
       ts-jest:
         specifier: ^29.3.2
-        version: 29.4.1(@babel/core@7.28.3)(@jest/transform@30.0.5)(@jest/types@30.0.5)(babel-jest@30.0.5(@babel/core@7.28.3))(jest-util@30.0.5)(jest@30.0.5(@types/node@22.17.2)(node-notifier@10.0.1)(ts-node@10.9.2(@types/node@22.17.2)(typescript@5.9.2)))(typescript@5.9.2)
+        version: 29.4.1(@babel/core@7.28.3)(@jest/transform@30.0.5)(@jest/types@30.0.5)(babel-jest@30.0.5(@babel/core@7.28.3))(esbuild@0.25.9)(jest-util@30.0.5)(jest@30.0.5(@types/node@22.17.2)(node-notifier@10.0.1)(ts-node@10.9.2(@types/node@22.17.2)(typescript@5.9.2)))(typescript@5.9.2)
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.17.2)(typescript@5.9.2)
@@ -458,6 +461,12 @@ packages:
 
   '@1natsu/wait-element@4.1.2':
     resolution: {integrity: sha512-qWxSJD+Q5b8bKOvESFifvfZ92DuMsY+03SBNjTO34ipJLP6mZ9yK4bQz/vlh48aEQXoJfaZBqUwKL5BdI5iiWw==}
+
+  '@ai-sdk/anthropic@2.0.4':
+    resolution: {integrity: sha512-ii2bZEUPwBitUiK1dpX+HsOarcDGY71G9TVdSJqbfXSVqa+speJNZ8PA/bjuNMml0NyX8VxNsaMg3SwBUCZspA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4
 
   '@ai-sdk/gateway@1.0.7':
     resolution: {integrity: sha512-Athrq7OARuNc0iHZJP6InhSQ53tImCc990vMWyR1UHaZgPZJbXjKhIMiOj54F0I0Nlemx48V4fHYUTfLkJotnQ==}
@@ -7542,6 +7551,12 @@ snapshots:
       defu: 6.1.4
       many-keys-map: 2.0.1
 
+  '@ai-sdk/anthropic@2.0.4(zod@4.0.17)':
+    dependencies:
+      '@ai-sdk/provider': 2.0.0
+      '@ai-sdk/provider-utils': 3.0.3(zod@4.0.17)
+      zod: 4.0.17
+
   '@ai-sdk/gateway@1.0.7(zod@4.0.17)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
@@ -14607,7 +14622,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-jest@29.4.1(@babel/core@7.28.3)(@jest/transform@30.0.5)(@jest/types@30.0.5)(babel-jest@30.0.5(@babel/core@7.28.3))(jest-util@30.0.5)(jest@30.0.5(@types/node@22.17.2)(node-notifier@10.0.1)(ts-node@10.9.2(@types/node@22.17.2)(typescript@5.9.2)))(typescript@5.9.2):
+  ts-jest@29.4.1(@babel/core@7.28.3)(@jest/transform@30.0.5)(@jest/types@30.0.5)(babel-jest@30.0.5(@babel/core@7.28.3))(esbuild@0.25.9)(jest-util@30.0.5)(jest@30.0.5(@types/node@22.17.2)(node-notifier@10.0.1)(ts-node@10.9.2(@types/node@22.17.2)(typescript@5.9.2)))(typescript@5.9.2):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
@@ -14625,6 +14640,7 @@ snapshots:
       '@jest/transform': 30.0.5
       '@jest/types': 30.0.5
       babel-jest: 30.0.5(@babel/core@7.28.3)
+      esbuild: 0.25.9
       jest-util: 30.0.5
 
   ts-node@10.9.2(@types/node@22.17.2)(typescript@5.9.2):
