@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "@types/json-schema": "catalog:",
-    "wrangler": "^4.4.0"
+    "@types/node": "catalog:",
+    "wrangler": "^4.30.0"
   }
 }

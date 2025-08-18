@@ -62,6 +62,6 @@ export default defineConfig({
   runner: {
     openConsole: true,
     openDevtools: true,
-    startUrls: ['http://gmail.com'],
+    startUrls: ['http://mcp-b.ai'],
   },
 });

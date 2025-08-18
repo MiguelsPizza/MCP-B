@@ -1,12 +1,11 @@
 import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { zValidator } from '@hono/zod-validator';
-import { convertToModelMessages, streamText } from 'ai';
+import { convertToModelMessages, stepCountIs, streamText } from 'ai';
 
 import { frontendTools } from '@assistant-ui/react-ai-sdk';
 import { Context, Env, Hono } from 'hono';
 import { z } from 'zod';
-import '../../worker-configuration.d.ts';
 
 /**
  * Request body schema for chat endpoint
@@ -47,14 +46,33 @@ const chat = new Hono<{ Bindings: Env }>().post(
   zValidator('json', PostRequestBodySchema),
   async (c) => {
     const { messages, system, tools } = c.req.valid('json');
+    const frontendToolsThatDoNotRegisterAsTools = frontendTools(tools);
 
     const result = streamText({
       model: getModel(c),
-
       system,
       messages: convertToModelMessages(messages),
+      stopWhen: (params) =>{
+        console.log(params.steps);
+        if (stepCountIs(10)) {
+          return true;
+        }
+        return false;
+      },
       tools: {
-        ...frontendTools(tools),
+        ...frontendToolsThatDoNotRegisterAsTools,
+        toolThatRegistersAsATool: {
+          description: 'Will wait for a given number of seconds',
+          inputSchema: z.object({
+            time: z.number(),
+          }),
+          execute: async (input) => {
+            await new Promise((resolve) => setTimeout(resolve, input.time * 1000));
+            return {
+              content: 'Tool executed',
+            };
+          },
+        },
       },
     });
 
